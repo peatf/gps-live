@@ -1,0 +1,1 @@
+# gps-liveA-somatic-awareness-app-integrating-OpenAI-Assistant
