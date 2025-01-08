@@ -35,7 +35,7 @@ const Slider = ({ value, min, max, step, onValueChange, className }) => (
       max={max}
       step={step}
       onChange={(e) => onValueChange([parseInt(e.target.value, 10)])}
-      className={`appearance-none w-full h-2 bg-gradient-to-r from-blue-600 to-gray-300 rounded`}
+      className="appearance-none w-full h-2 bg-gradient-to-r from-blue-600 to-gray-300 rounded"
     />
     <div
       className="absolute top-[-30px] left-1/2 transform -translate-x-1/2 text-blue-600 font-bold"
@@ -84,34 +84,25 @@ const JourneyFlow = () => {
           you want to achieve.
         </p>
       </div>
-      <div className="space-y-2">
-        <label className="text-sm text-gray-500">Name your goal</label>
-        <input
-          type="text"
-          value={goal}
-          onChange={(e) => setGoal(e.target.value)}
-          className="w-full border border-gray-300 rounded px-2 py-1"
-        />
-      </div>
+      <input
+        type="text"
+        value={goal}
+        onChange={(e) => setGoal(e.target.value)}
+        className="w-full border border-gray-300 rounded px-2 py-1"
+      />
     </div>,
 
     // Step 2: Date Selection
     <div key="date" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm">
-          Choose a date for your goal—not as a deadline, but as a way to track
-          your progress.
-        </p>
+        <p className="text-sm">Choose a target date for your goal.</p>
       </div>
-      <div className="space-y-2">
-        <label className="text-sm text-gray-500">Choose a target date</label>
-        <input
-          type="date"
-          value={targetDate}
-          onChange={(e) => setTargetDate(e.target.value)}
-          className="w-full border border-gray-300 rounded px-2 py-1"
-        />
-      </div>
+      <input
+        type="date"
+        value={targetDate}
+        onChange={(e) => setTargetDate(e.target.value)}
+        className="w-full border border-gray-300 rounded px-2 py-1"
+      />
       {targetDate && (
         <div className="text-sm text-gray-600">
           This date is {daysUntilTarget} days away. The halfway point would be
@@ -130,16 +121,6 @@ const JourneyFlow = () => {
           which letter would you currently find yourself at?
         </p>
       </div>
-      <div className="flex justify-between text-sm text-gray-600">
-        {alphabet.map((letter, index) => (
-          <span
-            key={letter}
-            className={`${index <= currentPosition ? "text-blue-600 font-bold" : ""}`}
-          >
-            {letter}
-          </span>
-        ))}
-      </div>
       <Slider
         value={[currentPosition]}
         min={0}
@@ -150,32 +131,92 @@ const JourneyFlow = () => {
       />
     </div>,
 
-    // Step 4, 5, 6, and 7 defined...
+    // Step 4: Midpoint Position
+    <div key="midpoint" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">What letter on the map do you believe you'll be at halfway?</p>
+      </div>
+      <Slider
+        value={[midpointPosition]}
+        min={0}
+        max={25}
+        step={1}
+        onValueChange={(value) => setMidpointPosition(value[0])}
+        className="w-full"
+      />
+    </div>,
+
+    // Step 5: Target Position
+    <div key="target" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">What letter do you believe you'll reach on the target date?</p>
+      </div>
+      <Slider
+        value={[endPosition]}
+        min={0}
+        max={25}
+        step={1}
+        onValueChange={(value) => setEndPosition(value[0])}
+        className="w-full"
+      />
+    </div>,
+
+    // Step 6: Somatic Check
+    <div key="somatic" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">
+          What sensations feel closest to what you're experiencing?
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        {["Tension", "Warmth", "Lightness", "Heaviness"].map((sensation) => (
+          <Button key={sensation} variant="ghost">{sensation}</Button>
+        ))}
+      </div>
+    </div>,
+
+    // Step 7: Alignment Check
+    <div key="alignment" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">How true do these statements feel in your body?</p>
+      </div>
+      {Object.entries(likertScores).map(([key, value]) => (
+        <div key={key} className="space-y-2">
+          <p className="text-sm">
+            {key === "safety" && "I feel safe to receive my goal."}
+            {key === "confidence" && "I trust in my capacity to reach this point."}
+          </p>
+          <Slider
+            value={[value]}
+            min={1}
+            max={5}
+            step={1}
+            onValueChange={(newValue) =>
+              setLikertScores((prev) => ({ ...prev, [key]: newValue[0] }))
+            }
+            className="w-full"
+          />
+        </div>
+      ))}
+    </div>,
   ];
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
+    <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {step <= 3 && <Map className="w-5 h-5" />}
-            {step === 4 && <Heart className="w-5 h-5" />}
-            {step === 5 && <Activity className="w-5 h-5" />}
-            <span>Step {step + 1} of 7</span>
-          </div>
-        </CardTitle>
+        <CardTitle>Step {step + 1} of {steps.length}</CardTitle>
       </CardHeader>
       <CardContent>{steps[step]}</CardContent>
-      <div className="flex justify-between pt-4">
+      <div className="flex justify-between">
         <Button
           variant="outline"
-          onClick={() => setStep(Math.max(0, step - 1))}
+          onClick={() => setStep(step - 1)}
           disabled={step === 0}
         >
           Back
         </Button>
         <Button
-          onClick={() => setStep(Math.min(steps.length - 1, step + 1))}
+          onClick={() => setStep(step + 1)}
           disabled={step === steps.length - 1}
         >
           Continue
