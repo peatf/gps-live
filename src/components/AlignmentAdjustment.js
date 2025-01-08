@@ -1,54 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
-import { Heart, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle } from 'lucide-react';
 
-/**
- * AlignmentAdjustment
- *
- * Props:
- * - journeyData (object): user data from parent
- * - setJourneyData (function): if you want to store adjustments globally
- * - onComplete (function): called when user finishes alignment
- */
 export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete }) {
   const [activeCategory, setActiveCategory] = useState('safety');
   const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [aiSuggestions, setAiSuggestions] = useState({});
 
-  const getAdjustments = (category) => {
-    const adjustments = {
-      anticipation: {
-        title: 'Anticipation / Expectation of Receiving',
-        options: [
-          {
-            type: 'Shorten the Timeline',
-            original: 'in six months, I want to land a big deal',
-            adjusted: 'in the next two weeks, I’d love one encouraging sign or opportunity',
-            somaticPrompt: 'Breathe and ask...'
-          },
-          // more if desired
-        ]
-      },
-      safety: {
-        title: 'Feeling Safe to Receive',
-        options: [
-          {
-            type: 'Scale the Size',
-            original: 'triple my revenue in three months',
-            adjusted: 'welcome one new client...',
-            somaticPrompt: 'Close your eyes...'
-          },
-          // more
-        ]
-      },
-      // confidence, openness, deserving, appreciation...
+  // Function to get AI suggestions for a category
+  const getAISuggestions = useCallback(async (category) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          journeyData: {
+            ...journeyData,
+            category,
+            message: `Please provide 2 specific adjustments for the goal "${journeyData.goal}" 
+                     focusing on ${category}. Consider somatic awareness and emotional safety. 
+                     Format each suggestion with a 'type', 'original' version, 'adjusted' version, 
+                     and 'somaticPrompt' for body awareness.`
+          }
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get AI suggestions');
+      }
+
+      const data = await response.json();
+      
+      // Parse the AI response and structure it
+      try {
+        const suggestions = data.message.includes('{') 
+          ? JSON.parse(data.message) 
+          : inferSuggestionsFromText(data.message);
+          
+        setAiSuggestions(prev => ({
+          ...prev,
+          [category]: suggestions
+        }));
+      } catch (e) {
+        console.error('Error parsing AI response:', e);
+        // Fallback to simpler structure if parsing fails
+        setAiSuggestions(prev => ({
+          ...prev,
+          [category]: {
+            title: `${category.charAt(0).toUpperCase() + category.slice(1)} Adjustments`,
+            options: [{
+              type: 'Goal Reframing',
+              original: journeyData.goal,
+              adjusted: data.message,
+              somaticPrompt: 'Take a deep breath and notice how this adjustment feels in your body.'
+            }]
+          }
+        }));
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [journeyData]);
+
+  // Helper function to infer suggestions structure from text
+  const inferSuggestionsFromText = (text) => {
+    const sentences = text.split('.');
+    return {
+      title: `${activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1)} Adjustments`,
+      options: [{
+        type: 'Goal Reframing',
+        original: journeyData.goal,
+        adjusted: sentences[0],
+        somaticPrompt: sentences[1] || 'Notice how this adjustment feels in your body.'
+      }]
     };
-
-    return adjustments[category] || { title: 'Unknown Category', options: [] };
   };
 
-  const { title, options } = getAdjustments(activeCategory);
+  // Fetch suggestions when category changes
+  useEffect(() => {
+    if (!aiSuggestions[activeCategory]) {
+      getAISuggestions(activeCategory);
+    }
+  }, [activeCategory, getAISuggestions]);
+
+  // Get current category suggestions
+  const currentSuggestions = aiSuggestions[activeCategory] || { title: '', options: [] };
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -59,22 +103,41 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Category Intro Alert */}
+        {/* Loading State */}
+        {isLoading && (
+          <Alert className="bg-blue-50 border-blue-200">
+            <AlertDescription className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+              <span>Getting alignment suggestions...</span>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <Alert className="bg-red-50 border-red-200">
+            <AlertDescription className="flex items-center space-x-2 text-red-600">
+              <AlertTriangle className="w-4 h-4" />
+              <span>{error}</span>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Category Intro */}
         <Alert className="bg-blue-50 border-blue-200">
           <AlertDescription className="space-y-2">
             <p>
-              We’re focusing on <span className="font-medium">{title}</span> as an area
-              where we could bring more alignment.
+              We're focusing on <span className="font-medium">{currentSuggestions.title}</span>
             </p>
             <p className="text-sm text-blue-600">
-              Let's explore some adjustments that might feel better in your body.
+              Let's explore adjustments that feel aligned with your body's wisdom.
             </p>
           </AlertDescription>
         </Alert>
 
-        {/* Adjustment Options */}
+        {/* AI Suggestions */}
         <div className="space-y-4">
-          {options.map((option, i) => (
+          {currentSuggestions.options.map((option, i) => (
             <div
               key={i}
               className="p-4 rounded-lg border border-gray-200 space-y-3 hover:border-blue-200 transition-all"
@@ -104,14 +167,16 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-2">
-          {['safety','anticipation','openness','deserving','confidence','appreciation'].map((cat) => (
-            <Button
-              key={cat}
-              variant={cat === activeCategory ? 'default' : 'outline'}
-              onClick={() => setActiveCategory(cat)}
-            >
-              {cat.charAt(0).toUpperCase() + cat.slice(1)}
-            </Button>
+          {['safety', 'anticipation', 'openness', 'deserving', 'confidence', 'appreciation'].map(
+            (cat) => (
+              <Button
+                key={cat}
+                variant={cat === activeCategory ? 'default' : 'outline'}
+                onClick={() => setActiveCategory(cat)}
+              >
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </Button>
+            )
           ))}
         </div>
 
@@ -123,7 +188,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
               <p className="font-medium">Your Refined Goal:</p>
               <p className="mt-1">{adjustedGoal}</p>
               <p className="mt-2 text-sm text-green-600">
-                Notice how it feels in your body.
+                Take a moment to feel how this lands in your body.
               </p>
             </AlertDescription>
           </Alert>
@@ -135,8 +200,17 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             <ArrowLeft className="w-4 h-4" />
             Back
           </Button>
-          <Button className="flex items-center gap-2" onClick={onComplete}>
-            Continue
+          <Button
+            className="flex items-center gap-2"
+            onClick={() => {
+              setJourneyData(prev => ({
+                ...prev,
+                adjustedGoal
+              }));
+              onComplete();
+            }}
+          >
+            Complete Journey
             <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
