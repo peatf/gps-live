@@ -5,6 +5,8 @@ export default async function handler(req, res) {
 
   const { message } = req.body;
 
+  console.log("Incoming request:", { message });
+
   if (!message) {
     return res.status(400).json({ error: "Message is required" });
   }
@@ -17,12 +19,11 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4", // Adjust based on your model
+        model: "gpt-4",
         messages: [
           { role: "system", content: "You are a somatic awareness assistant." },
           { role: "user", content: message },
         ],
-        assistant_id: process.env.OPENAI_ASSISTANT_ID,
       }),
     });
 
@@ -31,9 +32,11 @@ export default async function handler(req, res) {
     if (response.ok) {
       return res.status(200).json({ reply: data.choices[0].message.content });
     } else {
+      console.error("Error from OpenAI:", data.error);
       return res.status(response.status).json({ error: data.error });
     }
   } catch (error) {
+    console.error("Server Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
