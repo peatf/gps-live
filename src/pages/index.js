@@ -1,4 +1,4 @@
-import JourneyFlow from "@/components/JourneyFlow";
+import JourneyFlow from "../components/JourneyFlow";
 
 export default function Home() {
   return (
