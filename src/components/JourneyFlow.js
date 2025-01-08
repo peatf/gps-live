@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/Card/Card";
-import { Button } from "@/components/Button/Button";
-import { Slider } from "@/components/Slider/Slider";
-import { Input } from "@/components/Input/Input";
-import { Map, Heart, Activity } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "../Card/Card";
+import { Button } from "../Button/Button";
+import { Slider } from "../Slider/Slider";
+import { Input } from "../Input/Input";
+import { Map, Heart, Activity } from "lucide-react";
 
 const JourneyFlow = () => {
   const [step, setStep] = useState(0);
