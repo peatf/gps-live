@@ -41,6 +41,7 @@ const Slider = ({ value, min, max, step, onValueChange, className }) => (
 
 const JourneyFlow = () => {
   const [step, setStep] = useState(0);
+  const [goal, setGoal] = useState("");
   const [targetDate, setTargetDate] = useState("");
   const [daysUntilTarget, setDaysUntilTarget] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(0);
@@ -66,13 +67,31 @@ const JourneyFlow = () => {
   }, [targetDate]);
 
   const steps = [
-    // Step 1: Date Selection
+    // Step 1: Naming the Goal
+    <div key="goal" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">
+          What is your goal or desire for your business? Be specific about what
+          you want to achieve.
+        </p>
+      </div>
+      <div className="space-y-2">
+        <label className="text-sm text-gray-500">Name your goal</label>
+        <input
+          type="text"
+          value={goal}
+          onChange={(e) => setGoal(e.target.value)}
+          className="w-full border border-gray-300 rounded px-2 py-1"
+        />
+      </div>
+    </div>,
+
+    // Step 2: Date Selection
     <div key="date" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          I want you to have a date in mind for your goal - not as a deadline or
-          a tool to punish yourself, because that does nothing for you. But for
-          the sake of honest evaluation.
+          Choose a date for your goal—not as a deadline, but as a way to track
+          your progress.
         </p>
       </div>
       <div className="space-y-2">
@@ -92,14 +111,12 @@ const JourneyFlow = () => {
       )}
     </div>,
 
-    // Step 2: Current Position
+    // Step 3: Current Position
     <div key="current" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Imagine yourself in the now moment like an object on a slider. If
-          point A was the first stop on a map moving in the direction of the
-          next experience you want to attract and point Z was the last stop,
-          which letter would you currently find yourself at?
+          Imagine yourself on a slider. If point A is where you start and point
+          Z is your goal, where are you now?
         </p>
       </div>
       <div className="space-y-4">
@@ -115,6 +132,9 @@ const JourneyFlow = () => {
             </span>
           ))}
         </div>
+        <div className="text-center font-bold text-blue-600">
+          Current Letter: {alphabet[currentPosition]}
+        </div>
         <Slider
           value={[currentPosition]}
           min={0}
@@ -126,15 +146,11 @@ const JourneyFlow = () => {
       </div>
     </div>,
 
-    // Step 3: Midpoint Position
+    // Step 4: Midpoint Position
     <div key="midpoint" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Using your imagination, on that halfway date ({
-            new Date(
-              Date.now() + (daysUntilTarget / 2) * 24 * 60 * 60 * 1000
-            ).toLocaleDateString()
-          }), what letter on the map do you believe you will be at?
+          On your halfway date, where do you believe you will be on the slider?
         </p>
       </div>
       <div className="space-y-4">
@@ -149,6 +165,9 @@ const JourneyFlow = () => {
               {letter}
             </span>
           ))}
+        </div>
+        <div className="text-center font-bold text-green-600">
+          Midpoint Letter: {alphabet[midpointPosition]}
         </div>
         <Slider
           value={[midpointPosition]}
@@ -172,11 +191,13 @@ const JourneyFlow = () => {
             {step === 5 && <Activity className="w-5 h-5" />}
             <span>
               {step === 0
+                ? "Name Your Goal"
+                : step === 1
                 ? "Choose Your Timeline"
-                : step <= 3
+                : step === 2
                 ? "Map Your Journey"
-                : step === 4
-                ? "Body Awareness Check"
+                : step === 3
+                ? "Map Your Midpoint"
                 : "Alignment Check"}
             </span>
           </div>
