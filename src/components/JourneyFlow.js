@@ -27,15 +27,25 @@ const Button = ({ children, onClick, variant, disabled }) => (
   </button>
 );
 const Slider = ({ value, min, max, step, onValueChange, className }) => (
-  <input
-    type="range"
-    value={value[0]}
-    min={min}
-    max={max}
-    step={step}
-    onChange={(e) => onValueChange([parseInt(e.target.value, 10)])}
-    className={`w-full ${className}`}
-  />
+  <div className="relative w-full">
+    <input
+      type="range"
+      value={value[0]}
+      min={min}
+      max={max}
+      step={step}
+      onChange={(e) => onValueChange([parseInt(e.target.value, 10)])}
+      className={`appearance-none w-full h-2 bg-gradient-to-r from-blue-600 via-blue-300 to-gray-300 rounded`}
+    />
+    <div
+      className="absolute top-[-30px] left-1/2 transform -translate-x-1/2 text-blue-600 font-bold"
+      style={{
+        left: `calc(${((value[0] - min) / (max - min)) * 100}% - 10px)`,
+      }}
+    >
+      {String.fromCharCode(65 + value[0])}
+    </div>
+  </div>
 );
 
 const JourneyFlow = () => {
@@ -114,8 +124,10 @@ const JourneyFlow = () => {
     <div key="current" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Imagine yourself on a slider. If point A is where you start and point
-          Z is your goal, where are you now?
+          Imagine yourself in the now moment like an object on a slider. If
+          point A was the first stop on a map moving in the direction of the
+          next experience you want to attract and point Z was the last stop,
+          which letter would you currently find yourself at?
         </p>
       </div>
       <div className="flex justify-between text-sm text-gray-600">
@@ -140,104 +152,43 @@ const JourneyFlow = () => {
       />
     </div>,
 
-    // Step 6: Somatic Check
-    <div key="somatic" className="space-y-6">
+    // Step 4: Midpoint Position
+    <div key="midpoint" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Notice in your body: How does the journey from {alphabet[currentPosition]} to{" "}
-          {alphabet[endPosition]} feel in your body?
+          Using your imagination, on the halfway date ({new Date(
+            Date.now() + (daysUntilTarget / 2) * 24 * 60 * 60 * 1000
+          ).toLocaleDateString()}), what letter on the map do you believe you
+          will be at?
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        {["Tension", "Warmth", "Lightness", "Heaviness", "Expansion", "Contraction"].map((sensation) => (
-          <Button
-            key={sensation}
-            variant="ghost"
-            className="justify-start"
+      <div className="flex justify-between text-sm text-gray-600">
+        {alphabet.map((letter, index) => (
+          <span
+            key={letter}
+            className={`${
+              index <= midpointPosition ? "text-green-600 font-bold" : ""
+            }`}
           >
-            + {sensation}
-          </Button>
+            {letter}
+          </span>
         ))}
       </div>
+      <Slider
+        value={[midpointPosition]}
+        min={0}
+        max={25}
+        step={1}
+        onValueChange={(value) => setMidpointPosition(value[0])}
+        className="w-full"
+      />
     </div>,
-
-    // Step 7: Alignment Check
-    <div key="alignment" className="space-y-6">
-      <div className="p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm">How true do these statements feel in your body right now?</p>
-      </div>
-      <div className="space-y-6">
-        {Object.entries(likertScores).map(([key, value]) => (
-          <div key={key} className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm">
-                {key === "safety" && "I feel safe to receive this experience"}
-                {key === "confidence" && "I trust in my capacity to reach this point"}
-                {key === "openness" && "I can stay open even if it takes time"}
-                {key === "deserving" && "I feel deserving of this experience"}
-                {key === "belief" && "I believe this is possible for me"}
-              </span>
-              <span className="text-sm text-gray-500">{value}/5</span>
-            </div>
-            <Slider
-              value={[value]}
-              min={1}
-              max={5}
-              step={1}
-              onValueChange={(newValue) =>
-                setLikertScores((prev) => ({ ...prev, [key]: newValue[0] }))
-              }
-              className="w-full"
-            />
-          </div>
-        ))}
-      </div>
-    </div>,
+    ...
   ];
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {step <= 3 && <Map className="w-5 h-5" />}
-            {step === 4 && <Heart className="w-5 h-5" />}
-            {step === 5 && <Activity className="w-5 h-5" />}
-            <span>
-              {step === 0
-                ? "Name Your Goal"
-                : step === 1
-                ? "Choose Your Timeline"
-                : step === 2
-                ? "Map Your Journey"
-                : step === 3
-                ? "Map Your Midpoint"
-                : step === 4
-                ? "Map Your Target"
-                : step === 5
-                ? "Body Awareness Check"
-                : "Alignment Check"}
-            </span>
-          </div>
-          <span className="text-sm text-gray-500">{step + 1} of 7</span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>{steps[step]}</CardContent>
-      <div className="flex justify-between pt-4">
-        <Button
-          variant="outline"
-          onClick={() => setStep(Math.max(0, step - 1))}
-          disabled={step === 0}
-        >
-          Back
-        </Button>
-        <Button
-          onClick={() => setStep(Math.min(steps.length - 1, step + 1))}
-          disabled={step === steps.length - 1}
-        >
-          Continue
-        </Button>
-      </div>
+    <Card>
+      ...
     </Card>
   );
 };
