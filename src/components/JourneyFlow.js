@@ -7,7 +7,7 @@ import { Map, Heart, Activity } from "lucide-react";
 
 const JourneyFlow = () => {
   const [step, setStep] = useState(0);
-  const [goal, setGoal] = useState(''); // New state for the goal
+  const [goal, setGoal] = useState(''); // State for user goal
   const [targetDate, setTargetDate] = useState('');
   const [daysUntilTarget, setDaysUntilTarget] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(0);
@@ -31,7 +31,7 @@ const JourneyFlow = () => {
   }, [targetDate]);
 
   const steps = [
-    // Step 1: Goal Submission + Date Selection
+    // Step 1: Goal Submission
     <div key="goal-setting" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
@@ -48,6 +48,16 @@ const JourneyFlow = () => {
           placeholder="Enter your goal here"
           className="w-full"
         />
+      </div>
+    </div>,
+
+    // Step 2: Date Selection
+    <div key="date" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">
+          I want you to have a date in mind for your goal - not as a deadline or a tool to punish yourself,
+          because that does nothing for you. But for the sake of honest evaluation.
+        </p>
       </div>
       <div className="space-y-2">
         <label className="text-sm text-gray-500">Choose a target date</label>
@@ -66,7 +76,7 @@ const JourneyFlow = () => {
       )}
     </div>,
 
-    // Step 2: Current Position
+    // Step 3: Current Position
     <div key="current" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
@@ -94,7 +104,7 @@ const JourneyFlow = () => {
       </div>
     </div>,
 
-    // Step 3: Midpoint Position
+    // Step 4: Midpoint Position
     <div key="midpoint" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
@@ -122,7 +132,7 @@ const JourneyFlow = () => {
       </div>
     </div>,
 
-    // Step 4: End Position
+    // Step 5: End Position
     <div key="end" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
@@ -149,7 +159,7 @@ const JourneyFlow = () => {
       </div>
     </div>,
 
-    // Step 5: Somatic Check
+    // Step 6: Somatic Check
     <div key="somatic" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
@@ -158,14 +168,18 @@ const JourneyFlow = () => {
       </div>
       <div className="grid grid-cols-2 gap-4">
         {['Tension', 'Warmth', 'Lightness', 'Heaviness', 'Expansion', 'Contraction'].map((sensation) => (
-          <Button key={sensation} variant="ghost" className="justify-start">
+          <Button 
+            key={sensation}
+            variant="ghost" 
+            className="justify-start"
+          >
             + {sensation}
           </Button>
         ))}
       </div>
     </div>,
 
-    // Step 6: Alignment Check
+    // Step 7: Alignment Check
     <div key="alignment" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">How true do these statements feel in your body right now?</p>
@@ -188,8 +202,8 @@ const JourneyFlow = () => {
               min={1}
               max={5}
               step={1}
-              onValueChange={(newValue) =>
-                setLikertScores((prev) => ({ ...prev, [key]: newValue[0] }))
+              onValueChange={(newValue) => 
+                setLikertScores(prev => ({...prev, [key]: newValue[0]}))
               }
               className="w-full"
             />
@@ -204,27 +218,24 @@ const JourneyFlow = () => {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {step <= 3 && <Map className="w-5 h-5" />}
-            {step === 4 && <Heart className="w-5 h-5" />}
-            {step === 5 && <Activity className="w-5 h-5" />}
+            {step <= 4 && <Map className="w-5 h-5" />}
+            {step === 5 && <Heart className="w-5 h-5" />}
+            {step === 6 && <Activity className="w-5 h-5" />}
             <span>
-              {step === 0
-                ? 'Set Your Goal'
-                : step <= 3
-                ? 'Map Your Journey'
-                : step === 4
-                ? 'Body Awareness Check'
-                : 'Alignment Check'}
+              {step === 0 ? 'Set Your Goal' :
+               step === 1 ? 'Choose Your Timeline' :
+               step <= 4 ? 'Map Your Journey' :
+               step === 5 ? 'Body Awareness Check' :
+               'Alignment Check'}
             </span>
           </div>
-          <span className="text-sm text-gray-500">{step + 1} of 6</span>
+          <span className="text-sm text-gray-500">{step + 1} of 7</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {steps[step]}
-
         <div className="flex justify-between pt-4">
-          <Button
+          <Button 
             variant="outline"
             onClick={() => setStep(Math.max(0, step - 1))}
             disabled={step === 0}
@@ -232,8 +243,11 @@ const JourneyFlow = () => {
             Back
           </Button>
           <Button
-            onClick={() => setStep(Math.min(steps.length - 1, step + 1))}
-            disabled={step === 0 && !goal}
+            onClick={() => {
+              if (step === 0 && !goal.trim()) return; // Prevent moving forward without a goal
+              setStep(Math.min(steps.length - 1, step + 1));
+            }}
+            disabled={step === steps.length - 1}
           >
             Continue
           </Button>
