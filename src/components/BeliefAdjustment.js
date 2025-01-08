@@ -1,54 +1,48 @@
 import React, { useState, useEffect } from 'react';
-// UI components via alias:
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/Card/Card';
-import { Button } from '@/components/Button/Button';
-import { Alert, AlertDescription } from './Alert/Alert.js';
-import { Slider } from '@/components/Slider/Slider';
+// Using relative paths instead of aliases:
+import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
+import { Button } from './Button/Button';
+import { Alert, AlertDescription } from './Alert/Alert';
+import { Slider } from './Slider/Slider';
 
-// Icons from lucide-react
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 
 /**
  * BeliefAdjustment
  *
  * Props:
- * - journeyData (object): includes fields like { goal, ... } if you want to read them
- * - setJourneyData (function): if you want to update global data here
- * - onContinue (function): called when user is ready to move on
+ * - journeyData (object): includes fields like { goal, etc. }
+ * - setJourneyData (function): to update global data if desired
+ * - onContinue (function): called when user moves on
  */
 export default function BeliefAdjustment({ journeyData, setJourneyData, onContinue }) {
-  // A "journeyScale" that affects how far the user can move the slider
+  // A "journeyScale" for the slider
   const [journeyScale, setJourneyScale] = useState(100);
 
-  // Track the user’s current position along the alphabet
+  // Track the user’s position along the alphabet (0–25). W is index 22
   const [currentPosition, setCurrentPosition] = useState(0);
-  // “W” position in the alphabet is index 22 → but we scale it if needed
-  const [targetPosition] = useState(22);
+  const [targetPosition] = useState(22); // 'W' in the alphabet
 
-  // For Claude-based suggestions, we keep an "adjustedGoal"
-  // If your global journeyData already has a "goal," you could read or update it here
+  // If you want to read the user's goal from journeyData:
   const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
 
-  // We'll store the AI response text here
+  // AI response text
   const [aiResponse, setAiResponse] = useState('');
 
-  // A small alphabet array for the “visual journey map”
+  // Alphabet array for the “visual journey map”
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // --- AI CALL EXAMPLE ---
-  // By default, let's call AI once on mount just to show how:
+  // If you want to call AI on mount:
   useEffect(() => {
     // callAI();
   }, []);
 
   /**
    * callAI:
-   * Submits the entire journeyData (plus any local state) to /api/ai.
-   * The server responds with AI suggestions, stored in aiResponse.
+   * Submits entire journeyData + local state to /api/ai, storing result in aiResponse.
    */
   const callAI = async () => {
     try {
-      // You could combine local BeliefAdjustment state with journeyData:
       const payload = {
         ...journeyData,
         scale: journeyScale,
@@ -71,7 +65,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
 
   /**
    * getGoalAdjustment:
-   * Generate local suggestions (from the old "Claude" snippet) based on journeyScale.
+   * Generate local “Claude” suggestions based on journeyScale (0–100).
    */
   const getGoalAdjustment = (scale) => {
     const adjustments = {
@@ -92,8 +86,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
 
   /**
    * getScaledPosition:
-   * The alphabet index is scaled by journeyScale. So if the scale is 100, everything is full length (26 letters).
-   * If scale is 50, you only show half as far, etc.
+   * Scale an index (0–25) by journeyScale. e.g., if journeyScale=50, 25→12ish
    */
   const getScaledPosition = (position) => {
     return Math.round((position * journeyScale) / 100);
@@ -105,7 +98,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
         <CardTitle>Belief Adjustment</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Show AI response at top, if present */}
+        {/* AI response alert */}
         {aiResponse && (
           <Alert className="bg-yellow-50 border-yellow-200">
             <AlertDescription>
@@ -131,7 +124,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
               className="w-full"
             />
 
-            {/* Claude-based local "goal adjustment" suggestion */}
+            {/* “Claude” local suggestion if scale < 100 */}
             {journeyScale < 100 && (
               <Alert className="bg-blue-50 border-blue-200">
                 <AlertDescription>
@@ -147,7 +140,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
 
           {/* 2) Visual Journey Map */}
           <div className="p-6 bg-gray-50 rounded-lg space-y-6">
-            {/* The scaled alphabet */}
+            {/* Scaled alphabet */}
             <div className="flex justify-between text-sm text-gray-600">
               {alphabet.slice(0, getScaledPosition(26)).map((letter, index) => (
                 <span
@@ -179,12 +172,12 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
             </div>
           </div>
 
-          {/* 3) If user can't reach "W" yet, suggest reducing the scale */}
+          {/* 3) Suggest reducing scale if under W */}
           {currentPosition < getScaledPosition(22) && (
             <div className="p-4 bg-green-50 rounded-lg space-y-4">
               <p className="text-sm font-medium">
-                I notice you're at position {alphabet[currentPosition] || 'A'}.
-                Let's try scaling the journey down by 10% to see if that helps you reach further.
+                You're at position {alphabet[currentPosition] || 'A'}.
+                Let's try scaling the journey down by 10% to see if that helps you move further.
               </p>
               <Button
                 onClick={() => setJourneyScale(Math.max(10, journeyScale - 10))}
@@ -195,7 +188,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
             </div>
           )}
 
-          {/* 4) Success: if user reached W or beyond */}
+          {/* 4) Success if user reached W */}
           {currentPosition >= getScaledPosition(22) && (
             <Alert className="bg-green-50 border-green-200">
               <Sparkles className="w-4 h-4 text-green-600" />
@@ -211,7 +204,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
           )}
         </div>
 
-        {/* 5) Navigation Buttons */}
+        {/* 5) Navigation */}
         <div className="flex justify-between pt-4">
           <Button variant="outline" className="flex items-center gap-2">
             <ArrowLeft className="w-4 h-4" />
