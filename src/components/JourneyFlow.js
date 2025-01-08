@@ -1,30 +1,35 @@
-import React, { useEffect } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/Card/Card";
-import { Button } from "@/components/Button/Button";
-import { Slider } from "@/components/Slider/Slider";
-import { Input } from "@/components/Input/Input";
-import { Map, Heart, Activity } from "lucide-react";
+/* src/components/JourneyFlow.js */
+import React, { useEffect, useState } from 'react';
 
-// We expect these props from parent:
-// - journeyData (the big object)
-// - setJourneyData (function to update it)
-// - onComplete (function to go to next step)
+// Relative imports for your UI components
+import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
+import { Button } from './Button/Button';
+import { Slider } from './Slider/Slider';
+import { Input } from './Input/Input';
+
+import { Map, Heart, Activity } from 'lucide-react';
+
 export default function JourneyFlow({ journeyData, setJourneyData, onComplete }) {
-  const { goal, targetDate, daysUntilTarget, currentPosition, midpointPosition, endPosition, likertScores } = journeyData;
+  // Destructure values from journeyData; provide defaults just in case
+  const {
+    goal = '',
+    targetDate = '',
+    daysUntilTarget = 0,
+    currentPosition = 0,
+    midpointPosition = 0,
+    endPosition = 0,
+    likertScores = {},
+  } = journeyData;
 
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Recompute daysUntilTarget whenever targetDate changes
   useEffect(() => {
     if (targetDate) {
       const days = Math.ceil((new Date(targetDate) - new Date()) / (1000 * 60 * 60 * 24));
-      // Update journeyData with new daysUntilTarget
       setJourneyData((prev) => ({ ...prev, daysUntilTarget: days }));
     }
   }, [targetDate, setJourneyData]);
 
-  // Steps array is basically the same, except we read & write from journeyData
-  // For clarity, I've broken them out as separate inline steps:
   const steps = [
     // Step 1: Goal Submission
     <div key="goal-setting" className="space-y-6">
@@ -50,7 +55,8 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
     <div key="date" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          I want you to have a date in mind for your goal...
+          I want you to have a date in mind for your goal - not as a deadline or a tool to punish yourself,
+          because that does nothing for you. But for the sake of honest evaluation.
         </p>
       </div>
       <div className="space-y-2">
@@ -64,7 +70,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
       </div>
       {targetDate && (
         <div className="text-sm text-gray-600">
-          This date is {daysUntilTarget} days away. <br />
+          This date is {daysUntilTarget} days away.
           The halfway point would be in {Math.ceil(daysUntilTarget / 2)} days.
         </div>
       )}
@@ -74,7 +80,8 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
     <div key="current" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Imagine yourself in the now moment like an object on a slider...
+          Imagine yourself in the now moment like an object on a slider.
+          If point A was the first stop on a map... which letter would you be at?
         </p>
       </div>
       <div className="space-y-4">
@@ -105,8 +112,9 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
     <div key="midpoint" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Using your imagination, on that halfway date ({new Date(Date.now() + (daysUntilTarget / 2) * 86400000).toLocaleDateString()}),
-          what letter on the map do you believe you will be at?
+          On that halfway date ({
+            new Date(Date.now() + (daysUntilTarget / 2) * 24 * 60 * 60 * 1000).toLocaleDateString()
+          }), what letter do you think you'll be at?
         </p>
       </div>
       <div className="space-y-4">
@@ -137,8 +145,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
     <div key="end" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Now use your imagination to go to your target date ({new Date(targetDate).toLocaleDateString()}).
-          Where do you believe you will be on the map?
+          Now, at your target date ({new Date(targetDate).toLocaleDateString()}), which letter do you believe you'll be at?
         </p>
       </div>
       <div className="space-y-4">
@@ -169,33 +176,38 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
     <div key="somatic" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Notice in your body: When you look at this journey from {alphabet[currentPosition]} to {alphabet[endPosition]}, what do you feel?
+          Notice in your body: From {alphabet[currentPosition]} to {alphabet[endPosition]}, how do you feel?
         </p>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        {["Tension", "Warmth", "Lightness", "Heaviness", "Expansion", "Contraction"].map((sensation) => (
-          <Button key={sensation} variant="ghost" className="justify-start">
-            + {sensation}
-          </Button>
-        ))}
+        {['Tension', 'Warmth', 'Lightness', 'Heaviness', 'Expansion', 'Contraction'].map(
+          (sensation) => (
+            <Button key={sensation} variant="ghost" className="justify-start">
+              + {sensation}
+            </Button>
+          )
+        )}
       </div>
     </div>,
 
     // Step 7: Alignment Check
     <div key="alignment" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm">How true do these statements feel in your body right now?</p>
+        <p className="text-sm">
+          How true do these statements feel in your body right now?
+        </p>
       </div>
       <div className="space-y-6">
-        {Object.entries(likertScores).map(([key, value]) => (
+        {/* Safely call Object.entries on likertScores */}
+        {Object.entries(likertScores || {}).map(([key, value]) => (
           <div key={key} className="space-y-2">
             <div className="flex justify-between">
               <span className="text-sm">
-                {key === "safety" && "I feel safe to receive this experience"}
-                {key === "confidence" && "I trust in my capacity to reach this point"}
-                {key === "openness" && "I can stay open even if it takes time"}
-                {key === "deserving" && "I feel deserving of this experience"}
-                {key === "belief" && "I believe this is possible for me"}
+                {key === 'safety' && 'I feel safe to receive this experience'}
+                {key === 'confidence' && 'I trust in my capacity to reach this point'}
+                {key === 'openness' && 'I can stay open even if it takes time'}
+                {key === 'deserving' && 'I feel deserving of this experience'}
+                {key === 'belief' && 'I believe this is possible for me'}
               </span>
               <span className="text-sm text-gray-500">{value}/5</span>
             </div>
@@ -208,7 +220,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
                 setJourneyData({
                   ...journeyData,
                   likertScores: {
-                    ...journeyData.likertScores,
+                    ...likertScores,
                     [key]: newValue[0],
                   },
                 })
@@ -221,18 +233,15 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
     </div>,
   ];
 
+  const [step, setStep] = useState(0);
+
   const handleContinue = () => {
-    // If user hasn’t typed a goal, show an alert
     if (step === 0 && !goal.trim()) {
-      alert("Please enter your goal before continuing.");
+      alert('Please enter your goal before continuing.');
       return;
     }
-    // Advance to next step
     setStep((prev) => Math.min(steps.length - 1, prev + 1));
   };
-
-  // If we've exhausted all steps, call onComplete to move to BeliefAdjustment
-  const isFinalStep = (step >= steps.length - 1);
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -244,14 +253,14 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
             {step === 6 && <Activity className="w-5 h-5" />}
             <span>
               {step === 0
-                ? "Set Your Goal"
+                ? 'Set Your Goal'
                 : step === 1
-                ? "Choose Your Timeline"
+                ? 'Choose Your Timeline'
                 : step <= 4
-                ? "Map Your Journey"
+                ? 'Map Your Journey'
                 : step === 5
-                ? "Body Awareness Check"
-                : "Alignment Check"}
+                ? 'Body Awareness Check'
+                : 'Alignment Check'}
             </span>
           </div>
           <span className="text-sm text-gray-500">
@@ -259,11 +268,8 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
           </span>
         </CardTitle>
       </CardHeader>
-
       <CardContent className="space-y-6">
         {steps[step]}
-
-        {/* Navigation Buttons */}
         <div className="flex justify-between pt-4">
           <Button
             variant="outline"
@@ -274,15 +280,16 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete })
           </Button>
           <Button
             onClick={() => {
-              if (isFinalStep) {
-                // If we've completed all steps (step=6), call onComplete
+              if (step === steps.length - 1) {
+                // Last step => go to next phase (BeliefAdjustment)
                 onComplete();
               } else {
                 handleContinue();
               }
             }}
+            disabled={false}
           >
-            {isFinalStep ? "Finish" : "Continue"}
+            {step === steps.length - 1 ? 'Finish' : 'Continue'}
           </Button>
         </div>
       </CardContent>
