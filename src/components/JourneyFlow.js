@@ -7,7 +7,7 @@ import { Map, Heart, Activity } from "lucide-react";
 
 const JourneyFlow = () => {
   const [step, setStep] = useState(0);
-  const [targetDate, setTargetDate] = useState('');
+  const [targetDate, setTargetDate] = useState("");
   const [daysUntilTarget, setDaysUntilTarget] = useState(0);
   const [currentPosition, setCurrentPosition] = useState(0);
   const [midpointPosition, setMidpointPosition] = useState(0);
@@ -17,11 +17,11 @@ const JourneyFlow = () => {
     confidence: 3,
     openness: 3,
     deserving: 3,
-    belief: 3
+    belief: 3,
   });
-  
-  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-  
+
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
   useEffect(() => {
     if (targetDate) {
       const days = Math.ceil((new Date(targetDate) - new Date()) / (1000 * 60 * 60 * 24));
@@ -30,20 +30,16 @@ const JourneyFlow = () => {
   }, [targetDate]);
 
   const steps = [
-    // Step 1: Imagining the Goal
-    <div key="imagine-goal" className="space-y-6">
+    // Step 0: Imagining the Goal
+    <div key="imagine" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Take a moment to imagine the next goal you want to achieve in your business. 
-          Think about what you want to experience, something tangible that can be reached by a certain date.
+          Take a moment to imagine your next goal in your business. What do you want to experience that can be achieved by a certain date?
         </p>
-      </div>
-      <div className="text-sm text-gray-500">
-        When you're ready, click "Continue" to proceed.
       </div>
     </div>,
 
-    // Step 2: Date Selection
+    // Step 1: Date Selection
     <div key="date" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
@@ -62,25 +58,22 @@ const JourneyFlow = () => {
       </div>
       {targetDate && (
         <div className="text-sm text-gray-600">
-          This date is {daysUntilTarget} days away. 
-          The halfway point would be in {Math.ceil(daysUntilTarget/2)} days.
+          This date is {daysUntilTarget} days away. The halfway point would be in {Math.ceil(daysUntilTarget / 2)} days.
         </div>
       )}
     </div>,
 
-    // Step 3: Current Position
+    // Step 2: Current Position
     <div key="current" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          Imagine yourself in the now moment like an object on a slider. 
-          If point A was the first stop on a map moving in the direction of the next experience 
-          you want to attract and point Z was the last stop, which letter would you currently find yourself at?
+          Imagine yourself in the now moment like an object on a slider. If point A was the first stop on a map moving in the direction of the next experience you want to attract and point Z was the last stop, which letter would you currently find yourself at?
         </p>
       </div>
       <div className="space-y-4">
         <div className="flex justify-between text-sm text-gray-600">
           {alphabet.map((letter, index) => (
-            <span key={letter} className={`${index === currentPosition ? 'text-blue-600 font-bold' : ''}`}>
+            <span key={letter} className={`${index === currentPosition ? "text-blue-600 font-bold" : ""}`}>
               {letter}
             </span>
           ))}
@@ -96,12 +89,106 @@ const JourneyFlow = () => {
       </div>
     </div>,
 
-    // Add the remaining steps here...
+    // Step 3: Midpoint Position
+    <div key="midpoint" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">
+          Using your imagination, on that halfway date ({
+            new Date(Date.now() + (daysUntilTarget / 2) * 24 * 60 * 60 * 1000).toLocaleDateString()
+          }), what letter on the map do you believe you will be at?
+        </p>
+      </div>
+      <div className="space-y-4">
+        <div className="flex justify-between text-sm text-gray-600">
+          {alphabet.map((letter, index) => (
+            <span key={letter} className={`${index === midpointPosition ? "text-green-600 font-bold" : ""}`}>
+              {letter}
+            </span>
+          ))}
+        </div>
+        <Slider
+          value={[midpointPosition]}
+          min={0}
+          max={25}
+          step={1}
+          onValueChange={(value) => setMidpointPosition(value[0])}
+          className="w-full"
+        />
+      </div>
+    </div>,
 
-    // Step 4: Midpoint Position
-    // Step 5: End Position
-    // Step 6: Somatic Check
-    // Step 7: Alignment Check
+    // Step 4: End Position
+    <div key="end" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">
+          Now use your imagination to go to your target date ({new Date(targetDate).toLocaleDateString()}). Where do you believe you will be on the map?
+        </p>
+      </div>
+      <div className="space-y-4">
+        <div className="flex justify-between text-sm text-gray-600">
+          {alphabet.map((letter, index) => (
+            <span key={letter} className={`${index === endPosition ? "text-purple-600 font-bold" : ""}`}>
+              {letter}
+            </span>
+          ))}
+        </div>
+        <Slider
+          value={[endPosition]}
+          min={0}
+          max={25}
+          step={1}
+          onValueChange={(value) => setEndPosition(value[0])}
+          className="w-full"
+        />
+      </div>
+    </div>,
+
+    // Step 5: Somatic Check
+    <div key="somatic" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">
+          Notice in your body: When you look at this journey from {alphabet[currentPosition]} to {alphabet[endPosition]}, what do you feel?
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        {["Tension", "Warmth", "Lightness", "Heaviness", "Expansion", "Contraction"].map((sensation) => (
+          <Button key={sensation} variant="ghost" className="justify-start">
+            + {sensation}
+          </Button>
+        ))}
+      </div>
+    </div>,
+
+    // Step 6: Alignment Check
+    <div key="alignment" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">How true do these statements feel in your body right now?</p>
+      </div>
+      <div className="space-y-6">
+        {Object.entries(likertScores).map(([key, value]) => (
+          <div key={key} className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-sm">
+                {key === "safety" && "I feel safe to receive this experience"}
+                {key === "confidence" && "I trust in my capacity to reach this point"}
+                {key === "openness" && "I can stay open even if it takes time"}
+                {key === "deserving" && "I feel deserving of this experience"}
+                {key === "belief" && "I believe this is possible for me"}
+              </span>
+              <span className="text-sm text-gray-500">{value}/5</span>
+            </div>
+            <Slider
+              value={[value]}
+              min={1}
+              max={5}
+              step={1}
+              onValueChange={(newValue) => setLikertScores((prev) => ({ ...prev, [key]: newValue[0] }))}
+              className="w-full"
+            />
+          </div>
+        ))}
+      </div>
+    </div>,
   ];
 
   return (
@@ -112,22 +199,26 @@ const JourneyFlow = () => {
             {step <= 3 && <Map className="w-5 h-5" />}
             {step === 4 && <Heart className="w-5 h-5" />}
             {step === 5 && <Activity className="w-5 h-5" />}
-            <span>{
-              step === 0 ? 'Imagine Your Goal' :
-              step === 1 ? 'Choose Your Timeline' :
-              step <= 3 ? 'Map Your Journey' :
-              step === 4 ? 'Body Awareness Check' :
-              'Alignment Check'
-            }</span>
+            <span>
+              {step === 0
+                ? "Imagine Your Goal"
+                : step === 1
+                ? "Choose Your Timeline"
+                : step <= 3
+                ? "Map Your Journey"
+                : step === 4
+                ? "Body Awareness Check"
+                : "Alignment Check"}
+            </span>
           </div>
-          <span className="text-sm text-gray-500">{step + 1} of {steps.length}</span>
+          <span className="text-sm text-gray-500">{step + 1} of 7</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {steps[step]}
-        
+
         <div className="flex justify-between pt-4">
-          <Button 
+          <Button
             variant="outline"
             onClick={() => setStep(Math.max(0, step - 1))}
             disabled={step === 0}
