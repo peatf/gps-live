@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "../components/Card";
-import { Slider } from "../components/Slider";
-import { Alert, AlertDescription } from "../components/Alert";
-import { Button } from "../components/Button";
+iimport { Card, CardHeader, CardTitle, CardContent } from "./Card/Card";
+import { Slider } from "./Slider/Slider";
+import { Alert, AlertDescription } from "./Alert/Alert";
+import { Button } from "./Button/Button"; // Adjust if Button is also in a subfolder
 
 const JourneyFlow = () => {
   const [step, setStep] = useState(0);
