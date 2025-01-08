@@ -1,4 +1,3 @@
-/* src/pages/index.js */
 import React, { useState } from 'react';
 
 // Using relative imports: one folder up, then into `components`
@@ -27,12 +26,36 @@ export default function HomePage() {
     },
   });
 
+  // AI response state (if you want to display the AI response)
+  const [aiSuggestion, setAiSuggestion] = useState('');
+
   // Step handlers
   const handleJourneyFlowComplete = () => setStep(1);
   const handleBeliefAdjustmentContinue = () => setStep(2);
   const handleAlignmentAdjustmentComplete = () => {
     alert('All steps complete!');
     console.log('Final journeyData:', journeyData);
+  };
+
+  // Example function to call your /api/generate endpoint, sending journeyData as userData.
+  // You could trigger this after each step or via a button.
+  const handleGenerateAI = async () => {
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userData: journeyData }), 
+      });
+      const data = await response.json();
+      if (data.result) {
+        setAiSuggestion(data.result);
+      } else {
+        setAiSuggestion('No response from the AI.');
+      }
+    } catch (error) {
+      console.error('Error calling AI API:', error);
+      setAiSuggestion('Error calling AI API.');
+    }
   };
 
   return (
@@ -63,6 +86,16 @@ export default function HomePage() {
           onComplete={handleAlignmentAdjustmentComplete}
         />
       )}
+
+      {/* An optional button to call the AI for suggestions */}
+      <div style={{ marginTop: '2rem' }}>
+        <button onClick={handleGenerateAI}>Get AI Suggestion</button>
+        {aiSuggestion && (
+          <div style={{ marginTop: '1rem', whiteSpace: 'pre-wrap' }}>
+            <strong>AI Suggestion:</strong> {aiSuggestion}
+          </div>
+        )}
+      </div>
     </main>
   );
 }
