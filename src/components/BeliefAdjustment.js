@@ -4,7 +4,6 @@ import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { Slider } from './Slider/Slider';
-
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 
 /**
@@ -21,54 +20,8 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
   const [targetPosition] = useState(22); // 'W' in the alphabet
   const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
   const [aiResponse, setAiResponse] = useState('');
-
-  useEffect(() => {
-    // callAI();
-  }, []);
-
-  /**
-   * callAI:
-   * Submits entire journeyData + local state to /api/ai, storing result in aiResponse.
-   */
-  const callAI = async () => {
-    try {
-      const payload = {
-        ...journeyData,
-        scale: journeyScale,
-        currentPos: currentPosition,
-        message: 'BeliefAdjustment requesting AI suggestions',
-      };
-
-      const res = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ journeyData: payload }),
-      });
-      const data = await res.json();
-      setAiResponse(data.message || 'No AI response.');
-    } catch (error) {
-      console.error('AI call failed:', error);
-      setAiResponse('Error calling AI.');
-    }
-  };
-export default function BeliefAdjustment({ journeyData, setJourneyData, onContinue }) {
-  // A "journeyScale" for the slider
-  const [journeyScale, setJourneyScale] = useState(100);
-
-  // Track the user’s position along the alphabet (0–25). W is index 22
-  const [currentPosition, setCurrentPosition] = useState(0);
-  const [targetPosition] = useState(22); // 'W' in the alphabet
-
-  // If you want to read the user's goal from journeyData:
-  const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
-
-  // AI response text
-  const [aiResponse, setAiResponse] = useState('');
-
-  // Alphabet array for the “visual journey map”
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // If you want to call AI on mount:
   useEffect(() => {
     // callAI();
   }, []);
