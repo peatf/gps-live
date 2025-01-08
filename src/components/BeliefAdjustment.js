@@ -1,4 +1,42 @@
 import React, { useState, useEffect } from 'react';
+
+export default function BeliefAdjustment({ journeyData, setJourneyData, onContinue }) {
+  const [journeyScale, setJourneyScale] = useState(100);
+  const [currentPosition, setCurrentPosition] = useState(0);
+  const [targetPosition] = useState(22); // 'W' in the alphabet
+  const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
+  const [aiResponse, setAiResponse] = useState('');
+
+  useEffect(() => {
+    // callAI();
+  }, []);
+
+  /**
+   * callAI:
+   * Submits entire journeyData + local state to /api/ai, storing result in aiResponse.
+   */
+  const callAI = async () => {
+    try {
+      const payload = {
+        ...journeyData,
+        scale: journeyScale,
+        currentPos: currentPosition,
+        message: 'BeliefAdjustment requesting AI suggestions',
+      };
+
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ journeyData: payload }),
+      });
+      const data = await res.json();
+      setAiResponse(data.message || 'No AI response.');
+    } catch (error) {
+      console.error('AI call failed:', error);
+      setAiResponse('Error calling AI.');
+    }
+  };
+import React, { useState, useEffect } from 'react';
 // Using relative paths instead of aliases:
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
