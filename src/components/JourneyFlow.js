@@ -15,7 +15,7 @@ const JourneyFlow = () => {
     // Step 1: Define Your Goal
     <Card key="goal">
       <CardHeader>
-        <CardTitle>What is Your Goal?</CardTitle>
+        <CardTitle>Step 1: Define Your Goal</CardTitle>
       </CardHeader>
       <CardContent>
         <input
@@ -31,7 +31,7 @@ const JourneyFlow = () => {
     // Step 2: Adjust Journey Scale
     <Card key="journey">
       <CardHeader>
-        <CardTitle>Adjust Your Journey Scale</CardTitle>
+        <CardTitle>Step 2: Adjust Your Journey Scale</CardTitle>
       </CardHeader>
       <CardContent>
         <Slider
@@ -57,14 +57,18 @@ const JourneyFlow = () => {
     // Step 3: Where Are You Now?
     <Card key="current">
       <CardHeader>
-        <CardTitle>Where Are You Now?</CardTitle>
+        <CardTitle>Step 3: Where Are You Now?</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex justify-between text-sm">
           {alphabet.map((letter, index) => (
             <span
               key={letter}
-              className={index === currentPosition ? "text-blue-600 font-bold" : ""}
+              className={`${
+                index <= currentPosition
+                  ? "text-blue-600 font-bold"
+                  : "text-gray-400"
+              }`}
             >
               {letter}
             </span>
@@ -80,13 +84,26 @@ const JourneyFlow = () => {
       </CardContent>
     </Card>,
 
-    // Step 4: Add Steps Here
-    <Card key="future-step">
+    // Step 4: Midpoint Position
+    <Card key="midpoint">
       <CardHeader>
-        <CardTitle>Next Step Placeholder</CardTitle>
+        <CardTitle>Step 4: Midpoint Position</CardTitle>
       </CardHeader>
       <CardContent>
-        <p>This is where the next step’s functionality will go.</p>
+        <p>
+          Imagine where you'll be halfway through your journey. Select the
+          letter that represents this position.
+        </p>
+      </CardContent>
+    </Card>,
+
+    // Step 5: Alignment Check
+    <Card key="alignment">
+      <CardHeader>
+        <CardTitle>Step 5: Alignment Check</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>How true do these statements feel in your body?</p>
       </CardContent>
     </Card>,
   ];
