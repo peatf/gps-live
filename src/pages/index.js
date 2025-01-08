@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import JourneyFlow from '../components/JourneyFlow';
-import BeliefAdjustment from '../components/BeliefAdjustment';
-import AlignmentAdjustment from '../components/AlignmentAdjustment';
+import JourneyFlow from '@/components/JourneyFlow';
+import BeliefAdjustment from '@/components/BeliefAdjustment';
+import AlignmentAdjustment from '@/components/AlignmentAdjustment';
 
 export default function Home() {
-  // Track which step the user is on (0,1,2)
+  // 1) Step logic
   const [step, setStep] = useState(0);
 
-  // Keep the user’s data here
+  // 2) Example user data (if you need it). 
+  //    If JourneyFlow updates these fields, pass journeyData + setJourneyData down to JourneyFlow.
   const [journeyData, setJourneyData] = useState({
     goal: '',
     timeline: '',
@@ -26,12 +27,13 @@ export default function Home() {
 
   // Called when AlignmentAdjustment is done
   const handleAlignmentAdjustmentComplete = () => {
-    alert('All steps complete! Check the console for final data.');
-    console.log('Final journeyData:', journeyData);
+    alert('All steps complete! See final data in console.');
+    console.log('Final data:', journeyData);
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+      {/* Step 0: JourneyFlow */}
       {step === 0 && (
         <JourneyFlow
           journeyData={journeyData}
@@ -40,6 +42,7 @@ export default function Home() {
         />
       )}
 
+      {/* Step 1: BeliefAdjustment */}
       {step === 1 && (
         <BeliefAdjustment
           initialGoal={journeyData.goal}
@@ -47,6 +50,7 @@ export default function Home() {
         />
       )}
 
+      {/* Step 2: AlignmentAdjustment */}
       {step === 2 && (
         <AlignmentAdjustment
           initialGoal={journeyData.goal}
