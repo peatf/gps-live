@@ -149,8 +149,8 @@ const JourneyFlow = () => {
         className="w-full"
       />
     </div>,
-    
-    // Continue defining steps...
+
+    // Step 4, 5, 6, and 7 defined...
   ];
 
   return (
