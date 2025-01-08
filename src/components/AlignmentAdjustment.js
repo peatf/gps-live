@@ -167,18 +167,16 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-2">
-          {['safety', 'anticipation', 'openness', 'deserving', 'confidence', 'appreciation'].map(
-            (cat) => (
-              <Button
-                key={cat}
-                variant={cat === activeCategory ? 'default' : 'outline'}
-                onClick={() => setActiveCategory(cat)}
-              >
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </Button>
-            )
-          ))}
-        </div>
+  {['safety', 'anticipation', 'openness', 'deserving', 'confidence', 'appreciation'].map((cat) => (
+    <Button
+      key={cat}
+      variant={cat === activeCategory ? 'default' : 'outline'}
+      onClick={() => setActiveCategory(cat)}
+    >
+      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+    </Button>
+  ))}
+</div>
 
         {/* Show adjusted goal if changed */}
         {adjustedGoal !== journeyData.goal && (
