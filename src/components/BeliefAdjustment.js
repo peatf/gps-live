@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 // UI components via alias:
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/Card/Card';
 import { Button } from '@/components/Button/Button';
-import { Alert, AlertDescription } from '@/components/Alert/Alert';
+import { Alert, AlertDescription } from './Alert/Alert.js';
 import { Slider } from '@/components/Slider/Slider';
 
 // Icons from lucide-react
