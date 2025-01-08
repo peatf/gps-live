@@ -1,46 +1,48 @@
 import React, { useState } from 'react';
 
-import JourneyFlow from '@/components/JourneyFlow.js';
-import BeliefAdjustment from '@/components/BeliefAdjustment.js';
-import AlignmentAdjustment from '@/components/AlignmentAdjustment.js';
+// Use relative paths:
+import JourneyFlow from '../components/JourneyFlow.js';
+import BeliefAdjustment from '../components/BeliefAdjustment.js';
+import AlignmentAdjustment from '../components/AlignmentAdjustment.js';
 
 export default function HomePage() {
   const [step, setStep] = useState(0);
 
-  // Example data object
-  const [journeyData, setJourneyData] = useState({ 
+  // Example: Keep a single data object
+  const [journeyData, setJourneyData] = useState({
     goal: '',
-    // etc...
+    // ...any other fields
   });
 
-  const handleJourneyComplete = () => setStep(1);
-  const handleBeliefContinue = () => setStep(2);
-  const handleAlignmentComplete = () => {
-    alert('Done with all steps');
-    console.log('Final journeyData:', journeyData);
+  // Step handlers
+  const handleJourneyFlowComplete = () => setStep(1);
+  const handleBeliefAdjustmentContinue = () => setStep(2);
+  const handleAlignmentAdjustmentComplete = () => {
+    alert('All steps complete!');
+    console.log('Final data:', journeyData);
   };
 
   return (
-    <main>
+    <main className="p-4">
       {step === 0 && (
         <JourneyFlow
           journeyData={journeyData}
           setJourneyData={setJourneyData}
-          onComplete={handleJourneyComplete}
+          onComplete={handleJourneyFlowComplete}
         />
       )}
       {step === 1 && (
         <BeliefAdjustment
           journeyData={journeyData}
           setJourneyData={setJourneyData}
-          onContinue={handleBeliefContinue}
+          onContinue={handleBeliefAdjustmentContinue}
         />
       )}
       {step === 2 && (
         <AlignmentAdjustment
           journeyData={journeyData}
           setJourneyData={setJourneyData}
-          onComplete={handleAlignmentComplete}
+          onComplete={handleAlignmentAdjustmentComplete}
         />
       )}
     </main>
