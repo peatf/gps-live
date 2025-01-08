@@ -1,40 +1,47 @@
 /* src/pages/api/ai.ts */
 import type { NextApiRequest, NextApiResponse } from 'next';
-// If you want to use the official OpenAI library, uncomment below:
-// import { Configuration, OpenAIApi } from 'openai';
+import { Configuration, OpenAIApi } from 'openai'; // (1) <-- This is now UN-commented!
 
-// const config = new Configuration({
-//   apiKey: process.env.OPENAI_API_KEY || '',
-// });
-// const openai = new OpenAIApi(config);
+// (2) Create a Configuration object with your OpenAI API key
+const config = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY || '',
+});
+
+// (3) Create an OpenAIApi instance
+const openai = new OpenAIApi(config);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Enforce POST so we only accept data from a POST request
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed. Please use POST.' });
   }
 
   try {
-    // We'll receive "journeyData" from the client side
+    // The client will send something like { journeyData: {...} }
+    // We grab that from the request body:
     const { journeyData } = req.body;
 
-    // If you want to call OpenAI, uncomment and adapt:
-    //
-    // const completion = await openai.createCompletion({
-    //   model: 'text-davinci-003',
-    //   prompt: `User data: ${JSON.stringify(journeyData)}`,
-    //   max_tokens: 100,
-    // });
-    // const aiResponse = completion.data.choices[0].text;
+    // (4) Call OpenAI's ChatGPT model (gpt-3.5-turbo) or text-davinci-003
+    const completion = await openai.createChatCompletion({
+      model: 'gpt-3.5-turbo',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a helpful assistant.', 
+        },
+        {
+          role: 'user',
+          content: `Analyze this user data: ${JSON.stringify(journeyData)}. Provide a short suggestion.`,
+        },
+      ],
+    });
 
-    // For now, just echo the data back:
-    const aiResponse = `Echoing your journeyData: ${JSON.stringify(journeyData)}`;
+    // (5) Extract the AI response text
+    const aiResponse = completion.data.choices[0].message?.content || 'No response from AI.';
 
-    // Return the AI response to the client
+    // Send it back to the frontend
     res.status(200).json({ message: aiResponse });
   } catch (error: any) {
     console.error('AI Route Error:', error);
-    res.status(500).json({ error: 'Something went wrong.' });
+    res.status(500).json({ error: 'Something went wrong calling OpenAI.' });
   }
 }
-
