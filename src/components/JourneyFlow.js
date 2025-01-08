@@ -35,7 +35,7 @@ const Slider = ({ value, min, max, step, onValueChange, className }) => (
       max={max}
       step={step}
       onChange={(e) => onValueChange([parseInt(e.target.value, 10)])}
-      className={`appearance-none w-full h-2 bg-gradient-to-r from-blue-600 via-blue-300 to-gray-300 rounded`}
+      className={`appearance-none w-full h-2 bg-gradient-to-r from-blue-600 to-gray-300 rounded`}
     />
     <div
       className="absolute top-[-30px] left-1/2 transform -translate-x-1/2 text-blue-600 font-bold"
@@ -134,9 +134,7 @@ const JourneyFlow = () => {
         {alphabet.map((letter, index) => (
           <span
             key={letter}
-            className={`${
-              index <= currentPosition ? "text-blue-600 font-bold" : ""
-            }`}
+            className={`${index <= currentPosition ? "text-blue-600 font-bold" : ""}`}
           >
             {letter}
           </span>
@@ -151,44 +149,38 @@ const JourneyFlow = () => {
         className="w-full"
       />
     </div>,
-
-    // Step 4: Midpoint Position
-    <div key="midpoint" className="space-y-6">
-      <div className="p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm">
-          Using your imagination, on the halfway date ({new Date(
-            Date.now() + (daysUntilTarget / 2) * 24 * 60 * 60 * 1000
-          ).toLocaleDateString()}), what letter on the map do you believe you
-          will be at?
-        </p>
-      </div>
-      <div className="flex justify-between text-sm text-gray-600">
-        {alphabet.map((letter, index) => (
-          <span
-            key={letter}
-            className={`${
-              index <= midpointPosition ? "text-green-600 font-bold" : ""
-            }`}
-          >
-            {letter}
-          </span>
-        ))}
-      </div>
-      <Slider
-        value={[midpointPosition]}
-        min={0}
-        max={25}
-        step={1}
-        onValueChange={(value) => setMidpointPosition(value[0])}
-        className="w-full"
-      />
-    </div>,
-    ...
+    
+    // Continue defining steps...
   ];
 
   return (
-    <Card>
-      ...
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {step <= 3 && <Map className="w-5 h-5" />}
+            {step === 4 && <Heart className="w-5 h-5" />}
+            {step === 5 && <Activity className="w-5 h-5" />}
+            <span>Step {step + 1} of 7</span>
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>{steps[step]}</CardContent>
+      <div className="flex justify-between pt-4">
+        <Button
+          variant="outline"
+          onClick={() => setStep(Math.max(0, step - 1))}
+          disabled={step === 0}
+        >
+          Back
+        </Button>
+        <Button
+          onClick={() => setStep(Math.min(steps.length - 1, step + 1))}
+          disabled={step === steps.length - 1}
+        >
+          Continue
+        </Button>
+      </div>
     </Card>
   );
 };
