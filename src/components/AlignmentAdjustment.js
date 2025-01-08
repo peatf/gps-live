@@ -1,15 +1,8 @@
 import React, { useState } from 'react';
-
-// Adjust imports as needed:
-import { Card, CardHeader, CardTitle, CardContent } from '../Card/Card';
-import { Button } from '../Button/Button';
-import { Alert, AlertDescription } from '../Alert/Alert';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/Card/Card';
+import { Button } from '@/components/Button/Button';
+import { Alert, AlertDescription } from '@/components/Alert/Alert';
 import { Heart, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
-
-// If you don't have a Tabs component, remove or replace this logic.
-// The code references "Tabs, TabsList, TabsTrigger, TabsContent" from a 
-// typical UI library, so adapt as needed. 
-// If you do NOT have these, you can omit that logic or create your own simple nav.
 
 const AlignmentAdjustment = ({ alignmentScores = {}, initialGoal, onComplete }) => {
   const [activeCategory, setActiveCategory] = useState('safety');
@@ -204,10 +197,9 @@ const AlignmentAdjustment = ({ alignmentScores = {}, initialGoal, onComplete }) 
           ))}
         </div>
 
-        {/* Category Navigation (Simplified) */}
+        {/* Category Navigation */}
         <div className="pt-4 space-y-4">
           <div className="flex flex-wrap gap-2">
-            {/* If you don't have a Tabs component, just use simple buttons */}
             {['safety', 'anticipation', 'openness', 'deserving', 'confidence', 'appreciation'].map(
               (cat) => (
                 <Button
@@ -253,4 +245,3 @@ const AlignmentAdjustment = ({ alignmentScores = {}, initialGoal, onComplete }) 
 };
 
 export default AlignmentAdjustment;
-
