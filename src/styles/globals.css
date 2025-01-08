@@ -1,70 +1,24 @@
-/* Import the Roboto Mono font */
+/* Import Roboto Mono font */
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap');
 
-/* Global body styles */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Roboto Mono', monospace;
-  background-color: #f8f9fa; /* Light gray background for a subtle retro look */
-  color: #333; /* Soft dark gray for text */
-}
-
-/* Retro-style container */
-.retro-style {
-  font-family: 'Roboto Mono', monospace;
-  background: #f8f9fa; /* Light background for retro feel */
-  border: 2px solid #ddd;
-  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
-  padding: 16px;
-  border-radius: 8px;
-}
-
-/* Slider styling */
-.slider {
-  appearance: none;
-  width: 100%;
-  height: 8px;
-  background: #ddd;
-  border-radius: 4px;
-  outline: none;
-  transition: background 0.3s ease;
-}
-
-.slider:hover {
-  background: #bbb;
-}
-
-/* Button styles */
-button {
-  font-family: 'Roboto Mono', monospace;
-  cursor: pointer;
-  background-color: #007bff; /* Classic blue */
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: bold;
-  transition: transform 0.2s ease, background-color 0.3s ease;
+  background-color: #f8f9fa;
+  color: #333;
 }
 
 button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
-  transform: scale(1.05); /* Slight scale-up effect */
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
 }
 
-button:active {
-  background-color: #003d82; /* Even darker blue when clicked */
-}
-
-/* Header styling */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Roboto Mono', monospace;
   margin: 0;
 }
 
-/* Paragraph styling */
 p {
   margin: 0;
   font-size: 14px;
