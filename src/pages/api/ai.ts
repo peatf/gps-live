@@ -7,39 +7,46 @@ const openai = new OpenAI({
   // Optional: organization: 'org-id'
 });
 
+// /api/ai.ts
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Enforce POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed. Use POST.' });
   }
 
   try {
-    const { journeyData } = req.body || {};
+    const { journeyData } = req.body;
     if (!journeyData) {
       return res.status(400).json({ error: 'Missing journeyData in request body.' });
     }
 
-    // Call the Chat Completion endpoint
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
-          content: 'You are a helpful assistant that provides suggestions and guidance based on user data.',
+          content: `You are an AI assistant helping users adjust their goals based on their journey progress.
+                   Provide specific, actionable suggestions for goal adjustments.`
         },
         {
           role: 'user',
-          content: `Analyze this user data: ${JSON.stringify(journeyData)}. Provide a short suggestion.`,
-        },
+          content: `Current goal: "${journeyData.goal}"
+                   Scale: ${journeyData.scale}%
+                   Position: ${journeyData.currentPos}
+                   Please suggest a modified version of this goal that feels more achievable.`
+        }
       ],
-      max_tokens: 100,
+      max_tokens: 200
     });
 
-    const aiResponse = response.choices?.[0]?.message?.content || 'No response from AI.';
-
-    return res.status(200).json({ message: aiResponse });
+    return res.status(200).json({ 
+      message: response.choices[0].message.content,
+      success: true
+    });
   } catch (error: any) {
     console.error('Error calling OpenAI:', error);
-    return res.status(500).json({ error: 'Failed to process AI request.' });
+    return res.status(500).json({ 
+      error: 'Failed to process AI request.',
+      details: error.message 
+    });
   }
 }
