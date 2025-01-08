@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-iimport { Card, CardHeader, CardTitle, CardContent } from "./Card/Card";
+import { Card, CardHeader, CardTitle, CardContent } from "./Card/Card";
 import { Slider } from "./Slider/Slider";
 import { Alert, AlertDescription } from "./Alert/Alert";
-import { Button } from "./Button/Button"; // Adjust if Button is also in a subfolder
+import { Button } from "./Button/Button";
 
 const JourneyFlow = () => {
   const [step, setStep] = useState(0);
@@ -12,6 +12,7 @@ const JourneyFlow = () => {
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
   const steps = [
+    // Step 1: Define Your Goal
     <Card key="goal">
       <CardHeader>
         <CardTitle>What is Your Goal?</CardTitle>
@@ -26,6 +27,8 @@ const JourneyFlow = () => {
         />
       </CardContent>
     </Card>,
+
+    // Step 2: Adjust Journey Scale
     <Card key="journey">
       <CardHeader>
         <CardTitle>Adjust Your Journey Scale</CardTitle>
@@ -50,6 +53,8 @@ const JourneyFlow = () => {
         )}
       </CardContent>
     </Card>,
+
+    // Step 3: Where Are You Now?
     <Card key="current">
       <CardHeader>
         <CardTitle>Where Are You Now?</CardTitle>
@@ -72,6 +77,16 @@ const JourneyFlow = () => {
           step={1}
           onValueChange={(value) => setCurrentPosition(value[0])}
         />
+      </CardContent>
+    </Card>,
+
+    // Step 4: Add Steps Here
+    <Card key="future-step">
+      <CardHeader>
+        <CardTitle>Next Step Placeholder</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>This is where the next step’s functionality will go.</p>
       </CardContent>
     </Card>,
   ];
