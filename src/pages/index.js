@@ -4,10 +4,10 @@ import BeliefAdjustment from '../components/BeliefAdjustment';
 import AlignmentAdjustment from '../components/AlignmentAdjustment';
 
 export default function Home() {
-  // Track which step the user is on (0: JourneyFlow, 1: BeliefAdjustment, 2: AlignmentAdjustment)
+  // Track which step the user is on (0,1,2)
   const [step, setStep] = useState(0);
 
-  // Keep track of the user's data in one object
+  // Keep the user’s data here
   const [journeyData, setJourneyData] = useState({
     goal: '',
     timeline: '',
@@ -28,7 +28,6 @@ export default function Home() {
   const handleAlignmentAdjustmentComplete = () => {
     alert('All steps complete! Check the console for final data.');
     console.log('Final journeyData:', journeyData);
-    // You could redirect somewhere, show a final summary, etc.
   };
 
   return (
@@ -40,12 +39,14 @@ export default function Home() {
           onComplete={handleJourneyFlowComplete}
         />
       )}
+
       {step === 1 && (
         <BeliefAdjustment
           initialGoal={journeyData.goal}
           onContinue={handleBeliefAdjustmentContinue}
         />
       )}
+
       {step === 2 && (
         <AlignmentAdjustment
           initialGoal={journeyData.goal}
