@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Map, Heart, Activity } from "lucide-react";
 
-// Replace missing components with styled divs and buttons
 const Card = ({ children, className }) => (
   <div className={`p-4 bg-white shadow-md rounded-lg ${className}`}>
     {children}
@@ -28,25 +27,15 @@ const Button = ({ children, onClick, variant, disabled }) => (
   </button>
 );
 const Slider = ({ value, min, max, step, onValueChange, className }) => (
-  <div className="relative w-full">
-    <input
-      type="range"
-      value={value[0]}
-      min={min}
-      max={max}
-      step={step}
-      onChange={(e) => onValueChange([parseInt(e.target.value, 10)])}
-      className={`w-full ${className}`}
-    />
-    <div
-      className="absolute top-[-30px] left-1/2 transform -translate-x-1/2 text-blue-600 font-bold"
-      style={{
-        left: `calc(${((value[0] - min) / (max - min)) * 100}% - 10px)`,
-      }}
-    >
-      {String.fromCharCode(65 + value[0])}
-    </div>
-  </div>
+  <input
+    type="range"
+    value={value[0]}
+    min={min}
+    max={max}
+    step={step}
+    onChange={(e) => onValueChange([parseInt(e.target.value, 10)])}
+    className={`w-full ${className}`}
+  />
 );
 
 const JourneyFlow = () => {
@@ -129,6 +118,18 @@ const JourneyFlow = () => {
           Z is your goal, where are you now?
         </p>
       </div>
+      <div className="flex justify-between text-sm text-gray-600">
+        {alphabet.map((letter, index) => (
+          <span
+            key={letter}
+            className={`${
+              index <= currentPosition ? "text-blue-600 font-bold" : ""
+            }`}
+          >
+            {letter}
+          </span>
+        ))}
+      </div>
       <Slider
         value={[currentPosition]}
         min={0}
@@ -139,54 +140,57 @@ const JourneyFlow = () => {
       />
     </div>,
 
-    // Step 4: Midpoint Position
-    <div key="midpoint" className="space-y-6">
-      <div className="p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm">
-          On your halfway date, where do you believe you will be on the slider?
-        </p>
-      </div>
-      <Slider
-        value={[midpointPosition]}
-        min={0}
-        max={25}
-        step={1}
-        onValueChange={(value) => setMidpointPosition(value[0])}
-        className="w-full"
-      />
-    </div>,
-
-    // Step 5: End Position
-    <div key="end" className="space-y-6">
-      <div className="p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm">
-          Where do you believe you will be on the target date?
-        </p>
-      </div>
-      <Slider
-        value={[endPosition]}
-        min={0}
-        max={25}
-        step={1}
-        onValueChange={(value) => setEndPosition(value[0])}
-        className="w-full"
-      />
-    </div>,
-
     // Step 6: Somatic Check
     <div key="somatic" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
         <p className="text-sm">
-          How does the journey from {alphabet[currentPosition]} to{" "}
+          Notice in your body: How does the journey from {alphabet[currentPosition]} to{" "}
           {alphabet[endPosition]} feel in your body?
         </p>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        {["Tension", "Warmth", "Lightness", "Heaviness", "Expansion", "Contraction"].map((sensation) => (
+          <Button
+            key={sensation}
+            variant="ghost"
+            className="justify-start"
+          >
+            + {sensation}
+          </Button>
+        ))}
       </div>
     </div>,
 
     // Step 7: Alignment Check
     <div key="alignment" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm">How aligned do you feel with this journey?</p>
+        <p className="text-sm">How true do these statements feel in your body right now?</p>
+      </div>
+      <div className="space-y-6">
+        {Object.entries(likertScores).map(([key, value]) => (
+          <div key={key} className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-sm">
+                {key === "safety" && "I feel safe to receive this experience"}
+                {key === "confidence" && "I trust in my capacity to reach this point"}
+                {key === "openness" && "I can stay open even if it takes time"}
+                {key === "deserving" && "I feel deserving of this experience"}
+                {key === "belief" && "I believe this is possible for me"}
+              </span>
+              <span className="text-sm text-gray-500">{value}/5</span>
+            </div>
+            <Slider
+              value={[value]}
+              min={1}
+              max={5}
+              step={1}
+              onValueChange={(newValue) =>
+                setLikertScores((prev) => ({ ...prev, [key]: newValue[0] }))
+              }
+              className="w-full"
+            />
+          </div>
+        ))}
       </div>
     </div>,
   ];
@@ -196,9 +200,26 @@ const JourneyFlow = () => {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Map className="w-5 h-5" />
-            <span>Step {step + 1} of 7</span>
+            {step <= 3 && <Map className="w-5 h-5" />}
+            {step === 4 && <Heart className="w-5 h-5" />}
+            {step === 5 && <Activity className="w-5 h-5" />}
+            <span>
+              {step === 0
+                ? "Name Your Goal"
+                : step === 1
+                ? "Choose Your Timeline"
+                : step === 2
+                ? "Map Your Journey"
+                : step === 3
+                ? "Map Your Midpoint"
+                : step === 4
+                ? "Map Your Target"
+                : step === 5
+                ? "Body Awareness Check"
+                : "Alignment Check"}
+            </span>
           </div>
+          <span className="text-sm text-gray-500">{step + 1} of 7</span>
         </CardTitle>
       </CardHeader>
       <CardContent>{steps[step]}</CardContent>
