@@ -1,5 +1,20 @@
 import React, { useState, useEffect } from 'react';
+// Using relative paths instead of aliases:
+import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
+import { Button } from './Button/Button';
+import { Alert, AlertDescription } from './Alert/Alert';
+import { Slider } from './Slider/Slider';
 
+import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
+
+/**
+ * BeliefAdjustment
+ *
+ * Props:
+ * - journeyData (object): includes fields like { goal, etc. }
+ * - setJourneyData (function): to update global data if desired
+ * - onContinue (function): called when user moves on
+ */
 export default function BeliefAdjustment({ journeyData, setJourneyData, onContinue }) {
   const [journeyScale, setJourneyScale] = useState(100);
   const [currentPosition, setCurrentPosition] = useState(0);
@@ -36,23 +51,6 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
       setAiResponse('Error calling AI.');
     }
   };
-import React, { useState, useEffect } from 'react';
-// Using relative paths instead of aliases:
-import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
-import { Button } from './Button/Button';
-import { Alert, AlertDescription } from './Alert/Alert';
-import { Slider } from './Slider/Slider';
-
-import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
-
-/**
- * BeliefAdjustment
- *
- * Props:
- * - journeyData (object): includes fields like { goal, etc. }
- * - setJourneyData (function): to update global data if desired
- * - onContinue (function): called when user moves on
- */
 export default function BeliefAdjustment({ journeyData, setJourneyData, onContinue }) {
   // A "journeyScale" for the slider
   const [journeyScale, setJourneyScale] = useState(100);
