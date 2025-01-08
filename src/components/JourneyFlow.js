@@ -30,15 +30,6 @@ const JourneyFlow = () => {
   }, [targetDate]);
 
   const steps = [
-    // Step 0: Reflection Step
-    <div key="reflection" className="space-y-6">
-      <div className="p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm">
-          Take a moment to imagine your next goal in your business. What is it you want to experience that can be achieved by a certain date? 
-        </p>
-      </div>
-    </div>,
-
     // Step 1: Date Selection
     <div key="date" className="space-y-6">
       <div className="p-4 bg-blue-50 rounded-lg">
@@ -145,6 +136,57 @@ const JourneyFlow = () => {
           className="w-full"
         />
       </div>
+    </div>,
+
+    // Step 5: Somatic Check
+    <div key="somatic" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">Notice in your body: When you look at this journey from {alphabet[currentPosition]} to {alphabet[endPosition]}, what do you feel?</p>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        {['Tension', 'Warmth', 'Lightness', 'Heaviness', 'Expansion', 'Contraction'].map((sensation) => (
+          <Button 
+            key={sensation}
+            variant="ghost" 
+            className="justify-start"
+          >
+            + {sensation}
+          </Button>
+        ))}
+      </div>
+    </div>,
+
+    // Step 6: Alignment Check
+    <div key="alignment" className="space-y-6">
+      <div className="p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm">How true do these statements feel in your body right now?</p>
+      </div>
+      <div className="space-y-6">
+        {Object.entries(likertScores).map(([key, value]) => (
+          <div key={key} className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-sm">
+                {key === 'safety' && "I feel safe to receive this experience"}
+                {key === 'confidence' && "I trust in my capacity to reach this point"}
+                {key === 'openness' && "I can stay open even if it takes time"}
+                {key === 'deserving' && "I feel deserving of this experience"}
+                {key === 'belief' && "I believe this is possible for me"}
+              </span>
+              <span className="text-sm text-gray-500">{value}/5</span>
+            </div>
+            <Slider
+              value={[value]}
+              min={1}
+              max={5}
+              step={1}
+              onValueChange={(newValue) => 
+                setLikertScores(prev => ({...prev, [key]: newValue[0]}))
+              }
+              className="w-full"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   ];
 
@@ -157,8 +199,7 @@ const JourneyFlow = () => {
             {step === 4 && <Heart className="w-5 h-5" />}
             {step === 5 && <Activity className="w-5 h-5" />}
             <span>{
-              step === 0 ? 'Reflect on Your Goal' :
-              step === 1 ? 'Choose Your Timeline' :
+              step === 0 ? 'Choose Your Timeline' :
               step <= 3 ? 'Map Your Journey' :
               step === 4 ? 'Body Awareness Check' :
               'Alignment Check'
