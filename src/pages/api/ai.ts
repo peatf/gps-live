@@ -1,47 +1,45 @@
-/* src/pages/api/ai.ts */
+// src/pages/api/ai.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Configuration, OpenAIApi } from 'openai'; // (1) <-- This is now UN-commented!
+import OpenAI from 'openai';
 
-// (2) Create a Configuration object with your OpenAI API key
-const config = new Configuration({
+const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
+  // Optional: organization: 'org-id'
 });
 
-// (3) Create an OpenAIApi instance
-const openai = new OpenAIApi(config);
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Enforce POST
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed. Please use POST.' });
+    return res.status(405).json({ error: 'Method not allowed. Use POST.' });
   }
 
   try {
-    // The client will send something like { journeyData: {...} }
-    // We grab that from the request body:
-    const { journeyData } = req.body;
+    const { journeyData } = req.body || {};
+    if (!journeyData) {
+      return res.status(400).json({ error: 'Missing journeyData in request body.' });
+    }
 
-    // (4) Call OpenAI's ChatGPT model (gpt-3.5-turbo) or text-davinci-003
-    const completion = await openai.createChatCompletion({
+    // Call the Chat Completion endpoint
+    const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
-          content: 'You are a helpful assistant.', 
+          content: 'You are a helpful assistant that provides suggestions and guidance based on user data.',
         },
         {
           role: 'user',
           content: `Analyze this user data: ${JSON.stringify(journeyData)}. Provide a short suggestion.`,
         },
       ],
+      max_tokens: 100,
     });
 
-    // (5) Extract the AI response text
-    const aiResponse = completion.data.choices[0].message?.content || 'No response from AI.';
+    const aiResponse = response.choices?.[0]?.message?.content || 'No response from AI.';
 
-    // Send it back to the frontend
-    res.status(200).json({ message: aiResponse });
+    return res.status(200).json({ message: aiResponse });
   } catch (error: any) {
-    console.error('AI Route Error:', error);
-    res.status(500).json({ error: 'Something went wrong calling OpenAI.' });
+    console.error('Error calling OpenAI:', error);
+    return res.status(500).json({ error: 'Failed to process AI request.' });
   }
 }
