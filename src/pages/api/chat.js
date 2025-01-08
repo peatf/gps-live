@@ -5,13 +5,13 @@ export default async function handler(req, res) {
 
   const { message } = req.body;
 
-  console.log("Incoming request:", { message });
-
   if (!message) {
     return res.status(400).json({ error: "Message is required" });
   }
 
   try {
+    console.log("Sending request to OpenAI:", message);
+
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4",
+        model: "gpt-4", // Adjust this if using a different model
         messages: [
           { role: "system", content: "You are a somatic awareness assistant." },
           { role: "user", content: message },
@@ -29,10 +29,11 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    console.log("OpenAI API Response:", data);
+
     if (response.ok) {
       return res.status(200).json({ reply: data.choices[0].message.content });
     } else {
-      console.error("Error from OpenAI:", data.error);
       return res.status(response.status).json({ error: data.error });
     }
   } catch (error) {
