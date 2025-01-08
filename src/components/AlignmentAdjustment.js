@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/Card/Card';
 import { Button } from '@/components/Button/Button';
-import { Alert, AlertDescription } from './components/Alert/Alert';
+import { Alert, AlertDescription } from './Alert/Alert';
 import { Heart, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 
 const AlignmentAdjustment = ({ journeyData, setJourneyData, initialGoal, onComplete }) => {
