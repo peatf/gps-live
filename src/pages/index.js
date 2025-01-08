@@ -1,39 +1,51 @@
 import React, { useState } from 'react';
+
+// Using the alias for these imports:
 import JourneyFlow from '@/components/JourneyFlow';
 import BeliefAdjustment from '@/components/BeliefAdjustment';
 import AlignmentAdjustment from '@/components/AlignmentAdjustment';
 
-export default function Home() {
-  // 1) Step logic
+export default function HomePage() {
+  // We track which of the 3 steps is being shown:
   const [step, setStep] = useState(0);
 
-  // 2) Example user data (if you need it). 
-  //    If JourneyFlow updates these fields, pass journeyData + setJourneyData down to JourneyFlow.
+  // Our single object for storing all user data from JourneyFlow
+  // Start with default values
   const [journeyData, setJourneyData] = useState({
     goal: '',
-    timeline: '',
-    reflections: '',
+    targetDate: '',
+    daysUntilTarget: 0,
+    currentPosition: 0,
+    midpointPosition: 0,
+    endPosition: 0,
+    likertScores: {
+      safety: 3,
+      confidence: 3,
+      openness: 3,
+      deserving: 3,
+      belief: 3,
+    },
   });
 
-  // Called when JourneyFlow is done
+  // Step navigation handlers:
   const handleJourneyFlowComplete = () => {
+    // Move from step 0 → step 1
     setStep(1);
   };
 
-  // Called when BeliefAdjustment is done
   const handleBeliefAdjustmentContinue = () => {
+    // Move from step 1 → step 2
     setStep(2);
   };
 
-  // Called when AlignmentAdjustment is done
   const handleAlignmentAdjustmentComplete = () => {
-    alert('All steps complete! See final data in console.');
-    console.log('Final data:', journeyData);
+    // The user is done with all steps
+    alert('All steps complete! Check console for final data.');
+    console.log('Final journeyData:', journeyData);
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      {/* Step 0: JourneyFlow */}
       {step === 0 && (
         <JourneyFlow
           journeyData={journeyData}
@@ -42,18 +54,18 @@ export default function Home() {
         />
       )}
 
-      {/* Step 1: BeliefAdjustment */}
       {step === 1 && (
         <BeliefAdjustment
-          initialGoal={journeyData.goal}
+          journeyData={journeyData}
+          setJourneyData={setJourneyData}
           onContinue={handleBeliefAdjustmentContinue}
         />
       )}
 
-      {/* Step 2: AlignmentAdjustment */}
       {step === 2 && (
         <AlignmentAdjustment
-          initialGoal={journeyData.goal}
+          journeyData={journeyData}
+          setJourneyData={setJourneyData}
           onComplete={handleAlignmentAdjustmentComplete}
         />
       )}
