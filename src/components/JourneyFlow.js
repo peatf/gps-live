@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/Card";
-import { Slider } from "@/components/Slider";
-import { Alert, AlertDescription } from "@/components/Alert";
-import { Button } from "@/components/Button";
+import { Card, CardHeader, CardTitle, CardContent } from "../components/Card";
+import { Slider } from "../components/Slider";
+import { Alert, AlertDescription } from "../components/Alert";
+import { Button } from "../components/Button";
 
 const JourneyFlow = () => {
   const [step, setStep] = useState(0);
