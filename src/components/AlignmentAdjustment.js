@@ -4,8 +4,10 @@ import { Button } from '@/components/Button/Button';
 import { Alert, AlertDescription } from '@/components/Alert/Alert';
 import { Heart, Sparkles, ArrowRight, ArrowLeft } from 'lucide-react';
 
-const AlignmentAdjustment = ({ alignmentScores = {}, initialGoal, onComplete }) => {
+const AlignmentAdjustment = ({ journeyData, setJourneyData, initialGoal, onComplete }) => {
   const [activeCategory, setActiveCategory] = useState('safety');
+  // If you want to store the adjustedGoal in the global journeyData, you can do that.
+  // For now, we'll keep it local:
   const [adjustedGoal, setAdjustedGoal] = useState(initialGoal);
 
   // Define adjustments for each category
@@ -133,10 +135,7 @@ const AlignmentAdjustment = ({ alignmentScores = {}, initialGoal, onComplete }) 
       }
     };
 
-    return adjustments[category] || {
-      title: 'Unknown Category',
-      options: []
-    };
+    return adjustments[category] || { title: 'Unknown Category', options: [] };
   };
 
   const { title, options } = getAdjustments(activeCategory);
@@ -187,9 +186,7 @@ const AlignmentAdjustment = ({ alignmentScores = {}, initialGoal, onComplete }) 
               <Button
                 variant="outline"
                 className="w-full mt-2"
-                onClick={() => {
-                  setAdjustedGoal(option.adjusted);
-                }}
+                onClick={() => setAdjustedGoal(option.adjusted)}
               >
                 Try This Adjustment
               </Button>
