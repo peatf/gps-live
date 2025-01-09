@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import JourneyFlow from '../components/JourneyFlow';
 import BeliefAdjustment from '../components/BeliefAdjustment';
 import AlignmentAdjustment from '../components/AlignmentAdjustment';
-import '../styles/globals.css';
 
 export default function HomePage() {
   const [step, setStep] = useState(0);
