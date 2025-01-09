@@ -6,21 +6,22 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Slider } from './Slider/Slider';
 
 export default function ProximityMapping({ journeyData, setJourneyData, onContinue, onBack }) {
-  // State initialization
+  // Initialize state directly from journeyData or fallback to default values
   const [goalScale, setGoalScale] = useState(100);
-  const [letterPosition, setLetterPosition] = useState(journeyData.letterPosition || 0);
+  const [letterPosition, setLetterPosition] = useState(journeyData.currentPosition || 0);
   const [aiResponse, setAiResponse] = useState('');
   const [celebrationTriggered, setCelebrationTriggered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Update letterPosition when journeyData updates
+  // Ensure letterPosition updates correctly on mount or when journeyData changes
   useEffect(() => {
-    if (journeyData.letterPosition !== undefined) {
-      setLetterPosition(journeyData.letterPosition);
+    if (journeyData.currentPosition !== undefined) {
+      console.log('Initializing letterPosition from journeyData:', journeyData.currentPosition);
+      setLetterPosition(journeyData.currentPosition); // Use the previously selected position
     }
-  }, [journeyData.letterPosition]);
+  }, [journeyData.currentPosition]);
 
   // Handle scope slider changes
   const handleScaleChange = async (value) => {
@@ -74,7 +75,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     setJourneyData((prev) => ({
       ...prev,
       scale: goalScale,
-      letterPosition,
+      currentPosition: letterPosition, // Sync current position
     }));
   }, [goalScale, letterPosition, setJourneyData]);
 
