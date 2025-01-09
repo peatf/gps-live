@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+// src/pages/index.js
 
-// Example of relative imports for your components
+import React, { useState } from 'react';
 import JourneyFlow from '../components/JourneyFlow';
 import BeliefAdjustment from '../components/BeliefAdjustment';
 import AlignmentAdjustment from '../components/AlignmentAdjustment';
 
 export default function HomePage() {
   const [step, setStep] = useState(0);
-
-  // Provide a default for everything you’ll read in JourneyFlow
   const [journeyData, setJourneyData] = useState({
     goal: '',
     targetDate: '',
@@ -16,7 +14,6 @@ export default function HomePage() {
     currentPosition: 0,
     midpointPosition: 0,
     endPosition: 0,
-    // Likert scores must have a default object
     likertScores: {
       safety: 3,
       confidence: 3,
@@ -26,68 +23,41 @@ export default function HomePage() {
     },
   });
 
-  // AI response state
-  const [aiSuggestion, setAiSuggestion] = useState('');
-
-  // Step handlers
+  // Navigation handlers
+  const handleBack = () => setStep(prev => Math.max(0, prev - 1));
   const handleJourneyFlowComplete = () => setStep(1);
   const handleBeliefAdjustmentContinue = () => setStep(2);
-
   const handleAlignmentAdjustmentComplete = () => {
-    alert('All steps complete!');
+    alert('Journey complete! Thank you for participating.');
     console.log('Final journeyData:', journeyData);
   };
 
-  /**
-   * Calls your /api/generate endpoint, sending journeyData as userData.
-   * This will communicate with OpenAI using the API key you configured.
-   */
-  const handleGenerateAI = async () => {
-    try {
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userData: journeyData }),
-      });
-      const data = await response.json();
-
-      if (data?.result) {
-        setAiSuggestion(data.result);
-      } else {
-        setAiSuggestion('No response received from AI.');
-      }
-    } catch (error) {
-      console.error('Error calling AI API:', error);
-      setAiSuggestion('Error calling AI API.');
-    }
-  };
-
   return (
-    <main className="p-4">
-      {/* Step 0: JourneyFlow */}
+    <main className="p-4 min-h-screen bg-gray-50">
       {step === 0 && (
         <JourneyFlow
           journeyData={journeyData}
           setJourneyData={setJourneyData}
           onComplete={handleJourneyFlowComplete}
+          onBack={handleBack}
         />
       )}
 
-      {/* Step 1: BeliefAdjustment */}
       {step === 1 && (
         <BeliefAdjustment
           journeyData={journeyData}
           setJourneyData={setJourneyData}
           onContinue={handleBeliefAdjustmentContinue}
+          onBack={handleBack}
         />
       )}
 
-      {/* Step 2: AlignmentAdjustment */}
       {step === 2 && (
         <AlignmentAdjustment
           journeyData={journeyData}
           setJourneyData={setJourneyData}
           onComplete={handleAlignmentAdjustmentComplete}
+          onBack={handleBack}
         />
       )}
     </main>
