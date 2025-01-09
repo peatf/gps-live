@@ -16,10 +16,6 @@
     --radius: 0.5rem;
   }
 
-  * {
-    @apply border-border;
-  }
-
   body {
     @apply bg-stone text-earth antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -33,27 +29,27 @@
 @layer components {
   .button {
     @apply inline-flex items-center justify-center rounded-md text-sm font-medium 
-           ring-offset-background transition-all duration-300 ease-in-out
+           transition-all duration-300 ease-in-out
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cosmic 
            focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50
            hover:scale-[1.02] active:scale-[0.98];
   }
 
   .button-primary {
-    @apply bg-sage text-white hover:bg-sage-light shadow-spiritual;
+    @apply bg-sage text-white hover:bg-sage-light shadow-sm;
   }
 
   .button-cosmic {
-    @apply bg-cosmic text-white hover:bg-cosmic-light shadow-cosmic;
+    @apply bg-cosmic text-white hover:bg-cosmic-light shadow-md;
   }
 
   .button-outline {
-    @apply border border-input bg-background hover:bg-stone hover:border-cosmic-light;
+    @apply border bg-background hover:bg-stone hover:border-cosmic-light;
   }
 
   .card {
     @apply rounded-lg border border-stone/20 bg-cloud/80 backdrop-blur-sm
-           shadow-sm transition-all duration-300 hover:shadow-spiritual;
+           shadow-sm transition-all duration-300 hover:shadow-md;
   }
 
   .alert {
@@ -67,8 +63,8 @@
   }
 
   .input {
-    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 
-           text-sm ring-offset-background transition-all duration-200
+    @apply flex h-10 w-full rounded-md border bg-background px-3 py-2 
+           text-sm transition-all duration-200
            file:border-0 file:bg-transparent file:text-sm file:font-medium
            placeholder:text-dove hover:border-cosmic-light
            focus-visible:outline-none focus-visible:ring-2
