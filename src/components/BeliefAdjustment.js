@@ -4,6 +4,7 @@ import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { Slider } from './Slider/Slider';
 import { ArrowRight, ArrowLeft, Sparkles, AlertTriangle, Heart } from 'lucide-react';
+import debounce from 'lodash/debounce';
 
 export default function BeliefAdjustment({ journeyData, setJourneyData, onContinue, onBack }) {
   const [goalScale, setGoalScale] = useState(100);
@@ -14,24 +15,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
   const [selectedSensations] = useState(journeyData.selectedSensations || []);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Generate scaled goal suggestion based on scale percentage
-  const getScaledGoalSuggestion = useCallback((scale) => {
-    const examples = {
-      90: "slightly reduce the scope",
-      80: "focus on the next milestone",
-      70: "break it into smaller phases",
-      60: "start with a pilot version",
-      50: "focus on the first step",
-      40: "begin with a mini-experiment",
-      30: "start with a small test",
-      20: "take a tiny first step",
-      10: "explore the smallest possible start"
-    };
-    const nearestTen = Math.floor(scale / 10) * 10;
-    return examples[nearestTen] || "adjust the scale of your goal";
-  }, []);
-
-  // Get AI suggestions based on both scale and letter position
+  // Get AI suggestions based on scale - debounced
   const requestAISuggestions = useCallback(async (scale, letter) => {
     setIsLoading(true);
     setError(null);
@@ -44,10 +28,11 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
             ...journeyData,
             scale,
             letterPosition: letter,
-            message: `The user's goal "${journeyData.goal}" needs to be scaled to ${scale}% 
-                     and they're at position ${alphabet[letter]}. 
-                     Suggest a specific adjustment that ${getScaledGoalSuggestion(scale)}.
-                     Consider their body sensations: ${selectedSensations.join(', ')}.`
+            message: `The user's goal "${journeyData.goal}" needs adjustment. Scale: ${scale}%.
+                     Current position: letter ${alphabet[letter]}.
+                     Consider their felt sensations: ${selectedSensations.join(', ')}.
+                     Provide a clear, specific suggestion to make the goal more manageable 
+                     while preserving its essence.`
           }
         }),
       });
@@ -61,13 +46,38 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
     } finally {
       setIsLoading(false);
     }
-  }, [journeyData, alphabet, selectedSensations, getScaledGoalSuggestion]);
+  }, [journeyData, alphabet, selectedSensations]);
 
-  // Update suggestions when scale changes
-  useEffect(() => {
-    requestAISuggestions(goalScale, letterPosition);
-  }, [goalScale, letterPosition]);
+  // Debounced handlers
+  const debouncedScaleUpdate = useCallback(
+    debounce((scale, letter) => {
+      requestAISuggestions(scale, letter);
+    }, 800),
+    [requestAISuggestions]
+  );
 
+  const debouncedLetterUpdate = useCallback(
+    debounce((scale, letter) => {
+      requestAISuggestions(scale, letter);
+    }, 800),
+    [requestAISuggestions]
+  );
+
+  // Handle scale changes
+  const handleScaleChange = (value) => {
+    setGoalScale(value[0]);
+    debouncedScaleUpdate(value[0], letterPosition);
+  };
+
+  // Handle letter position changes
+  const handleLetterChange = (value) => {
+    setLetterPosition(value[0]);
+    debouncedLetterUpdate(goalScale, value[0]);
+  };
+
+  // Rest of the component remains the same...
+  // [Previous return statement and JSX remains unchanged]
+  
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
       <CardHeader>
@@ -118,7 +128,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
             min={10}
             max={100}
             step={10}
-            onValueChange={(value) => setGoalScale(value[0])}
+            onValueChange={handleScaleChange}
             className="w-full"
           />
           
@@ -144,7 +154,6 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
             </AlertDescription>
           </Alert>
 
-          {/* Visual Journey Map */}
           <div className="space-y-4">
             <div className="flex justify-between text-sm text-gray-600">
               {alphabet.slice(0, Math.floor((26 * goalScale) / 100)).map((letter, index) => (
@@ -166,7 +175,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
               min={0}
               max={Math.floor((25 * goalScale) / 100)}
               step={1}
-              onValueChange={(value) => setLetterPosition(value[0])}
+              onValueChange={handleLetterChange}
               className="w-full"
             />
           </div>
