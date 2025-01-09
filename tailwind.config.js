@@ -60,18 +60,12 @@ module.exports = {
           DEFAULT: "#E8EAE8",
           light: "#F5F6F5",
           dark: "#DBDCDB"
-        },
-        // System colors for backwards compatibility
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        }
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "0.5rem",
+        md: "0.375rem",
+        sm: "0.25rem",
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -121,10 +115,7 @@ module.exports = {
         },
       },
       transitionTimingFunction: {
-        'ease-spiritual': 'cubic-bezier(0.4, 0, 0.2, 1)',
-      },
-      transitionDuration: {
-        '2000': '2000ms',
+        'in-out-soft': 'cubic-bezier(0.4, 0, 0.2, 1)',
       },
       boxShadow: {
         'spiritual': '0 0 15px rgba(62, 84, 184, 0.1)',
