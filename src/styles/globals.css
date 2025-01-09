@@ -3,36 +3,179 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import Roboto Mono font */
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap');
+/* Import modern fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* Custom global styles */
+/* Root variables */
+:root {
+  --primary-blue: #4F46E5;
+  --primary-purple: #7C3AED;
+  --success-green: #10B981;
+  --warning-yellow: #F59E0B;
+  --error-red: #EF4444;
+  --surface-white: #FFFFFF;
+  --background-gray: #F9FAFB;
+}
+
+/* Base styles */
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Roboto Mono', monospace;
-  background-color: #f8f9fa;
-  color: #333;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background-color: var(--background-gray);
+  color: #111827;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-button:hover {
-  transform: scale(1.05);
-  transition: transform 0.2s ease;
+/* Enhanced slider styling */
+input[type="range"] {
+  @apply h-2 rounded-lg appearance-none cursor-pointer bg-gray-200;
+  transition: background-color 0.2s ease-in-out;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Roboto Mono', monospace;
-  margin: 0;
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-blue);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  background: var(--primary-purple);
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(0.95);
+}
+
+input[type="range"]:focus {
+  outline: none;
+  background-color: #E5E7EB;
+}
+
+/* Button enhancements */
+button {
+  @apply transition-all duration-200;
+  transform-origin: center;
+}
+
+button:not(:disabled):hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+button:not(:disabled):active {
+  transform: translateY(1px) scale(0.99);
+}
+
+button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+  transform: none !important;
+}
+
+/* Card enhancements */
+.card {
+  @apply backdrop-blur-sm bg-white/90;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Alert enhancements */
+.alert {
+  @apply rounded-lg border transition-all duration-200;
+  backdrop-filter: blur(8px);
+}
+
+.alert:hover {
+  @apply shadow-sm;
+  transform: translateY(-1px);
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-semibold tracking-tight;
+  color: #111827;
 }
 
 p {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.6;
-  color: #555;
+  @apply text-gray-600 leading-relaxed;
+}
+
+/* Input enhancements */
+input[type="text"],
+input[type="date"] {
+  @apply rounded-lg border-gray-300 shadow-sm transition-all duration-200;
+  font-family: 'Inter', sans-serif;
+}
+
+input[type="text"]:hover,
+input[type="date"]:hover {
+  @apply border-gray-400;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus {
+  @apply ring-2 ring-blue-500 ring-opacity-50 border-blue-500;
+  outline: none;
+}
+
+/* Sensation tags styling */
+.sensation-tag {
+  @apply px-3 py-1 rounded-full text-sm font-medium transition-all duration-200;
+  background-color: rgba(124, 58, 237, 0.1);
+  color: var(--primary-purple);
+}
+
+.sensation-tag:hover {
+  background-color: rgba(124, 58, 237, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Progress indicators */
+.step-indicator {
+  @apply flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-all duration-200;
+  background-color: rgba(79, 70, 229, 0.1);
+  color: var(--primary-blue);
+}
+
+.step-indicator.active {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  @apply inline-block w-4 h-4 border-2 border-gray-200 rounded-full;
+  border-top-color: var(--primary-blue);
+  animation: spin 0.6s linear infinite;
+}
+
+/* Responsive design adjustments */
+@media (max-width: 640px) {
+  .card {
+    @apply mx-4;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    width: 24px;
+    height: 24px;
+  }
 }
