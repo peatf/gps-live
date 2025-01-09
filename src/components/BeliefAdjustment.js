@@ -6,13 +6,12 @@ import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle } from 'lucide-re
 import { Slider } from './Slider/Slider';
 import debounce from 'lodash/debounce';
 
-export default function BeliefAdjustment({ journeyData, setJourneyData, onContinue, onBack }) {
+export default function ProximityMapping({ journeyData, setJourneyData, onContinue, onBack }) {
   const [goalScale, setGoalScale] = useState(100);
   const [letterPosition, setLetterPosition] = useState(0);
   const [aiResponse, setAiResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedSensations] = useState(journeyData.selectedSensations || []);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   const requestAISuggestions = useCallback(
@@ -28,8 +27,8 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
               ...journeyData,
               scale,
               letterPosition: letter,
-              message: `The user's goal "${journeyData.goal}" needs adjustment. Scale: ${scale}%.\nCurrent position: letter ${alphabet[letter]}.\nConsider their felt sensations: ${selectedSensations.join(', ')}.\nProvide a clear, specific suggestion to make the goal more manageable while preserving its essence.`
-            }
+              message: `The user's goal "${journeyData.goal}" needs adjustment. Scale: ${scale}%.\nCurrent position: letter ${alphabet[letter]}.\nProvide a clear, specific suggestion to make the goal more manageable while preserving its essence.`,
+            },
           }),
         });
 
@@ -43,7 +42,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
         setIsLoading(false);
       }
     }, 1000),
-    [journeyData, alphabet, selectedSensations]
+    [journeyData, alphabet]
   );
 
   const handleScaleChange = useCallback((value) => {
@@ -67,13 +66,36 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
       <CardHeader>
-        <CardTitle>Refine Your Goal's Scope</CardTitle>
+        <CardTitle>Proximity Mapping</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Intro Text */}
         <Alert className="bg-blue-50 border-blue-200">
           <AlertDescription className="space-y-4">
-            <p>This exercise is designed to help you gain clarity about where you are in relation to your goals and how you want to move toward them...</p>
+            <p>
+              Honesty is your anchor, especially in this experience. We’re looking for real answers,
+              not perfect ones. Take a moment to reflect: where are you standing in relation to your
+              goal? Imagine crossing a river, hopping from stone to stone. Some stones are close and
+              steady, easy to land on. Others are a stretch, requiring a bit more reach. And then
+              there are the leaps, those edgy moments when you feel ready to propel yourself
+              forward, trusting the momentum.
+            </p>
+            <p>
+              This practice of proximity mapping asks you to tune into three things:
+              <ul className="list-disc list-inside">
+                <li>What’s already within your grasp? Solid, reachable, and ready for action.</li>
+                <li>
+                  What can you reach with a stretch? These steps push you further, requiring
+                  intention and effort, but they can accelerate your progress.
+                </li>
+                <li>
+                  When are you ready to leap? Bold moves that demand trust, risk, and readiness, but
+                  can catapult you further than imagined.
+                </li>
+              </ul>
+              The rhythm is yours to set—step, stretch, or leap. Each choice brings its own energy
+              and flow to your progress.
+            </p>
           </AlertDescription>
         </Alert>
 
@@ -87,28 +109,6 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
             </p>
           </AlertDescription>
         </Alert>
-
-        {/* Body Awareness Reminder */}
-        {selectedSensations.length > 0 && (
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Heart className="w-4 h-4 text-blue-600" />
-                <p className="font-medium">Your Body's Wisdom:</p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {selectedSensations.map((sensation, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
-                  >
-                    {sensation}
-                  </span>
-                ))}
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
 
         {/* Scale Adjustment */}
         <div className="space-y-4">
@@ -168,15 +168,6 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
               How much does this adjusted goal allow you to move on the proximity slider?
             </div>
           </>
-        )}
-
-        {/* Celebratory Message */}
-        {letterPosition > 22 && (
-          <Alert className="bg-yellow-50 border-yellow-200">
-            <AlertDescription className="text-gray-800 text-center">
-              Wonderful progress. You're stepping into alignment. Continue to the next step when you're ready.
-            </AlertDescription>
-          </Alert>
         )}
 
         {/* Loading State */}
