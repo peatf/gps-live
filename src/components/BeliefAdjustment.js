@@ -59,6 +59,14 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
     requestAISuggestions(goalScale, value[0]);
   }, [goalScale, requestAISuggestions]);
 
+  useEffect(() => {
+    setJourneyData((prev) => ({
+      ...prev,
+      scale: goalScale,
+      letterPosition,
+    }));
+  }, [goalScale, letterPosition, setJourneyData]);
+
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
       <CardHeader>
@@ -68,9 +76,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
         {/* Intro Text */}
         <Alert className="bg-blue-50 border-blue-200">
           <AlertDescription className="space-y-4">
-            <p>This exercise is designed to help you gain clarity about where you are in relation to your goals and how you want to move toward them. It's not about making the "right" decisions but about learning how you are designed to make decisions in alignment with your body's wisdom and your truest desires.</p>
-            <p>Think of your journey like walking across a river on stepping stones. Some stones are nearby and easy to step onto. Others might feel like a bit of a stretch, and then there are leaps, those moments when you feel ready to make bigger, more daring moves. This activity is about tuning into your own pace and deciding when to step closer, stretch further, or leap.</p>
-            <p>This is a space for self-reflection, not self-judgment. The aim isn't to "get it right," but to get it honest, to explore your proximity to your goal and take action in a way that feels aligned and doable for you. Let's begin. 🎯</p>
+            <p>This exercise is designed to help you gain clarity about where you are in relation to your goals and how you want to move toward them...</p>
           </AlertDescription>
         </Alert>
 
