@@ -7,6 +7,9 @@ import { Alert, AlertDescription } from './Alert/Alert';
 import { Map, Heart, Activity, Plus, X } from 'lucide-react';
 import { cn } from '../utils/cn';
 
+// Move alphabet to the top level, outside the component
+const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
 export default function JourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
   const {
     goal = '',
@@ -48,6 +51,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       setJourneyData((prev) => ({ ...prev, daysUntilTarget: days }));
     }
   }, [targetDate, setJourneyData]);
+
 
   const steps = [
     // Goal Setting
