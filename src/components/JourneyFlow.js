@@ -4,7 +4,7 @@ import { Button } from './Button/Button';
 import { Slider } from './Slider/Slider';
 import { Input } from './Input/Input';
 import { Alert, AlertDescription } from './Alert/Alert';
-import { Map, Heart, Activity } from 'lucide-react';
+import { Map, Heart, Activity, Plus, X } from 'lucide-react';
 
 export default function JourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
   const {
@@ -12,13 +12,37 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     targetDate = '',
     daysUntilTarget = 0,
     currentPosition = 0,
-    midpointPosition = 0,
-    endPosition = 0,
-    likertScores = {},
+    selectedSensations = [],
+    likertScores = {
+      safety: 3,
+      confidence: 3,
+      openness: 3,
+      deserving: 3,
+      belief: 3,
+      anticipation: 3,
+      appreciation: 3,
+    },
   } = journeyData;
 
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const [step, setStep] = useState(0);
+
+  // Available sensations with categories
+  const sensationCategories = {
+    physical: ['Tension', 'Relaxation', 'Warmth', 'Coolness', 'Tingling', 'Pressure'],
+    emotional: ['Lightness', 'Heaviness', 'Expansion', 'Contraction', 'Flow', 'Stillness'],
+    energetic: ['Vibration', 'Pulsing', 'Radiating', 'Centering', 'Opening', 'Grounding']
+  };
+
+  // Handle sensation selection
+  const toggleSensation = (sensation) => {
+    setJourneyData(prev => ({
+      ...prev,
+      selectedSensations: prev.selectedSensations?.includes(sensation)
+        ? prev.selectedSensations.filter(s => s !== sensation)
+        : [...(prev.selectedSensations || []), sensation]
+    }));
+  };
 
   useEffect(() => {
     if (targetDate) {
@@ -114,15 +138,50 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
           what do you feel? Choose the sensations that describe what you're feeling best.
         </AlertDescription>
       </Alert>
-      <div className="grid grid-cols-2 gap-4">
-        {['Tension', 'Warmth', 'Lightness', 'Heaviness', 'Expansion', 'Contraction'].map(
-          (sensation) => (
-            <Button key={sensation} variant="ghost" className="justify-start">
-              + {sensation}
-            </Button>
-          )
-        )}
-      </div>
+
+      {/* Selected Sensations Display */}
+      {selectedSensations?.length > 0 && (
+        <div className="flex flex-wrap gap-2 p-4 bg-purple-50 rounded-lg">
+          {selectedSensations.map((sensation) => (
+            <span
+              key={sensation}
+              className="flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
+            >
+              {sensation}
+              <button
+                onClick={() => toggleSensation(sensation)}
+                className="hover:text-purple-900"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Sensation Categories */}
+      {Object.entries(sensationCategories).map(([category, sensations]) => (
+        <div key={category} className="space-y-2">
+          <h3 className="text-sm font-medium text-gray-700 capitalize">{category} Sensations</h3>
+          <div className="grid grid-cols-2 gap-2">
+            {sensations.map((sensation) => (
+              <Button
+                key={sensation}
+                variant={selectedSensations?.includes(sensation) ? 'default' : 'outline'}
+                className="justify-start"
+                onClick={() => toggleSensation(sensation)}
+              >
+                {selectedSensations?.includes(sensation) ? (
+                  <X className="w-4 h-4 mr-2" />
+                ) : (
+                  <Plus className="w-4 h-4 mr-2" />
+                )}
+                {sensation}
+              </Button>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>,
 
     // Alignment Check
@@ -133,20 +192,22 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         </AlertDescription>
       </Alert>
       <div className="space-y-6">
-        {Object.entries(likertScores || {}).map(([key, value]) => (
+        {Object.entries({
+          safety: "I feel safe and open to receiving this opportunity or experience",
+          confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
+          anticipation: "I consistently expect and anticipate that I will receive what I work towards and desire",
+          openness: "I can maintain my focus and open connection to my desired result even if it takes time",
+          deserving: "I feel deserving of this experience",
+          belief: "I believe this is possible for me",
+          appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly"
+        }).map(([key, statement]) => (
           <div key={key} className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm">
-                {key === 'safety' && 'I feel safe to receive this experience'}
-                {key === 'confidence' && 'I trust in my capacity to reach this point'}
-                {key === 'openness' && 'I can stay open even if it takes time'}
-                {key === 'deserving' && 'I feel deserving of this experience'}
-                {key === 'belief' && 'I believe this is possible for me'}
-              </span>
-              <span className="text-sm text-gray-500">{value}/5</span>
+              <span className="text-sm">{statement}</span>
+              <span className="text-sm text-gray-500">{likertScores[key]}/5</span>
             </div>
             <Slider
-              value={[value]}
+              value={[likertScores[key]]}
               min={1}
               max={5}
               step={1}
