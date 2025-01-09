@@ -5,6 +5,7 @@ import { Slider } from './Slider/Slider';
 import { Input } from './Input/Input';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { Map, Heart, Activity, Plus, X } from 'lucide-react';
+import { cn } from '../../utils/cn';
 
 export default function JourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
   const {
@@ -61,13 +62,13 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         </AlertDescription>
       </Alert>
       <div className="space-y-2">
-        <label className="text-sm text-gray-600">Describe your goal</label>
+        <label className="text-sm font-medium text-gray-700">Describe your goal</label>
         <Input
           type="text"
           value={goal}
           onChange={(e) => setJourneyData({ ...journeyData, goal: e.target.value })}
           placeholder="Enter your goal here"
-          className="w-full"
+          className="input w-full"
         />
       </div>
     </div>,
@@ -82,12 +83,12 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         </AlertDescription>
       </Alert>
       <div className="space-y-2">
-        <label className="text-sm text-gray-600">Choose a target date</label>
+        <label className="text-sm font-medium text-gray-700">Choose a target date</label>
         <Input
           type="date"
           value={targetDate}
           onChange={(e) => setJourneyData({ ...journeyData, targetDate: e.target.value })}
-          className="w-full"
+          className="input w-full"
         />
       </div>
       {targetDate && (
@@ -111,7 +112,10 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
           {alphabet.map((letter, index) => (
             <span
               key={letter}
-              className={index === currentPosition ? 'text-blue-600 font-bold' : ''}
+              className={cn(
+                "text-sm",
+                index === currentPosition ? "text-primary-600 font-bold" : "text-gray-600"
+              )}
             >
               {letter}
             </span>
@@ -125,7 +129,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
           onValueChange={(value) =>
             setJourneyData({ ...journeyData, currentPosition: value[0] })
           }
-          className="w-full"
+          className="slider"
         />
       </div>
     </div>,
@@ -139,7 +143,6 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         </AlertDescription>
       </Alert>
 
-      {/* Selected Sensations Display */}
       {selectedSensations?.length > 0 && (
         <div className="flex flex-wrap gap-2 p-4 bg-purple-50 rounded-lg">
           {selectedSensations.map((sensation) => (
@@ -159,7 +162,6 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         </div>
       )}
 
-      {/* Sensation Categories */}
       {Object.entries(sensationCategories).map(([category, sensations]) => (
         <div key={category} className="space-y-2">
           <h3 className="text-sm font-medium text-gray-700 capitalize">{category} Sensations</h3>
@@ -167,7 +169,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
             {sensations.map((sensation) => (
               <Button
                 key={sensation}
-                variant={selectedSensations?.includes(sensation) ? 'default' : 'outline'}
+                variant={selectedSensations?.includes(sensation) ? 'primary' : 'outline'}
                 className="justify-start"
                 onClick={() => toggleSensation(sensation)}
               >
@@ -203,7 +205,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         }).map(([key, statement]) => (
           <div key={key} className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-sm">{statement}</span>
+              <span className="text-sm text-gray-700">{statement}</span>
               <span className="text-sm text-gray-500">{likertScores[key]}/5</span>
             </div>
             <Slider
@@ -220,7 +222,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
                   },
                 })
               }
-              className="w-full"
+              className="slider"
             />
           </div>
         ))}
@@ -228,27 +230,15 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     </div>,
   ];
 
-  const handleContinue = () => {
-    if (step === 0 && !goal.trim()) {
-      alert('Please enter your goal before continuing.');
-      return;
-    }
-    if (step === steps.length - 1) {
-      onComplete();
-    } else {
-      setStep((prev) => prev + 1);
-    }
-  };
-
   return (
-    <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
+    <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {step <= 2 && <Map className="w-5 h-5" />}
-            {step === 3 && <Heart className="w-5 h-5" />}
-            {step === 4 && <Activity className="w-5 h-5" />}
-            <span>
+            {step <= 2 && <Map className="w-5 h-5 text-primary-600" />}
+            {step === 3 && <Heart className="w-5 h-5 text-primary-600" />}
+            {step === 4 && <Activity className="w-5 h-5 text-primary-600" />}
+            <span className="text-xl font-semibold">
               {step === 0
                 ? 'Set Your Goal'
                 : step === 1
@@ -260,7 +250,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
                 : 'Alignment Check'}
             </span>
           </div>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500 font-medium">
             {step + 1} of {steps.length}
           </span>
         </CardTitle>
@@ -271,11 +261,25 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
           <Button
             variant="outline"
             onClick={() => step === 0 ? onBack() : setStep((prev) => prev - 1)}
-            disabled={false}
+            className="flex items-center gap-2"
           >
             Back
           </Button>
-          <Button onClick={handleContinue}>
+          <Button 
+            variant="primary"
+            onClick={() => {
+              if (step === steps.length - 1) {
+                onComplete();
+              } else {
+                if (step === 0 && !goal.trim()) {
+                  alert('Please enter your goal before continuing.');
+                  return;
+                }
+                setStep((prev) => prev + 1);
+              }
+            }}
+            className="flex items-center gap-2"
+          >
             {step === steps.length - 1 ? 'Continue to Beliefs' : 'Continue'}
           </Button>
         </div>
