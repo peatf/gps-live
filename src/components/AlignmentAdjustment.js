@@ -4,6 +4,7 @@ import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Slider } from './Slider/Slider';
+import debounce from 'lodash/debounce';
 import { getCategoryPrompt } from '../utils/alignmentPrompts';
 
 export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete, onBack }) {
@@ -14,7 +15,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   const [aiSuggestions, setAiSuggestions] = useState({});
   const [sliderValues, setSliderValues] = useState(journeyData.likertScores || {});
 
-  // Define all alignment areas with their questions
+  // Define alignment areas with their questions
   const alignmentAreas = {
     safety: "I feel safe and open to receiving this opportunity or experience",
     confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
@@ -26,19 +27,57 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   };
 
   // Helper to check if an area needs adjustment
-  const needsAdjustment = (category) => {
+  const needsAdjustment = useCallback((category) => {
     const score = sliderValues[category];
     return !score || score < 4;
-  };
+  }, [sliderValues]);
 
-  // Handle slider change
+  // Debounced AI request
+  const getAISuggestions = useCallback(
+    debounce(async (category) => {
+      if (!needsAdjustment(category)) return;
+
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('/api/ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            journeyData: {
+              ...journeyData,
+              category,
+              message: getCategoryPrompt(category, sliderValues[category], journeyData.goal)
+            }
+          }),
+        });
+
+        if (!response.ok) throw new Error('Failed to get AI suggestions');
+
+        const data = await response.json();
+        setAiSuggestions(prev => ({
+          ...prev,
+          [category]: {
+            suggestions: data.message,
+            timestamp: Date.now()
+          }
+        }));
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 1000),
+    [journeyData, sliderValues, needsAdjustment]
+  );
+
+  // Handle slider changes
   const handleSliderChange = useCallback((category, value) => {
     setSliderValues(prev => ({
       ...prev,
       [category]: value[0]
     }));
 
-    // Update journeyData with new slider values
     setJourneyData(prev => ({
       ...prev,
       likertScores: {
@@ -46,43 +85,9 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         [category]: value[0]
       }
     }));
-  }, [setJourneyData]);
 
- // Then your getAISuggestions function should look like this:
-const getAISuggestions = useCallback(async (category) => {
-  if (!needsAdjustment(category)) return;
-
-  setIsLoading(true);
-  setError(null);
-  try {
-    const response = await fetch('/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        journeyData: {
-          ...journeyData,
-          category,
-          message: getCategoryPrompt(category, sliderValues[category], journeyData.goal)
-        }
-      }),
-    });
-
-    if (!response.ok) throw new Error('Failed to get AI suggestions');
-
-    const data = await response.json();
-    setAiSuggestions(prev => ({
-      ...prev,
-      [category]: {
-        suggestions: data.message,
-        timestamp: Date.now()
-      }
-    }));
-  } catch (error) {
-    setError(error.message);
-  } finally {
-    setIsLoading(false);
-  }
-}, [journeyData, sliderValues, needsAdjustment]);
+    getAISuggestions(category);
+  }, [getAISuggestions, setJourneyData]);
 
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
@@ -119,26 +124,6 @@ const getAISuggestions = useCallback(async (category) => {
           />
         </div>
 
-        {/* Loading State */}
-        {isLoading && (
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-              <span>Getting alignment suggestions...</span>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <Alert className="bg-red-50 border-red-200">
-            <AlertDescription className="flex items-center space-x-2 text-red-600">
-              <AlertTriangle className="w-4 h-4" />
-              <span>{error}</span>
-            </AlertDescription>
-          </Alert>
-        )}
-
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-2">
           {Object.keys(alignmentAreas).map((cat) => (
@@ -149,12 +134,14 @@ const getAISuggestions = useCallback(async (category) => {
               className="flex items-center gap-2"
             >
               {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              {!needsAdjustment(cat) && <CheckCircle2 className="w-4 h-4 text-green-500" />}
+              {!needsAdjustment(cat) && (
+                <CheckCircle2 className="w-4 h-4 text-green-500" />
+              )}
             </Button>
           ))}
         </div>
 
-        {/* Category Content */}
+        {/* AI Suggestions */}
         {!needsAdjustment(activeCategory) ? (
           <Alert className="bg-green-50 border-green-200">
             <AlertDescription className="flex items-center space-x-2">
@@ -176,6 +163,26 @@ const getAISuggestions = useCallback(async (category) => {
               <div className="p-3 bg-white rounded-lg">
                 <p className="text-sm">Take a moment to feel how these suggestions land in your body.</p>
               </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Loading State */}
+        {isLoading && (
+          <Alert className="bg-blue-50 border-blue-200">
+            <AlertDescription className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+              <span>Getting alignment suggestions...</span>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <Alert className="bg-red-50 border-red-200">
+            <AlertDescription className="flex items-center space-x-2 text-red-600">
+              <AlertTriangle className="w-4 h-4" />
+              <span>{error}</span>
             </AlertDescription>
           </Alert>
         )}
