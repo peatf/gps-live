@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
@@ -6,17 +6,18 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Slider } from './Slider/Slider';
 
 export default function ProximityMapping({ journeyData, setJourneyData, onContinue, onBack }) {
+  // Initialize state directly from journeyData or fallback to default values
   const [goalScale, setGoalScale] = useState(100);
   const [letterPosition, setLetterPosition] = useState(journeyData.letterPosition || 0);
-  const [celebrationTriggered, setCelebrationTriggered] = useState(false);
   const [aiResponse, setAiResponse] = useState('');
+  const [celebrationTriggered, setCelebrationTriggered] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Fetch AI suggestions
-  const requestAISuggestions = useCallback(async (scale, letter) => {
-    if (letter === 22) return; // Stop AI requests at letter W
+  // Handle scope slider changes
+  const handleScaleChange = async (value) => {
+    setGoalScale(value[0]);
     setIsLoading(true);
     setError(null);
 
@@ -27,9 +28,9 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
         body: JSON.stringify({
           journeyData: {
             ...journeyData,
-            scale,
-            letterPosition: letter,
-            message: `The user's goal "${journeyData.goal}" needs adjustment. Scale: ${scale}%. Current position: letter ${alphabet[letter]}.`,
+            scale: value[0],
+            letterPosition,
+            message: `The user's goal "${journeyData.goal}" needs adjustment. Scale: ${value[0]}%.`,
           },
         }),
       });
@@ -42,12 +43,12 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     } finally {
       setIsLoading(false);
     }
-  }, [journeyData, alphabet]);
 
-  // Handle scale slider changes
-  const handleScaleChange = (value) => {
-    setGoalScale(value[0]);
-    if (letterPosition < 22) requestAISuggestions(value[0], letterPosition);
+    // Trigger celebration if letterPosition is W
+    if (letterPosition === 22) {
+      setCelebrationTriggered(true);
+      setAiResponse('Congratulations! Your goal is well-aligned and ready to soar!');
+    }
   };
 
   // Handle letter slider changes
@@ -57,17 +58,10 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
 
     if (newPosition === 22) {
       setCelebrationTriggered(true);
-      setAiResponse('');
     } else {
       setCelebrationTriggered(false);
-      requestAISuggestions(goalScale, newPosition);
     }
   };
-
-  // Initialize letterPosition from journeyData
-  useEffect(() => {
-    setLetterPosition(journeyData.letterPosition || 0);
-  }, [journeyData.letterPosition]);
 
   // Sync journey data with changes
   useEffect(() => {
@@ -88,20 +82,16 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
         <Alert className="bg-blue-50 border-blue-200">
           <AlertDescription className="space-y-4">
             <p>
-              Honesty is your anchor, especially in this experience. Imagine crossing a river, hopping
-              from stone to stone. Each stone represents your steps—some are close, some require a stretch,
-              and others demand bold leaps.
-            </p>
-            <p>
-              Tune into three things: What’s within your grasp? What requires a stretch? And when are you
-              ready to leap? This practice invites you to align your rhythm—step, stretch, or leap.
+              Imagine crossing a river, hopping from stone to stone. Each stone represents steps
+              toward your goal—some are within reach, others require effort, and some demand bold
+              leaps. Tune into the rhythm of your progress: step, stretch, or leap.
             </p>
           </AlertDescription>
         </Alert>
 
         {/* Goal Summary */}
         <Alert className="bg-purple-50 border-purple-200">
-          <AlertDescription className="space-y-2">
+          <AlertDescription>
             <p className="font-medium">Your Current Goal:</p>
             <p className="text-purple-800">{journeyData.goal}</p>
             <p className="text-sm text-purple-600 mt-2">
@@ -110,7 +100,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
           </AlertDescription>
         </Alert>
 
-        {/* Scale Adjustment */}
+        {/* Scope Slider */}
         <div className="space-y-4">
           <div className="text-sm font-medium">
             Adjust Goal Scope: <span className="text-gray-500">{goalScale}%</span>
@@ -125,17 +115,11 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
           />
         </div>
 
-        {/* Letter Position */}
+        {/* Letter Position Slider */}
         <div className="space-y-4">
-          <div className="flex justify-between text-sm">
-            {alphabet.map((letter, index) => (
-              <span
-                key={letter}
-                className={index === letterPosition ? 'text-blue-600 font-bold' : ''}
-              >
-                {letter}
-              </span>
-            ))}
+          <div className="text-sm font-medium">
+            You are currently at letter{' '}
+            <span className="text-blue-600 font-bold">{alphabet[letterPosition]}</span>.
           </div>
           <Slider
             value={[letterPosition]}
@@ -145,22 +129,21 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             onValueChange={handleLetterChange}
             className="w-full"
           />
+          <div className="text-sm text-gray-500">
+            {celebrationTriggered
+              ? 'Congratulations! You’ve reached the final letter. Your goal is aligned!'
+              : 'Adjust your scope slider to refine your goal further.'}
+          </div>
         </div>
 
-        {/* AI Response or Celebration */}
-        {celebrationTriggered ? (
+        {/* AI Response */}
+        {aiResponse && !celebrationTriggered && (
           <Alert className="bg-green-50 border-green-200">
-            <AlertDescription>Congratulations! You've reached letter W—your goal is ready to soar!</AlertDescription>
+            <AlertDescription>{aiResponse}</AlertDescription>
           </Alert>
-        ) : (
-          aiResponse && (
-            <Alert className="bg-green-50 border-green-200">
-              <AlertDescription>{aiResponse}</AlertDescription>
-            </Alert>
-          )
         )}
 
-        {/* Loading/Error */}
+        {/* Loading/Error States */}
         {isLoading && (
           <Alert className="bg-blue-50 border-blue-200">
             <AlertDescription>Loading suggestions...</AlertDescription>
