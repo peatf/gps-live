@@ -1,4 +1,3 @@
-/ src/components/Card/Card.js
 import React from "react";
 import { cn } from "../../utils/cn";
 
