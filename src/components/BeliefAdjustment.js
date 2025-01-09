@@ -29,8 +29,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
           journeyData: {
             ...journeyData,
             scale: value[0],
-            letterPosition,
-            message: `The user's goal "${journeyData.goal}" needs adjustment. Scale: ${value[0]}%.`,
+            message: `Adjusting the scope of the user's goal to ${value[0]}%. Provide specific feedback on refining the goal's complexity and size.`,
           },
         }),
       });
@@ -47,7 +46,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     // Trigger celebration if letterPosition is W
     if (letterPosition === 22) {
       setCelebrationTriggered(true);
-      setAiResponse('Congratulations! Your goal is well-aligned and ready to soar!');
+      setAiResponse('Congratulations! Your goal is now within reach and aligned with your vision.');
     }
   };
 
@@ -84,7 +83,18 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             <p>
               Imagine crossing a river, hopping from stone to stone. Each stone represents steps
               toward your goal—some are within reach, others require effort, and some demand bold
-              leaps. Tune into the rhythm of your progress: step, stretch, or leap.
+              leaps.
+            </p>
+            <p>
+              This practice invites you to tune into three things:
+              <ul className="list-disc list-inside">
+                <li>What’s within your grasp? Solid, reachable, and ready for action.</li>
+                <li>What can you reach with a stretch? These steps push you further.</li>
+                <li>
+                  When are you ready to leap? Bold moves that demand trust, risk, and readiness.
+                </li>
+              </ul>
+              Each choice brings its own energy and rhythm to your progress.
             </p>
           </AlertDescription>
         </Alert>
@@ -131,8 +141,8 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
           />
           <div className="text-sm text-gray-500">
             {celebrationTriggered
-              ? 'Congratulations! You’ve reached the final letter. Your goal is aligned!'
-              : 'Adjust your scope slider to refine your goal further.'}
+              ? 'Congratulations! Your goal is now within reach and aligned with your vision. Focus on clarity and execution to bring it to life.'
+              : 'You\'re making progress. Adjust the scope of your goal to refine and align your goal further. You can use the Scope Adjustment slider for some suggestions.'}
           </div>
         </div>
 
