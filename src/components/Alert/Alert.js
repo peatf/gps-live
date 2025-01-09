@@ -1,11 +1,21 @@
+// src/components/Alert/Alert.js
+
 import React from "react";
 
-export const Alert = ({ children, className }) => (
-  <div className={`p-4 rounded border ${className || ""}`}>
-    {children}
-  </div>
-);
+export const Alert = ({ children, variant = "info", className = "" }) => {
+  const variantStyles = {
+    info: "alert-info",
+    success: "alert-success",
+    warning: "alert-warning"
+  };
 
-export const AlertDescription = ({ children }) => (
-  <p className="text-sm">{children}</p>
+  return (
+    <div className={`alert ${variantStyles[variant]} fade-in ${className}`}>
+      {children}
+    </div>
+  );
+};
+
+export const AlertDescription = ({ children, className = "" }) => (
+  <div className={`text-sm ${className}`}>{children}</div>
 );
