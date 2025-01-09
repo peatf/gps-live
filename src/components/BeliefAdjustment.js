@@ -1,21 +1,159 @@
-<CheckCircle2 className="w-4 h-4 text-green-600" />
-              <span>
-                Congratulations! Your {activeCategory} alignment is strong at {sliderValues[activeCategory]}/5. 
-                You can explore other areas or continue if you're ready.
-              </span>
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
+import { Button } from './Button/Button';
+import { Alert, AlertDescription } from './Alert/Alert';
+import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { Slider } from './Slider/Slider';
+import debounce from 'lodash/debounce';
+
+export default function BeliefAdjustment({ journeyData, setJourneyData, onContinue, onBack }) {
+  const [goalScale, setGoalScale] = useState(100);
+  const [letterPosition, setLetterPosition] = useState(0);
+  const [aiResponse, setAiResponse] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedSensations] = useState(journeyData.selectedSensations || []);
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+  // Debounced AI request
+  const requestAISuggestions = useCallback(
+    debounce(async (scale, letter) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('/api/ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            journeyData: {
+              ...journeyData,
+              scale,
+              letterPosition: letter,
+              message: `The user's goal "${journeyData.goal}" needs adjustment. Scale: ${scale}%.\nCurrent position: letter ${alphabet[letter]}.\nConsider their felt sensations: ${selectedSensations.join(', ')}.\nProvide a clear, specific suggestion to make the goal more manageable while preserving its essence.`
+            }
+          }),
+        });
+
+        if (!response.ok) throw new Error('AI response error');
+        const data = await response.json();
+        setAiResponse(data.message || 'Analyzing your journey...');
+      } catch (error) {
+        console.error('AI call failed:', error);
+        setError('Unable to get suggestions. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    }, 1000),
+    [journeyData, alphabet, selectedSensations]
+  );
+
+  // Handle scale changes
+  const handleScaleChange = useCallback((value) => {
+    setGoalScale(value[0]);
+    requestAISuggestions(value[0], letterPosition);
+  }, [letterPosition, requestAISuggestions]);
+
+  // Handle letter position changes
+  const handleLetterChange = useCallback((value) => {
+    setLetterPosition(value[0]);
+    requestAISuggestions(goalScale, value[0]);
+  }, [goalScale, requestAISuggestions]);
+
+  return (
+    <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
+      <CardHeader>
+        <CardTitle>Refine Your Goal's Scope</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Intro Text */}
+        <Alert className="bg-blue-50 border-blue-200">
+          <AlertDescription className="space-y-4">
+            <p>This exercise is designed to help you gain clarity about where you are in relation to your goals and how you want to move toward them. It's not about making the "right" decisions but about learning how you are designed to make decisions in alignment with your body's wisdom and your truest desires.</p>
+            <p>Think of your journey like walking across a river on stepping stones. Some stones are nearby and easy to step onto. Others might feel like a bit of a stretch, and then there are leaps, those moments when you feel ready to make bigger, more daring moves. This activity is about tuning into your own pace and deciding when to step closer, stretch further, or leap.</p>
+            <p>This is a space for self-reflection, not self-judgment. The aim isn't to "get it right," but to get it honest, to explore your proximity to your goal and take action in a way that feels aligned and doable for you. Let's begin. 🎯</p>
+          </AlertDescription>
+        </Alert>
+
+        {/* Goal Summary */}
+        <Alert className="bg-purple-50 border-purple-200">
+          <AlertDescription className="space-y-2">
+            <p className="font-medium">Your Current Goal:</p>
+            <p className="text-purple-800">{journeyData.goal}</p>
+            <p className="text-sm text-purple-600 mt-2">
+              Target Date: {new Date(journeyData.targetDate).toLocaleDateString()}
+            </p>
+          </AlertDescription>
+        </Alert>
+
+        {/* Body Awareness Reminder */}
+        {selectedSensations.length > 0 && (
+          <Alert className="bg-blue-50 border-blue-200">
+            <AlertDescription className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Heart className="w-4 h-4 text-blue-600" />
+                <p className="font-medium">Your Body's Wisdom:</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {selectedSensations.map((sensation, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
+                  >
+                    {sensation}
+                  </span>
+                ))}
+              </div>
             </AlertDescription>
           </Alert>
-        ) : aiSuggestions[activeCategory]?.suggestions && (
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-blue-600" />
-                <p className="font-medium">Alignment Suggestions:</p>
+        )}
+
+        {/* Scale Adjustment */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Adjust Goal Scope</span>
+            <span className="text-sm text-gray-500">{goalScale}%</span>
+          </div>
+          <Slider
+            value={[goalScale]}
+            min={10}
+            max={100}
+            step={10}
+            onValueChange={handleScaleChange}
+            className="w-full"
+          />
+        </div>
+
+        {/* Current Position */}
+        <div className="space-y-4">
+          <div className="flex justify-between text-sm text-gray-600">
+            {alphabet.slice(0, Math.floor((26 * goalScale) / 100)).map((letter, index) => (
+              <span
+                key={letter}
+                className={index === letterPosition ? 'text-blue-600 font-bold' : ''}
+              >
+                {letter}
+              </span>
+            ))}
+          </div>
+          <Slider
+            value={[letterPosition]}
+            min={0}
+            max={Math.floor((25 * goalScale) / 100)}
+            step={1}
+            onValueChange={handleLetterChange}
+            className="w-full"
+          />
+        </div>
+
+        {/* AI Response */}
+        {!isLoading && !error && aiResponse && (
+          <Alert className="bg-green-50 border-green-200">
+            <AlertDescription className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Sparkles className="w-4 h-4 text-green-600" />
+                <span className="font-medium">Suggested Adjustment:</span>
               </div>
-              <p className="text-sm">{aiSuggestions[activeCategory].suggestions}</p>
-              <div className="p-3 bg-white rounded-lg">
-                <p className="text-sm">Take a moment to feel how these suggestions land in your body.</p>
-              </div>
+              <p>{aiResponse}</p>
             </AlertDescription>
           </Alert>
         )}
@@ -25,7 +163,7 @@
           <Alert className="bg-blue-50 border-blue-200">
             <AlertDescription className="flex items-center space-x-2">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-              <span>Getting alignment suggestions...</span>
+              <span>Analyzing your journey...</span>
             </AlertDescription>
           </Alert>
         )}
@@ -52,16 +190,9 @@
           </Button>
           <Button
             className="flex items-center gap-2"
-            onClick={() => {
-              setJourneyData(prev => ({
-                ...prev,
-                likertScores: sliderValues,
-                adjustedGoal
-              }));
-              onComplete();
-            }}
+            onClick={onContinue}
           >
-            Complete Journey
+            Continue to Alignment
             <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
