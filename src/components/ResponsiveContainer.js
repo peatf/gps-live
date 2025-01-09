@@ -1,35 +1,54 @@
 // src/components/ResponsiveContainer.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+import _ from 'lodash';
 
 const ResponsiveContainer = ({ children }) => {
-  const [height, setHeight] = useState('100vh');
+  const lastHeight = useRef(0);
+  const resizeTimeoutRef = useRef(null);
 
   useEffect(() => {
-    // Function to send height to parent
     const sendHeight = () => {
-      const height = document.documentElement.scrollHeight;
-      window.parent.postMessage({ type: 'resize', height }, '*');
+      const currentHeight = document.documentElement.scrollHeight;
+      
+      // Prevent excessive height growth and tiny changes
+      if (
+        currentHeight !== lastHeight.current && 
+        currentHeight < 20000 && // Maximum reasonable height
+        Math.abs(currentHeight - lastHeight.current) > 10 // Minimum change threshold
+      ) {
+        lastHeight.current = currentHeight;
+        window.parent.postMessage({ type: 'resize', height: currentHeight }, '*');
+      }
     };
 
-    // Initial height calculation
-    sendHeight();
+    // Debounced resize handler
+    const debouncedSendHeight = _.debounce(sendHeight, 250);
 
-    // Set up mutation observer to watch for DOM changes
+    // Set up resize observer with debouncing
     const resizeObserver = new ResizeObserver(() => {
-      sendHeight();
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
+      resizeTimeoutRef.current = setTimeout(debouncedSendHeight, 100);
     });
 
     // Observe the document body
     resizeObserver.observe(document.body);
 
+    // Initial height calculation
+    setTimeout(sendHeight, 100);
+
     // Clean up
     return () => {
       resizeObserver.disconnect();
+      if (resizeTimeoutRef.current) {
+        clearTimeout(resizeTimeoutRef.current);
+      }
     };
   }, []);
 
   return (
-    <div className="w-full min-h-screen bg-cloud/80 backdrop-blur-sm">
+    <div className="w-full bg-cloud/80 backdrop-blur-sm">
       <div className="max-w-screen-xl mx-auto px-4 py-8 relative">
         {children}
       </div>
