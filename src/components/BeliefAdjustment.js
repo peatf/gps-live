@@ -6,7 +6,7 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { Slider } from './Slider/Slider';
 
 export default function ProximityMapping({ journeyData, setJourneyData, onContinue, onBack }) {
-  // Initialize state directly from journeyData or fallback to default values
+  // State initialization
   const [goalScale, setGoalScale] = useState(100);
   const [letterPosition, setLetterPosition] = useState(journeyData.letterPosition || 0);
   const [aiResponse, setAiResponse] = useState('');
@@ -14,6 +14,13 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+  // Update letterPosition when journeyData updates
+  useEffect(() => {
+    if (journeyData.letterPosition !== undefined) {
+      setLetterPosition(journeyData.letterPosition);
+    }
+  }, [journeyData.letterPosition]);
 
   // Handle scope slider changes
   const handleScaleChange = async (value) => {
@@ -29,7 +36,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
           journeyData: {
             ...journeyData,
             scale: value[0],
-            message: `Adjusting the scope of the user's goal to ${value[0]}%. Provide specific feedback on refining the goal's complexity and size.`,
+            message: `The user's goal "${journeyData.goal}" involves achieving ${value[0]}% scope. Provide specific feedback on refining the goal's complexity and size.`,
           },
         }),
       });
