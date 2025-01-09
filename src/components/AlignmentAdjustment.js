@@ -27,13 +27,13 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
   const needsAdjustment = useCallback((category) => {
     const score = sliderValues[category];
-    return score <= 3;  // Changed to <= 3 as per requirements
+    return score <= 3;
   }, [sliderValues]);
 
   const getAISuggestions = useCallback(
     debounce(async (category) => {
       const score = sliderValues[category];
-      if (score > 3) return; // Only get suggestions for scores <= 3
+      if (score > 3) return; // Only get suggestions for scores ≤ 3
 
       setIsLoading(true);
       setError(null);
@@ -54,7 +54,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         if (!response.ok) throw new Error('Failed to get suggestions');
 
         const data = await response.json();
-        setAiSuggestions(prev => ({
+        setAiSuggestions((prev) => ({
           ...prev,
           [category]: {
             suggestions: data.message,
@@ -70,22 +70,25 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     [journeyData, sliderValues]
   );
 
-  const handleSliderChange = useCallback((category, value) => {
-    setSliderValues(prev => ({
-      ...prev,
-      [category]: value[0]
-    }));
-
-    setJourneyData(prev => ({
-      ...prev,
-      likertScores: {
-        ...prev.likertScores,
+  const handleSliderChange = useCallback(
+    (category, value) => {
+      setSliderValues((prev) => ({
+        ...prev,
         [category]: value[0]
-      }
-    }));
+      }));
 
-    getAISuggestions(category);
-  }, [getAISuggestions, setJourneyData]);
+      setJourneyData((prev) => ({
+        ...prev,
+        likertScores: {
+          ...prev.likertScores,
+          [category]: value[0]
+        }
+      }));
+
+      getAISuggestions(category);
+    },
+    [getAISuggestions, setJourneyData]
+  );
 
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
@@ -106,9 +109,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         <div className="space-y-4">
           <div className="flex justify-between">
             <span className="text-sm font-medium">{alignmentAreas[activeCategory]}</span>
-            <span className="text-sm text-gray-500">
-              {sliderValues[activeCategory]}/5
-            </span>
+            <span className="text-sm text-gray-500">{sliderValues[activeCategory]}/5</span>
           </div>
           <Slider
             value={[sliderValues[activeCategory] || 1]}
@@ -120,7 +121,6 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           />
         </div>
 
-        {/* Category Tabs */}
         <div className="flex flex-wrap gap-2">
           {Object.keys(alignmentAreas).map((cat) => (
             <Button
@@ -137,7 +137,6 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           ))}
         </div>
 
-        {/* Feedback Section */}
         {sliderValues[activeCategory] >= 4 ? (
           <Alert className="bg-green-50 border-green-200">
             <AlertDescription className="flex items-center space-x-2">
@@ -190,7 +189,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           <Button
             className="flex items-center gap-2"
             onClick={() => {
-              setJourneyData(prev => ({
+              setJourneyData((prev) => ({
                 ...prev,
                 likertScores: sliderValues,
                 adjustedGoal
