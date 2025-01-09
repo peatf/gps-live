@@ -3,18 +3,36 @@ import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { Slider } from './Slider/Slider';
-import { ArrowRight, ArrowLeft, Sparkles, AlertTriangle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Sparkles, AlertTriangle, Heart } from 'lucide-react';
 
 export default function BeliefAdjustment({ journeyData, setJourneyData, onContinue, onBack }) {
-  const [journeyScale, setJourneyScale] = useState(100);
-  const [proximityLevel, setProximityLevel] = useState(0);
+  const [goalScale, setGoalScale] = useState(100);
+  const [letterPosition, setLetterPosition] = useState(0);
   const [aiResponse, setAiResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedSensations] = useState(journeyData.selectedSensations || []);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Call AI for suggestions
-  const requestAISuggestions = useCallback(async (scale, proximity) => {
+  // Generate scaled goal suggestion based on scale percentage
+  const getScaledGoalSuggestion = useCallback((scale) => {
+    const examples = {
+      90: "slightly reduce the scope",
+      80: "focus on the next milestone",
+      70: "break it into smaller phases",
+      60: "start with a pilot version",
+      50: "focus on the first step",
+      40: "begin with a mini-experiment",
+      30: "start with a small test",
+      20: "take a tiny first step",
+      10: "explore the smallest possible start"
+    };
+    const nearestTen = Math.floor(scale / 10) * 10;
+    return examples[nearestTen] || "adjust the scale of your goal";
+  }, []);
+
+  // Get AI suggestions based on both scale and letter position
+  const requestAISuggestions = useCallback(async (scale, letter) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -25,43 +43,35 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
           journeyData: {
             ...journeyData,
             scale,
-            proximityLevel: proximity,
-            message: `Based on the user's comfort level of ${scale}% and current proximity at letter ${alphabet[proximity]}, 
-                     suggest adjustments to their goal: "${journeyData.goal}"`
+            letterPosition: letter,
+            message: `The user's goal "${journeyData.goal}" needs to be scaled to ${scale}% 
+                     and they're at position ${alphabet[letter]}. 
+                     Suggest a specific adjustment that ${getScaledGoalSuggestion(scale)}.
+                     Consider their body sensations: ${selectedSensations.join(', ')}.`
           }
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('AI response error');
-      }
-
+      if (!response.ok) throw new Error('AI response error');
       const data = await response.json();
       setAiResponse(data.message || 'Analyzing your journey...');
     } catch (error) {
       console.error('AI call failed:', error);
-      setError('Unable to get AI suggestions. Please try again.');
+      setError('Unable to get suggestions. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  }, [journeyData, alphabet]);
+  }, [journeyData, alphabet, selectedSensations, getScaledGoalSuggestion]);
 
-  // Handle scale changes with AI feedback
-  const handleScaleChange = useCallback((value) => {
-    setJourneyScale(value[0]);
-    requestAISuggestions(value[0], proximityLevel);
-  }, [proximityLevel, requestAISuggestions]);
-
-  // Handle proximity changes with AI feedback
-  const handleProximityChange = useCallback((value) => {
-    setProximityLevel(value[0]);
-    requestAISuggestions(journeyScale, value[0]);
-  }, [journeyScale, requestAISuggestions]);
+  // Update suggestions when scale changes
+  useEffect(() => {
+    requestAISuggestions(goalScale, letterPosition);
+  }, [goalScale, letterPosition]);
 
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
       <CardHeader>
-        <CardTitle>Belief Adjustment</CardTitle>
+        <CardTitle>Adjusting Your Goal's Scale</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Goal Summary */}
@@ -74,6 +84,93 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
             </p>
           </AlertDescription>
         </Alert>
+
+        {/* Body Awareness Reminder */}
+        {selectedSensations.length > 0 && (
+          <Alert className="bg-blue-50 border-blue-200">
+            <AlertDescription className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Heart className="w-4 h-4 text-blue-600" />
+                <p className="font-medium">Your Body's Wisdom:</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {selectedSensations.map((sensation, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
+                  >
+                    {sensation}
+                  </span>
+                ))}
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {/* Scale Adjustment */}
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium">Reduce Goal Scale</span>
+            <span className="text-sm text-gray-500">{goalScale}%</span>
+          </div>
+          <Slider
+            value={[goalScale]}
+            min={10}
+            max={100}
+            step={10}
+            onValueChange={(value) => setGoalScale(value[0])}
+            className="w-full"
+          />
+          
+          {/* AI Suggestion directly under scale slider */}
+          {!isLoading && !error && aiResponse && (
+            <Alert className="bg-green-50 border-green-200">
+              <AlertDescription className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="w-4 h-4 text-green-600" />
+                  <span className="font-medium">Suggested Adjustment:</span>
+                </div>
+                <p>{aiResponse}</p>
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+
+        {/* Current Position on Journey */}
+        <div className="p-6 bg-gray-50 rounded-lg space-y-6">
+          <Alert className="bg-blue-50 border-blue-200">
+            <AlertDescription>
+              Where are you now in relationship to your adjusted goal?
+            </AlertDescription>
+          </Alert>
+
+          {/* Visual Journey Map */}
+          <div className="space-y-4">
+            <div className="flex justify-between text-sm text-gray-600">
+              {alphabet.slice(0, Math.floor((26 * goalScale) / 100)).map((letter, index) => (
+                <span
+                  key={letter}
+                  className={`transition-all ${
+                    index === letterPosition
+                      ? 'text-blue-600 font-bold transform scale-110'
+                      : ''
+                  }`}
+                >
+                  {letter}
+                </span>
+              ))}
+            </div>
+
+            <Slider
+              value={[letterPosition]}
+              min={0}
+              max={Math.floor((25 * goalScale) / 100)}
+              step={1}
+              onValueChange={(value) => setLetterPosition(value[0])}
+              className="w-full"
+            />
+          </div>
+        </div>
 
         {/* Loading State */}
         {isLoading && (
@@ -95,73 +192,6 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
           </Alert>
         )}
 
-        <div className="space-y-8">
-          {/* Journey Scale */}
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Comfort Level with Goal</span>
-              <span className="text-sm text-gray-500">{journeyScale}%</span>
-            </div>
-            <Slider
-              value={[journeyScale]}
-              min={10}
-              max={100}
-              step={10}
-              onValueChange={handleScaleChange}
-              className="w-full"
-            />
-          </div>
-
-          {/* Visual Journey Map */}
-          <div className="p-6 bg-gray-50 rounded-lg space-y-6">
-            <Alert className="bg-blue-50 border-blue-200 mb-4">
-              <AlertDescription>
-                If Z represents where you want to be, how close do you feel to that experience?
-              </AlertDescription>
-            </Alert>
-
-            <div className="flex justify-between text-sm text-gray-600">
-              {alphabet.slice(0, Math.floor((26 * journeyScale) / 100)).map((letter, index) => (
-                <span
-                  key={letter}
-                  className={`transition-all ${
-                    index === proximityLevel
-                      ? 'text-blue-600 font-bold transform scale-110'
-                      : ''
-                  }`}
-                >
-                  {letter}
-                </span>
-              ))}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm text-gray-600">Current Proximity to Goal</label>
-              <Slider
-                value={[proximityLevel]}
-                min={0}
-                max={Math.floor((25 * journeyScale) / 100)}
-                step={1}
-                onValueChange={handleProximityChange}
-                className="w-full"
-              />
-            </div>
-          </div>
-
-          {/* AI Response */}
-          {aiResponse && !error && !isLoading && (
-            <Alert className="bg-green-50 border-green-200">
-              <AlertDescription className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Sparkles className="w-4 h-4 text-green-600" />
-                  <span className="font-medium">Suggested Adjustment:</span>
-                </div>
-                <p>{aiResponse}</p>
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
-
         {/* Navigation */}
         <div className="flex justify-between pt-4">
           <Button 
@@ -175,7 +205,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
           <Button
             className="flex items-center gap-2"
             onClick={onContinue}
-            disabled={proximityLevel < Math.floor((22 * journeyScale) / 100)}
+            disabled={letterPosition < Math.floor((22 * goalScale) / 100)}
           >
             Continue to Alignment
             <ArrowRight className="w-4 h-4" />
