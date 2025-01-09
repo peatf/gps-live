@@ -5,7 +5,7 @@ import { Slider } from './Slider/Slider';
 import { Input } from './Input/Input';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { Map, Heart, Activity, Plus, X } from 'lucide-react';
-import { cn } from '../../utils/cn';
+import { cn } from '../utils/cn';
 
 export default function JourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
   const {
