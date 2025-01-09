@@ -60,15 +60,12 @@ module.exports = {
           DEFAULT: "#E8EAE8",
           light: "#F5F6F5",
           dark: "#DBDCDB"
-        }
-      },
-      borderRadius: {
-        lg: "0.5rem",
-        md: "0.375rem",
-        sm: "0.25rem",
-      },
-      fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        },
+        border: "rgb(229 231 235)",
+        input: "rgb(229 231 235)",
+        ring: "rgb(59 130 246)",
+        background: "rgb(255 255 255)",
+        foreground: "rgb(15 23 42)",
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-out',
@@ -114,12 +111,9 @@ module.exports = {
           '50%': { transform: 'translateY(-5px)' },
         },
       },
-      transitionTimingFunction: {
-        'in-out-soft': 'cubic-bezier(0.4, 0, 0.2, 1)',
-      },
       boxShadow: {
-        'spiritual': '0 0 15px rgba(62, 84, 184, 0.1)',
-        'cosmic': '0 0 20px rgba(62, 84, 184, 0.15)',
+        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
       },
     },
   },
