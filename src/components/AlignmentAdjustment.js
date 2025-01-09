@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Slider } from './Slider/Slider';
 
 export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete, onBack }) {
   const [activeCategory, setActiveCategory] = useState('safety');
@@ -10,12 +11,41 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [aiSuggestions, setAiSuggestions] = useState({});
+  const [sliderValues, setSliderValues] = useState(journeyData.likertScores || {});
 
-  // Helper to check if a category needs adjustment
+  // Define all alignment areas with their questions
+  const alignmentAreas = {
+    safety: "I feel safe and open to receiving this opportunity or experience",
+    confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
+    anticipation: "I consistently expect and anticipate that I will receive what I work towards and desire",
+    openness: "I can maintain my focus and open connection to my desired result even if it takes time",
+    deserving: "I feel deserving of this experience",
+    belief: "I believe this is possible for me",
+    appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly"
+  };
+
+  // Helper to check if an area needs adjustment
   const needsAdjustment = (category) => {
-    const score = journeyData.likertScores[category];
+    const score = sliderValues[category];
     return !score || score < 4;
   };
+
+  // Handle slider change
+  const handleSliderChange = useCallback((category, value) => {
+    setSliderValues(prev => ({
+      ...prev,
+      [category]: value[0]
+    }));
+
+    // Update journeyData with new slider values
+    setJourneyData(prev => ({
+      ...prev,
+      likertScores: {
+        ...prev.likertScores,
+        [category]: value[0]
+      }
+    }));
+  }, [setJourneyData]);
 
   // Get AI suggestions for a category
   const getAISuggestions = useCallback(async (category) => {
@@ -31,9 +61,9 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           journeyData: {
             ...journeyData,
             category,
-            message: `The user rated their ${category} as ${journeyData.likertScores[category]}/5. 
-                     Please provide 2 specific adjustments for the goal "${journeyData.goal}" 
-                     focusing on improving their sense of ${category}.`
+            message: `The user rated their ${category} as ${sliderValues[category]}/5 for their goal: "${journeyData.goal}". 
+                     Provide specific suggestions to help them improve their ${category} alignment.
+                     Focus on somatic awareness and emotional safety.`
           }
         }),
       });
@@ -42,39 +72,26 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
       const data = await response.json();
       
-      // Structure the suggestions
-      const suggestions = {
-        title: `${category.charAt(0).toUpperCase() + category.slice(1)} Adjustments`,
-        options: [
-          {
-            type: 'Goal Reframing',
-            original: journeyData.goal,
-            adjusted: data.message,
-            somaticPrompt: 'Take a moment to feel how this lands in your body.'
-          }
-        ]
-      };
-
       setAiSuggestions(prev => ({
         ...prev,
-        [category]: suggestions
+        [category]: {
+          suggestions: data.message,
+          timestamp: Date.now()
+        }
       }));
     } catch (error) {
       setError(error.message);
     } finally {
       setIsLoading(false);
     }
-  }, [journeyData]);
+  }, [journeyData, sliderValues, needsAdjustment]);
 
   // Fetch suggestions when category changes
   useEffect(() => {
-    if (!aiSuggestions[activeCategory] && needsAdjustment(activeCategory)) {
+    if (!aiSuggestions[activeCategory]?.suggestions && needsAdjustment(activeCategory)) {
       getAISuggestions(activeCategory);
     }
   }, [activeCategory, getAISuggestions]);
-
-  const categories = ['safety', 'anticipation', 'openness', 'deserving', 'confidence', 'appreciation'];
-  const currentSuggestions = aiSuggestions[activeCategory];
 
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
@@ -92,6 +109,24 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             <p className="text-purple-800">{journeyData.goal}</p>
           </AlertDescription>
         </Alert>
+
+        {/* Current Category Slider */}
+        <div className="space-y-4">
+          <div className="flex justify-between">
+            <span className="text-sm font-medium">{alignmentAreas[activeCategory]}</span>
+            <span className="text-sm text-gray-500">
+              {sliderValues[activeCategory]}/5
+            </span>
+          </div>
+          <Slider
+            value={[sliderValues[activeCategory] || 1]}
+            min={1}
+            max={5}
+            step={1}
+            onValueChange={(value) => handleSliderChange(activeCategory, value)}
+            className="w-full"
+          />
+        </div>
 
         {/* Loading State */}
         {isLoading && (
@@ -115,7 +150,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
+          {Object.keys(alignmentAreas).map((cat) => (
             <Button
               key={cat}
               variant={cat === activeCategory ? 'default' : 'outline'}
@@ -134,48 +169,22 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             <AlertDescription className="flex items-center space-x-2">
               <CheckCircle2 className="w-4 h-4 text-green-600" />
               <span>
-                Your alignment with {activeCategory} is already strong! 
-                Feel free to explore other areas or continue if you're ready.
+                Congratulations! Your {activeCategory} alignment is strong at {sliderValues[activeCategory]}/5. 
+                You can explore other areas or continue if you're ready.
               </span>
             </AlertDescription>
           </Alert>
-        ) : currentSuggestions?.options?.map((option, i) => (
-          <div
-            key={i}
-            className="p-4 rounded-lg border border-gray-200 space-y-3 hover:border-blue-200 transition-all"
-          >
-            <h3 className="font-medium">{option.type}</h3>
-            <div className="space-y-2">
-              <p className="text-sm">
-                Instead of "<span className="text-red-500">{option.original}</span>"
-              </p>
-              <p className="text-sm">
-                Try "<span className="text-green-600">{option.adjusted}</span>"
-              </p>
-            </div>
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm">{option.somaticPrompt}</p>
-            </div>
-            <Button
-              variant="outline"
-              className="w-full mt-2"
-              onClick={() => setAdjustedGoal(option.adjusted)}
-            >
-              Try This Adjustment
-            </Button>
-          </div>
-        ))}
-
-        {/* Show adjusted goal if changed */}
-        {adjustedGoal !== journeyData.goal && (
-          <Alert className="bg-green-50 border-green-200">
-            <Sparkles className="w-4 h-4 text-green-600" />
-            <AlertDescription>
-              <p className="font-medium">Your Refined Goal:</p>
-              <p className="mt-1">{adjustedGoal}</p>
-              <p className="mt-2 text-sm text-green-600">
-                Take a moment to feel how this lands in your body.
-              </p>
+        ) : aiSuggestions[activeCategory]?.suggestions && (
+          <Alert className="bg-blue-50 border-blue-200">
+            <AlertDescription className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-blue-600" />
+                <p className="font-medium">Alignment Suggestions:</p>
+              </div>
+              <p className="text-sm">{aiSuggestions[activeCategory].suggestions}</p>
+              <div className="p-3 bg-white rounded-lg">
+                <p className="text-sm">Take a moment to feel how these suggestions land in your body.</p>
+              </div>
             </AlertDescription>
           </Alert>
         )}
@@ -195,7 +204,8 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             onClick={() => {
               setJourneyData(prev => ({
                 ...prev,
-                adjustedGoal: adjustedGoal
+                likertScores: sliderValues,
+                adjustedGoal
               }));
               onComplete();
             }}
