@@ -34,7 +34,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   };
 
   // Request AI suggestions
-  const requestAISuggestions = useCallback(
+const requestAISuggestions = useCallback(
   debounce(async (category) => {
     const score = sliderValues[category];
     if (!needsAdjustment(category)) return;
