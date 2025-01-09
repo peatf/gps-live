@@ -24,6 +24,7 @@ module.exports = {
           500: "#0ea5e9",
           600: "#0284c7",
           700: "#0369a1",
+          800: "#075985",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -61,4 +62,10 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
+  // Add this section to enable interactive variants
+  variants: {
+    extend: {
+      backgroundColor: ['active', 'hover'],
+    },
+  },
 }
