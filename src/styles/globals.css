@@ -1,181 +1,121 @@
-/* Tailwind Directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
-/* Import modern fonts */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+ 
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+ 
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+ 
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+ 
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-/* Root variables */
-:root {
-  --primary-blue: #4F46E5;
-  --primary-purple: #7C3AED;
-  --success-green: #10B981;
-  --warning-yellow: #F59E0B;
-  --error-red: #EF4444;
-  --surface-white: #FFFFFF;
-  --background-gray: #F9FAFB;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+ 
+    --radius: 0.5rem;
+  }
 }
 
-/* Base styles */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-  background-color: var(--background-gray);
-  color: #111827;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
 }
 
-/* Enhanced slider styling */
-input[type="range"] {
-  @apply h-2 rounded-lg appearance-none cursor-pointer bg-gray-200;
-  transition: background-color 0.2s ease-in-out;
+/* Button Component */
+.button {
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors
+    focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring
+    disabled:pointer-events-none disabled:opacity-50;
 }
 
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--primary-blue);
-  cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: all 0.2s ease-in-out;
+.button-primary {
+  @apply bg-primary-600 text-white hover:bg-primary-700 shadow-sm;
 }
 
-input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-  background: var(--primary-purple);
+.button-outline {
+  @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground;
 }
 
-input[type="range"]::-webkit-slider-thumb:active {
-  transform: scale(0.95);
-}
-
-input[type="range"]:focus {
-  outline: none;
-  background-color: #E5E7EB;
-}
-
-/* Button enhancements */
-button {
-  @apply transition-all duration-200;
-  transform-origin: center;
-}
-
-button:not(:disabled):hover {
-  transform: translateY(-1px) scale(1.01);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-button:not(:disabled):active {
-  transform: translateY(1px) scale(0.99);
-}
-
-button:disabled {
-  @apply opacity-50 cursor-not-allowed;
-  transform: none !important;
-}
-
-/* Card enhancements */
+/* Card Component */
 .card {
-  @apply backdrop-blur-sm bg-white/90;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  @apply rounded-lg border bg-card text-card-foreground shadow-sm;
 }
 
-.card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-/* Alert enhancements */
+/* Alert Component */
 .alert {
-  @apply rounded-lg border transition-all duration-200;
-  backdrop-filter: blur(8px);
+  @apply relative w-full rounded-lg border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px]
+    [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground
+    [&>svg~*]:pl-7;
 }
 
-.alert:hover {
-  @apply shadow-sm;
-  transform: translateY(-1px);
+.alert-info {
+  @apply bg-primary-50 text-primary-700 border-primary-200;
 }
 
-/* Typography improvements */
-h1, h2, h3, h4, h5, h6 {
-  @apply font-semibold tracking-tight;
-  color: #111827;
+.alert-success {
+  @apply bg-green-50 text-green-800 border-green-200;
 }
 
-p {
-  @apply text-gray-600 leading-relaxed;
+.alert-warning {
+  @apply bg-yellow-50 text-yellow-800 border-yellow-200;
 }
 
-/* Input enhancements */
-input[type="text"],
-input[type="date"] {
-  @apply rounded-lg border-gray-300 shadow-sm transition-all duration-200;
-  font-family: 'Inter', sans-serif;
+/* Input styles */
+.input {
+  @apply flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm
+    transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium
+    placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1
+    focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50;
 }
 
-input[type="text"]:hover,
-input[type="date"]:hover {
-  @apply border-gray-400;
+/* Slider styles */
+.slider {
+  @apply relative flex w-full touch-none select-none items-center;
 }
 
-input[type="text"]:focus,
-input[type="date"]:focus {
-  @apply ring-2 ring-blue-500 ring-opacity-50 border-blue-500;
-  outline: none;
+.slider[data-orientation="horizontal"] {
+  @apply h-5;
 }
 
-/* Sensation tags styling */
-.sensation-tag {
-  @apply px-3 py-1 rounded-full text-sm font-medium transition-all duration-200;
-  background-color: rgba(124, 58, 237, 0.1);
-  color: var(--primary-purple);
+.slider[data-orientation="vertical"] {
+  @apply h-full w-5 flex-col;
 }
 
-.sensation-tag:hover {
-  background-color: rgba(124, 58, 237, 0.15);
-  transform: translateY(-1px);
+.slider-track {
+  @apply relative h-2 w-full grow overflow-hidden rounded-full bg-secondary;
 }
 
-/* Progress indicators */
-.step-indicator {
-  @apply flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-all duration-200;
-  background-color: rgba(79, 70, 229, 0.1);
-  color: var(--primary-blue);
+.slider-range {
+  @apply absolute h-full bg-primary;
 }
 
-.step-indicator.active {
-  background-color: var(--primary-blue);
-  color: white;
-}
-
-/* Loading spinner animation */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-spinner {
-  @apply inline-block w-4 h-4 border-2 border-gray-200 rounded-full;
-  border-top-color: var(--primary-blue);
-  animation: spin 0.6s linear infinite;
-}
-
-/* Responsive design adjustments */
-@media (max-width: 640px) {
-  .card {
-    @apply mx-4;
-  }
-  
-  input[type="range"]::-webkit-slider-thumb {
-    width: 24px;
-    height: 24px;
-  }
+.slider-thumb {
+  @apply block h-5 w-5 rounded-full border-2 border-primary bg-background ring-offset-background
+    transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+    focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
 }
