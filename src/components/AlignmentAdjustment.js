@@ -25,70 +25,65 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly"
   };
 
-  const needsAdjustment = useCallback((category) => {
+  const fetchAISuggestions = useCallback(async (category) => {
     const score = sliderValues[category];
-    return score <= 3;
-  }, [sliderValues]);
+    if (score > 3) return;
 
-  const getAISuggestions = useCallback(
-    debounce(async (category) => {
-      const score = sliderValues[category];
-      if (score > 3) return; // Only get suggestions for scores ≤ 3
+    setIsLoading(true);
+    setError(null);
 
-      setIsLoading(true);
-      setError(null);
-      try {
-        const response = await fetch('/api/ai', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            journeyData: {
-              ...journeyData,
-              category,
-              score,
-              message: `${getCategoryPrompt(category, score, journeyData.goal)} Does this allow you to move the slider up?`
-            }
-          }),
-        });
-
-        if (!response.ok) throw new Error('Failed to get suggestions');
-
-        const data = await response.json();
-        setAiSuggestions((prev) => ({
-          ...prev,
-          [category]: {
-            suggestions: data.message,
-            timestamp: Date.now()
+    try {
+      const response = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          journeyData: {
+            ...journeyData,
+            category,
+            score,
+            message: `${getCategoryPrompt(category, score, journeyData.goal)} Does this allow you to move the slider up?`
           }
-        }));
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    }, 1000),
-    [journeyData, sliderValues]
-  );
+        }),
+      });
 
-  const handleSliderChange = useCallback(
-    (category, value) => {
-      setSliderValues((prev) => ({
+      if (!response.ok) throw new Error('Failed to get suggestions');
+
+      const data = await response.json();
+      setAiSuggestions((prev) => ({
         ...prev,
-        [category]: value[0]
+        [category]: {
+          suggestions: data.message,
+          timestamp: Date.now(),
+        },
       }));
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [journeyData, sliderValues]);
 
-      setJourneyData((prev) => ({
-        ...prev,
-        likertScores: {
-          ...prev.likertScores,
-          [category]: value[0]
-        }
-      }));
+  const handleSliderChange = useCallback((category, value) => {
+    setSliderValues((prev) => ({
+      ...prev,
+      [category]: value[0],
+    }));
 
-      getAISuggestions(category);
-    },
-    [getAISuggestions, setJourneyData]
-  );
+    setJourneyData((prev) => ({
+      ...prev,
+      likertScores: {
+        ...prev.likertScores,
+        [category]: value[0],
+      },
+    }));
+  }, [setJourneyData]);
+
+  useEffect(() => {
+    const score = sliderValues[activeCategory];
+    if (score <= 3) {
+      fetchAISuggestions(activeCategory);
+    }
+  }, [activeCategory, sliderValues, fetchAISuggestions]);
 
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
@@ -109,7 +104,9 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         <div className="space-y-4">
           <div className="flex justify-between">
             <span className="text-sm font-medium">{alignmentAreas[activeCategory]}</span>
-            <span className="text-sm text-gray-500">{sliderValues[activeCategory]}/5</span>
+            <span className="text-sm text-gray-500">
+              {sliderValues[activeCategory]}/5
+            </span>
           </div>
           <Slider
             value={[sliderValues[activeCategory] || 1]}
@@ -155,6 +152,13 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
                 <p className="font-medium">Alignment Suggestion:</p>
               </div>
               <p className="text-sm">{aiSuggestions[activeCategory].suggestions}</p>
+              <Button
+                variant="outline"
+                onClick={() => fetchAISuggestions(activeCategory)}
+                className="mt-2"
+              >
+                Regenerate Suggestions
+              </Button>
             </AlertDescription>
           </Alert>
         )}
@@ -192,7 +196,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
               setJourneyData((prev) => ({
                 ...prev,
                 likertScores: sliderValues,
-                adjustedGoal
+                adjustedGoal,
               }));
               onComplete();
             }}
