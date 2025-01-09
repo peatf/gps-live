@@ -1,6 +1,6 @@
 // src/components/Slider/Slider.js
 import React from "react";
-import { cn } from "../utils/cn";
+import { cn } from "../../utils/cn";  // Fixed import path
 
 export const Slider = ({ value, min, max, step, onValueChange, className }) => {
   return (
