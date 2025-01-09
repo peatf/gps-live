@@ -15,6 +15,14 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   const [aiSuggestions, setAiSuggestions] = useState({});
   const [sliderValues, setSliderValues] = useState(journeyData.likertScores || {});
 
+  // 1) Create a small helper to generate category-specific context text:
+  const generateCategoryContext = (category, goal) => {
+    // Here you can tailor the text to each category if desired.
+    // Below is a generic example for any category.
+    // For “appreciation” or others, feel free to branch logic as needed.
+    return `A focus around this goal that connects you with ${category} could be something like, "I am glad I have the ability and resources to work on: ${goal}."`;
+  };
+
   const alignmentAreas = {
     safety: "I feel safe and open to receiving this opportunity or experience",
     confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
@@ -27,12 +35,19 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
   const fetchAISuggestions = useCallback(async (category) => {
     const score = sliderValues[category];
+    // Only fetch suggestions if score <= 3
     if (score > 3) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
+      // 2) Build the prompt by combining your original category prompt + the new contextual text
+      //    + the "Does this help you move this slider up?" line.
+      const basePrompt = getCategoryPrompt(category, score, journeyData.goal);
+      const contextualText = generateCategoryContext(category, journeyData.goal);
+      const finalPrompt = `${basePrompt}\n\n${contextualText}\n\nDoes this help you move this slider up?`;
+
       const response = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -41,8 +56,8 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             ...journeyData,
             category,
             score,
-            message: `${getCategoryPrompt(category, score, journeyData.goal)} Does this allow you to move the slider up?`
-          }
+            message: finalPrompt,
+          },
         }),
       });
 
@@ -118,6 +133,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           />
         </div>
 
+        {/* Buttons for each alignment category */}
         <div className="flex flex-wrap gap-2">
           {Object.keys(alignmentAreas).map((cat) => (
             <Button
@@ -134,6 +150,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           ))}
         </div>
 
+        {/* If slider is 4 or 5, show success alert; otherwise show suggestions (if any) */}
         {sliderValues[activeCategory] >= 4 ? (
           <Alert className="bg-green-50 border-green-200">
             <AlertDescription className="flex items-center space-x-2">
@@ -163,6 +180,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           </Alert>
         )}
 
+        {/* Loading and Error States */}
         {isLoading && (
           <Alert className="bg-blue-50 border-blue-200">
             <AlertDescription className="flex items-center space-x-2">
