@@ -49,17 +49,18 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
       const finalPrompt = `${basePrompt}\n\n${contextualText}\n\nDoes this help you move this slider up?`;
 
       const response = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          journeyData: {
-            ...journeyData,
-            category,
-            score,
-            message: finalPrompt,
-          },
-        }),
-      });
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    journeyData: {
+      ...journeyData,
+      category,   // e.g. "appreciation"
+      score,      // e.g. 3
+      message: finalPrompt
+    },
+  }),
+});
+
 
       if (!response.ok) throw new Error('Failed to get suggestions');
 
