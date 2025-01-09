@@ -4,6 +4,7 @@ import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Slider } from './Slider/Slider';
+import { getCategoryPrompt } from '../utils/alignmentPrompts';
 
 export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete, onBack }) {
   const [activeCategory, setActiveCategory] = useState('safety');
@@ -47,8 +48,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     }));
   }, [setJourneyData]);
 
-  // In AlignmentAdjustment.js, update the getAISuggestions function:
-
+ // Then your getAISuggestions function should look like this:
 const getAISuggestions = useCallback(async (category) => {
   if (!needsAdjustment(category)) return;
 
