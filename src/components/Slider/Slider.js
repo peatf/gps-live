@@ -1,4 +1,3 @@
-/ src/components/Slider/Slider.js
 import React from "react";
 import { cn } from "../../utils/cn";
 
