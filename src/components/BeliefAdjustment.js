@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { Slider } from './Slider/Slider';
 
 export default function ProximityMapping({ journeyData, setJourneyData, onContinue, onBack }) {
-  // Initialize state directly from journeyData or fallback to default values
   const [goalScale, setGoalScale] = useState(100);
   const [letterPosition, setLetterPosition] = useState(journeyData.currentPosition || 0);
   const [aiResponse, setAiResponse] = useState('');
@@ -15,15 +14,12 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
   const [error, setError] = useState(null);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Ensure letterPosition updates correctly on mount or when journeyData changes
   useEffect(() => {
     if (journeyData.currentPosition !== undefined) {
-      console.log('Initializing letterPosition from journeyData:', journeyData.currentPosition);
-      setLetterPosition(journeyData.currentPosition); // Use the previously selected position
+      setLetterPosition(journeyData.currentPosition);
     }
   }, [journeyData.currentPosition]);
 
-  // Handle scope slider changes
   const handleScaleChange = async (value) => {
     setGoalScale(value[0]);
     setIsLoading(true);
@@ -51,77 +47,79 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
       setIsLoading(false);
     }
 
-    // Trigger celebration if letterPosition is W
     if (letterPosition === 22) {
       setCelebrationTriggered(true);
       setAiResponse('Congratulations! Your goal is now within reach and aligned with your vision.');
     }
   };
 
-  // Handle letter slider changes
   const handleLetterChange = (value) => {
     const newPosition = value[0];
     setLetterPosition(newPosition);
-
-    if (newPosition === 22) {
-      setCelebrationTriggered(true);
-    } else {
-      setCelebrationTriggered(false);
-    }
+    setCelebrationTriggered(newPosition === 22);
   };
 
-  // Sync journey data with changes
   useEffect(() => {
     setJourneyData((prev) => ({
       ...prev,
       scale: goalScale,
-      currentPosition: letterPosition, // Sync current position
+      currentPosition: letterPosition,
     }));
   }, [goalScale, letterPosition, setJourneyData]);
 
   return (
-    <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
-      <CardHeader>
-        <CardTitle>Proximity Mapping</CardTitle>
+    <Card className="w-full max-w-4xl mx-auto bg-cloud/80 backdrop-blur-sm animate-fade-in">
+      <CardHeader className="border-b border-stone/10">
+        <CardTitle className="text-sage">Proximity Mapping</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 p-6">
         {/* Introductory Text */}
-        <Alert className="bg-blue-50 border-blue-200">
-          <AlertDescription className="space-y-4">
-            <p>
+        <Alert className="bg-sage/5 border-sage/20 fade-in">
+          <AlertDescription className="space-y-4 text-earth">
+            <p className="leading-relaxed">
               Imagine crossing a river, hopping from stone to stone. Each stone represents steps
               toward your goal—some are within reach, others require effort, and some demand bold
               leaps.
             </p>
-            <p>
-              This practice invites you to tune into three things:
-              <ul className="list-disc list-inside">
-                <li>What’s within your grasp? Solid, reachable, and ready for action.</li>
-                <li>What can you reach with a stretch? These steps push you further.</li>
-                <li>
-                  When are you ready to leap? Bold moves that demand trust, risk, and readiness.
+            <div className="space-y-2">
+              <p>This practice invites you to tune into three things:</p>
+              <ul className="list-none space-y-2 pl-4">
+                <li className="flex items-center space-x-2">
+                  <div className="w-1 h-1 rounded-full bg-cosmic"/>
+                  <span>What's within your grasp? Solid, reachable, and ready for action.</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <div className="w-1 h-1 rounded-full bg-cosmic"/>
+                  <span>What can you reach with a stretch? These steps push you further.</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <div className="w-1 h-1 rounded-full bg-cosmic"/>
+                  <span>When are you ready to leap? Bold moves that demand trust, risk, and readiness.</span>
                 </li>
               </ul>
+            </div>
+            <p className="italic text-sage">
               Each choice brings its own energy and rhythm to your progress.
             </p>
           </AlertDescription>
         </Alert>
 
         {/* Goal Summary */}
-        <Alert className="bg-purple-50 border-purple-200">
+        <Alert className="bg-cosmic/5 border-cosmic/20 scale-in">
           <AlertDescription>
-            <p className="font-medium">Your Current Goal:</p>
-            <p className="text-purple-800">{journeyData.goal}</p>
-            <p className="text-sm text-purple-600 mt-2">
+            <p className="font-medium text-cosmic">Your Current Goal:</p>
+            <p className="text-earth mt-2">{journeyData.goal}</p>
+            <p className="text-sm text-cosmic/80 mt-2">
               Target Date: {new Date(journeyData.targetDate).toLocaleDateString()}
             </p>
           </AlertDescription>
         </Alert>
 
         {/* Scope Slider */}
-        <div className="space-y-4">
-          <div className="text-sm font-medium">
-            Adjust Goal Scope: <span className="text-gray-500">{goalScale}%</span>
+        <div className="space-y-4 fade-up">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium text-earth">Adjust Goal Scope</span>
+            <span className="text-sm text-dove">{goalScale}%</span>
           </div>
           <Slider
             value={[goalScale]}
@@ -131,13 +129,16 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             onValueChange={handleScaleChange}
             className="w-full"
           />
+          <p className="text-sm text-cosmic/80 italic">
+            Reduce the scope by 10% using the slider to see if that makes the goal feel more achievable.
+          </p>
         </div>
 
         {/* Letter Position Slider */}
-        <div className="space-y-4">
-          <div className="text-sm font-medium">
+        <div className="space-y-4 fade-up">
+          <div className="text-sm font-medium text-earth">
             You are currently at letter{' '}
-            <span className="text-blue-600 font-bold">{alphabet[letterPosition]}</span>.
+            <span className="text-cosmic font-bold">{alphabet[letterPosition]}</span>
           </div>
           <Slider
             value={[letterPosition]}
@@ -147,39 +148,56 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             onValueChange={handleLetterChange}
             className="w-full"
           />
-          <div className="text-sm text-gray-500">
-            {celebrationTriggered
-              ? 'Congratulations! Your goal is now within reach and aligned with your vision. Focus on clarity and execution to bring it to life.'
-              : 'You\'re making progress. Adjust the scope of your goal to refine and align your goal further. You can use the Scope Adjustment slider for some suggestions.'}
+          <div className="text-sm text-dove">
+            {celebrationTriggered ? (
+              <div className="flex items-center space-x-2 text-cosmic">
+                <Sparkles className="w-4 h-4" />
+                <span>Congratulations! Your goal is now within reach and aligned with your vision.</span>
+              </div>
+            ) : (
+              <p>
+                How much does an adjusted goal allow you to move your location on the proximity slider?
+              </p>
+            )}
           </div>
         </div>
 
         {/* AI Response */}
         {aiResponse && !celebrationTriggered && (
-          <Alert className="bg-green-50 border-green-200">
-            <AlertDescription>{aiResponse}</AlertDescription>
+          <Alert className="bg-sage/5 border-sage/20 scale-in">
+            <AlertDescription className="text-earth">{aiResponse}</AlertDescription>
           </Alert>
         )}
 
         {/* Loading/Error States */}
         {isLoading && (
-          <Alert className="bg-blue-50 border-blue-200">
-            <AlertDescription>Loading suggestions...</AlertDescription>
+          <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
+            <AlertDescription className="flex items-center space-x-2">
+              <div className="animate-spin h-4 w-4 border-2 border-cosmic border-t-transparent rounded-full"/>
+              <span className="text-cosmic">Loading suggestions...</span>
+            </AlertDescription>
           </Alert>
         )}
         {error && (
-          <Alert className="bg-red-50 border-red-200">
-            <AlertDescription>{error}</AlertDescription>
+          <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
+            <AlertDescription className="text-burgundy">{error}</AlertDescription>
           </Alert>
         )}
 
         {/* Navigation */}
-        <div className="flex justify-between pt-4">
-          <Button variant="outline" onClick={onBack}>
-            <ArrowLeft className="w-4 h-4" /> Back
+        <div className="flex justify-between pt-4 border-t border-stone/10">
+          <Button 
+            variant="outline" 
+            onClick={onBack}
+            className="text-earth hover:text-cosmic transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
-          <Button onClick={onContinue}>
-            Continue to Alignment <ArrowRight className="w-4 h-4" />
+          <Button 
+            onClick={onContinue}
+            className="bg-cosmic text-white hover:bg-cosmic-light transition-colors"
+          >
+            Continue to Alignment <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
       </CardContent>
