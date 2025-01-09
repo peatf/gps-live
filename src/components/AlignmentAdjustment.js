@@ -15,11 +15,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   const [aiSuggestions, setAiSuggestions] = useState({});
   const [sliderValues, setSliderValues] = useState(journeyData.likertScores || {});
 
-  // 1) Create a small helper to generate category-specific context text:
   const generateCategoryContext = (category, goal) => {
-    // Here you can tailor the text to each category if desired.
-    // Below is a generic example for any category.
-    // For “appreciation” or others, feel free to branch logic as needed.
     return `A focus around this goal that connects you with ${category} could be something like, "I am glad I have the ability and resources to work on: ${goal}."`;
   };
 
@@ -35,32 +31,28 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
   const fetchAISuggestions = useCallback(async (category) => {
     const score = sliderValues[category];
-    // Only fetch suggestions if score <= 3
     if (score > 3) return;
 
     setIsLoading(true);
     setError(null);
 
     try {
-      // 2) Build the prompt by combining your original category prompt + the new contextual text
-      //    + the "Does this help you move this slider up?" line.
       const basePrompt = getCategoryPrompt(category, score, journeyData.goal);
       const contextualText = generateCategoryContext(category, journeyData.goal);
       const finalPrompt = `${basePrompt}\n\n${contextualText}\n\nDoes this help you move this slider up?`;
 
       const response = await fetch('/api/ai', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    journeyData: {
-      ...journeyData,
-      category,   // e.g. "appreciation"
-      score,      // e.g. 3
-      message: finalPrompt
-    },
-  }),
-});
-
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          journeyData: {
+            ...journeyData,
+            category,
+            score,
+            message: finalPrompt
+          },
+        }),
+      });
 
       if (!response.ok) throw new Error('Failed to get suggestions');
 
@@ -102,25 +94,25 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   }, [activeCategory, sliderValues, fetchAISuggestions]);
 
   return (
-    <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Heart className="w-5 h-5" />
+    <Card className="w-full max-w-4xl mx-auto bg-cloud/80 backdrop-blur-sm animate-fade-in">
+      <CardHeader className="border-b border-stone/10">
+        <CardTitle className="flex items-center gap-2 text-sage">
+          <Heart className="w-5 h-5 text-cosmic" />
           <span>Aligning Your Goal</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <Alert className="bg-purple-50 border-purple-200">
+      <CardContent className="space-y-6 p-6">
+        <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
           <AlertDescription className="space-y-2">
-            <p className="font-medium">Your Current Goal:</p>
-            <p className="text-purple-800">{journeyData.goal}</p>
+            <p className="font-medium text-cosmic">Your Current Goal:</p>
+            <p className="text-earth">{journeyData.goal}</p>
           </AlertDescription>
         </Alert>
 
-        <div className="space-y-4">
+        <div className="space-y-4 fade-in">
           <div className="flex justify-between">
-            <span className="text-sm font-medium">{alignmentAreas[activeCategory]}</span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm font-medium text-earth">{alignmentAreas[activeCategory]}</span>
+            <span className="text-sm text-cosmic">
               {sliderValues[activeCategory]}/5
             </span>
           </div>
@@ -134,83 +126,80 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           />
         </div>
 
-        {/* Buttons for each alignment category */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 fade-in">
           {Object.keys(alignmentAreas).map((cat) => (
             <Button
               key={cat}
-              variant={cat === activeCategory ? 'default' : 'outline'}
+              variant={cat === activeCategory ? 'cosmic' : 'outline'}
               onClick={() => setActiveCategory(cat)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 transition-all duration-200"
             >
               {cat.charAt(0).toUpperCase() + cat.slice(1)}
               {sliderValues[cat] >= 4 && (
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <CheckCircle2 className="w-4 h-4 text-sage" />
               )}
             </Button>
           ))}
         </div>
 
-        {/* If slider is 4 or 5, show success alert; otherwise show suggestions (if any) */}
         {sliderValues[activeCategory] >= 4 ? (
-          <Alert className="bg-green-50 border-green-200">
-            <AlertDescription className="flex items-center space-x-2">
-              <CheckCircle2 className="w-4 h-4 text-green-600" />
+          <Alert className="bg-sage/5 border-sage/20 scale-in">
+            <AlertDescription className="flex items-center space-x-2 text-earth">
+              <CheckCircle2 className="w-4 h-4 text-sage" />
               <span>
-                Congratulations! Your {activeCategory} alignment is strong at {sliderValues[activeCategory]}/5. 
+                Beautiful! Your {activeCategory} alignment is strong at {sliderValues[activeCategory]}/5. 
                 You can explore other areas or continue if you're ready.
               </span>
             </AlertDescription>
           </Alert>
         ) : aiSuggestions[activeCategory]?.suggestions && (
-          <Alert className="bg-blue-50 border-blue-200">
+          <Alert className="bg-cosmic/5 border-cosmic/20 scale-in">
             <AlertDescription className="space-y-4">
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-blue-600" />
-                <p className="font-medium">Alignment Suggestion:</p>
+                <Sparkles className="w-4 h-4 text-cosmic" />
+                <p className="font-medium text-cosmic">Alignment Insight:</p>
               </div>
-              <p className="text-sm">{aiSuggestions[activeCategory].suggestions}</p>
+              <p className="text-earth leading-relaxed">{aiSuggestions[activeCategory].suggestions}</p>
               <Button
                 variant="outline"
                 onClick={() => fetchAISuggestions(activeCategory)}
-                className="mt-2"
+                className="mt-2 text-cosmic hover:bg-cosmic/5"
               >
-                Regenerate Suggestions
+                Refresh Insight
               </Button>
             </AlertDescription>
           </Alert>
         )}
 
-        {/* Loading and Error States */}
         {isLoading && (
-          <Alert className="bg-blue-50 border-blue-200">
+          <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
             <AlertDescription className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-              <span>Getting alignment suggestions...</span>
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-cosmic border-t-transparent"/>
+              <span className="text-cosmic">Gathering alignment suggestions...</span>
             </AlertDescription>
           </Alert>
         )}
 
         {error && (
-          <Alert className="bg-red-50 border-red-200">
-            <AlertDescription className="flex items-center space-x-2 text-red-600">
+          <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
+            <AlertDescription className="flex items-center space-x-2 text-burgundy">
               <AlertTriangle className="w-4 h-4" />
               <span>{error}</span>
             </AlertDescription>
           </Alert>
         )}
 
-        <div className="flex justify-between pt-4">
+        <div className="flex justify-between pt-4 border-t border-stone/10">
           <Button 
             variant="outline" 
-            className="flex items-center gap-2"
+            className="text-earth hover:text-cosmic transition-colors"
             onClick={onBack}
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
           <Button
-            className="flex items-center gap-2"
+            variant="cosmic"
             onClick={() => {
               setJourneyData((prev) => ({
                 ...prev,
@@ -221,7 +210,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             }}
           >
             Complete Journey
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
       </CardContent>
