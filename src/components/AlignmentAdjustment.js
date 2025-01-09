@@ -47,51 +47,42 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     }));
   }, [setJourneyData]);
 
-  // Get AI suggestions for a category
-  const getAISuggestions = useCallback(async (category) => {
-    if (!needsAdjustment(category)) return;
+  // In AlignmentAdjustment.js, update the getAISuggestions function:
 
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('/api/ai', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          journeyData: {
-            ...journeyData,
-            category,
-            message: `The user rated their ${category} as ${sliderValues[category]}/5 for their goal: "${journeyData.goal}". 
-                     Provide specific suggestions to help them improve their ${category} alignment.
-                     Focus on somatic awareness and emotional safety.`
-          }
-        }),
-      });
+const getAISuggestions = useCallback(async (category) => {
+  if (!needsAdjustment(category)) return;
 
-      if (!response.ok) throw new Error('Failed to get AI suggestions');
-
-      const data = await response.json();
-      
-      setAiSuggestions(prev => ({
-        ...prev,
-        [category]: {
-          suggestions: data.message,
-          timestamp: Date.now()
+  setIsLoading(true);
+  setError(null);
+  try {
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        journeyData: {
+          ...journeyData,
+          category,
+          message: getCategoryPrompt(category, sliderValues[category], journeyData.goal)
         }
-      }));
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [journeyData, sliderValues, needsAdjustment]);
+      }),
+    });
 
-  // Fetch suggestions when category changes
-  useEffect(() => {
-    if (!aiSuggestions[activeCategory]?.suggestions && needsAdjustment(activeCategory)) {
-      getAISuggestions(activeCategory);
-    }
-  }, [activeCategory, getAISuggestions]);
+    if (!response.ok) throw new Error('Failed to get AI suggestions');
+
+    const data = await response.json();
+    setAiSuggestions(prev => ({
+      ...prev,
+      [category]: {
+        suggestions: data.message,
+        timestamp: Date.now()
+      }
+    }));
+  } catch (error) {
+    setError(error.message);
+  } finally {
+    setIsLoading(false);
+  }
+}, [journeyData, sliderValues, needsAdjustment]);
 
   return (
     <Card className="w-full max-w-4xl mx-auto bg-white shadow-lg">
