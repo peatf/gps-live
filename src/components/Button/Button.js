@@ -1,6 +1,6 @@
 // src/components/Button/Button.js
 import React from "react";
-import { cn } from "@/utils/cn";
+import { cn } from "../../utils/cn";  // Using relative import
 
 export const Button = ({
   children,
