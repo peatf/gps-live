@@ -15,7 +15,6 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
   const [selectedSensations] = useState(journeyData.selectedSensations || []);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Debounced AI request
   const requestAISuggestions = useCallback(
     debounce(async (scale, letter) => {
       setIsLoading(true);
@@ -47,13 +46,11 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
     [journeyData, alphabet, selectedSensations]
   );
 
-  // Handle scale changes
   const handleScaleChange = useCallback((value) => {
     setGoalScale(value[0]);
     requestAISuggestions(value[0], letterPosition);
   }, [letterPosition, requestAISuggestions]);
 
-  // Handle letter position changes
   const handleLetterChange = useCallback((value) => {
     setLetterPosition(value[0]);
     requestAISuggestions(goalScale, value[0]);
@@ -115,6 +112,9 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
 
         {/* Scale Adjustment */}
         <div className="space-y-4">
+          <div className="text-sm text-gray-700 font-medium">
+            You are currently at letter <span className="text-blue-600">{alphabet[letterPosition]}</span>. Adjust the scope of your goal.
+          </div>
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Adjust Goal Scope</span>
             <span className="text-sm text-gray-500">{goalScale}%</span>
@@ -127,6 +127,7 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
             onValueChange={handleScaleChange}
             className="w-full"
           />
+          <div className="text-sm text-gray-500">Reduce the scope by 10% using the slider to see if this makes the goal feel more achievable.</div>
         </div>
 
         {/* Current Position */}
@@ -153,13 +154,27 @@ export default function BeliefAdjustment({ journeyData, setJourneyData, onContin
 
         {/* AI Response */}
         {!isLoading && !error && aiResponse && (
-          <Alert className="bg-green-50 border-green-200">
-            <AlertDescription className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <Sparkles className="w-4 h-4 text-green-600" />
-                <span className="font-medium">Suggested Adjustment:</span>
-              </div>
-              <p>{aiResponse}</p>
+          <>
+            <Alert className="bg-green-50 border-green-200">
+              <AlertDescription className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="w-4 h-4 text-green-600" />
+                  <span className="font-medium">Suggested Adjustment:</span>
+                </div>
+                <p>{aiResponse}</p>
+              </AlertDescription>
+            </Alert>
+            <div className="text-sm text-gray-700">
+              How much does this adjusted goal allow you to move on the proximity slider?
+            </div>
+          </>
+        )}
+
+        {/* Celebratory Message */}
+        {letterPosition > 22 && (
+          <Alert className="bg-yellow-50 border-yellow-200">
+            <AlertDescription className="text-gray-800 text-center">
+              Wonderful progress. You're stepping into alignment. Continue to the next step when you're ready.
             </AlertDescription>
           </Alert>
         )}
