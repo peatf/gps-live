@@ -35,42 +35,12 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
   // Request AI suggestions
   const requestAISuggestions = useCallback(
-    debounce(async (category) => {
-      const score = sliderValues[category];
-      if (!needsimport React, { useState, useEffect, useCallback } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
-import { Button } from './Button/Button';
-import { Alert, AlertDescription } from './Alert/Alert';
-import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { Slider } from './Slider/Slider';
-import debounce from 'lodash/debounce';
-import { getCategoryPrompt } from '../utils/alignmentPrompts';
-
-export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete, onBack }) {
-  const [activeCategory, setActiveCategory] = useState('safety');
-  const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [aiSuggestions, setAiSuggestions] = useState({});
-  const [sliderValues, setSliderValues] = useState(journeyData.likertScores || {});
-
-  const alignmentAreas = {
-    safety: "I feel safe and open to receiving this opportunity or experience",
-    confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
-    anticipation: "I consistently expect and anticipate that I will receive what I work towards and desire",
-    openness: "I can maintain my focus and open connection to my desired result even if it takes time",
-    deserving: "I feel deserving of this experience",
-    belief: "I believe this is possible for me",
-    appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly"
-  };
-
-  const fetchAISuggestions = useCallback(async (category) => {
+  debounce(async (category) => {
     const score = sliderValues[category];
-    if (score > 3) return;
+    if (!needsAdjustment(category)) return;
 
     setIsLoading(true);
     setError(null);
-
     try {
       const response = await fetch('/api/ai', {
         method: 'POST',
@@ -80,27 +50,33 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             ...journeyData,
             category,
             score,
-            message: `${getCategoryPrompt(category, score, journeyData.goal)} Does this allow you to move the slider up?`
-          }
+            message: `${getCategoryPrompt(category, score, journeyData.goal)} A focus that connects you with ${category} might help.`,
+          },
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to get suggestions');
+      if (!response.ok) throw new Error('Failed to fetch AI suggestions');
 
       const data = await response.json();
+      const suggestion = appendPromptToResponse(
+        data.message || 'Here’s a suggestion to improve your alignment.'
+      );
+
       setAiSuggestions((prev) => ({
         ...prev,
         [category]: {
-          suggestions: data.message,
+          suggestion,
           timestamp: Date.now(),
         },
       }));
-    } catch (error) {
-      setError(error.message);
+    } catch (err) {
+      setError('Unable to fetch suggestions. Please try again.');
     } finally {
       setIsLoading(false);
     }
-  }, [journeyData, sliderValues]);
+  }, 1000),
+  [journeyData, sliderValues]
+);
 
   const handleSliderChange = useCallback((category, value) => {
     setSliderValues((prev) => ({
