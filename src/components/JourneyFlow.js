@@ -8,7 +8,7 @@ import {
   MetallicSlider,
   MetallicAlert,
   TypewriterText 
-} from './DesignSystem';
+} from '../components/DesignSystem';
 
 export default function EnhancedJourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
   const [step, setStep] = useState(0);
