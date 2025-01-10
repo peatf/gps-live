@@ -7,7 +7,6 @@ import { Alert, AlertDescription } from './Alert/Alert';
 import { Map, Heart, Activity, Plus, X } from 'lucide-react';
 import { cn } from '../utils/cn';
 
-// Move alphabet to the top level, outside the component
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 export default function JourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
@@ -52,9 +51,8 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     }
   }, [targetDate, setJourneyData]);
 
-
   const steps = [
-    // Goal Setting
+    // Step 1: Goal Setting
     <div key="goal-setting" className="space-y-6 fade-in">
       <Alert className="bg-sage/5 border-sage/20">
         <AlertDescription className="text-earth leading-relaxed">
@@ -75,7 +73,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       </div>
     </div>,
 
-    // Timeline Selection
+    // Step 2: Timeline Selection
     <div key="date" className="space-y-6 fade-in">
       <Alert className="bg-cosmic/5 border-cosmic/20">
         <AlertDescription className="text-earth leading-relaxed">
@@ -102,7 +100,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       )}
     </div>,
 
-    // Current Position
+    // Step 3: Current Position
     <div key="current" className="space-y-6 fade-in">
       <Alert className="bg-sage/5 border-sage/20">
         <AlertDescription className="text-earth leading-relaxed">
@@ -136,59 +134,38 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       </div>
     </div>,
 
-    // Body Awareness Check
-    <div key="somatic" className="space-y-6 fade-in">
-      <Alert className="bg-cosmic/5 border-cosmic/20">
-        <AlertDescription className="text-earth leading-relaxed">
-          Notice in your body: When you look at this journey from {alphabet[currentPosition]} to Z, 
-          what do you feel? Choose the sensations that describe what you're feeling best.
-        </AlertDescription>
-      </Alert>
-
-      {selectedSensations?.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-4 bg-sage/5 rounded-lg fade-in">
-          {selectedSensations.map((sensation) => (
-            <span
-              key={sensation}
-              className="flex items-center gap-1 px-3 py-1 bg-sage/10 text-sage rounded-full text-sm"
-            >
-              {sensation}
-              <button
-                onClick={() => toggleSensation(sensation)}
-                className="hover:text-cosmic transition-colors"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {Object.entries(sensationCategories).map(([category, sensations]) => (
-        <div key={category} className="space-y-3">
-          <h3 className="text-sm font-medium text-earth capitalize">{category} Sensations</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {sensations.map((sensation) => (
-              <Button
-                key={sensation}
-                variant={selectedSensations?.includes(sensation) ? 'cosmic' : 'outline'}
-                className="justify-start transition-all duration-200"
-                onClick={() => toggleSensation(sensation)}
-              >
-                {selectedSensations?.includes(sensation) ? (
-                  <X className="w-4 h-4 mr-2" />
-                ) : (
-                  <Plus className="w-4 h-4 mr-2" />
-                )}
-                {sensation}
-              </Button>
-            ))}
-          </div>
-        </div>
-      ))}
+    // Step 4: Reflective Step (New)
+    <div key="reflective-step" className="space-y-6 fade-in">
+      <Card className="glass-effect p-6 rounded-3xl shadow-md animate-fade-in">
+        <CardContent className="space-y-4">
+          <h2 className="text-cosmic font-bold text-xl">
+            Imagine crossing a river, hopping from stone to stone.
+          </h2>
+          <p className="text-earth">
+            Each stone represents steps toward your goal—some are within reach, others require effort,
+            and some demand bold leaps. This practice invites you to tune into three things:
+          </p>
+          <ul className="list-disc pl-5 space-y-2 text-earth">
+            <li>What's within your grasp? Solid, reachable, and ready for action.</li>
+            <li>What can you reach with a stretch? These steps push you further.</li>
+            <li>When are you ready to leap? Bold moves that demand trust, risk, and readiness.</li>
+          </ul>
+          <p className="italic text-sage">
+            Each choice brings its own energy and rhythm to your progress.
+          </p>
+        </CardContent>
+      </Card>
+      <div className="flex justify-end pt-4">
+        <Button
+          variant="cosmic"
+          onClick={() => setStep((prev) => prev + 1)}
+        >
+          Next
+        </Button>
+      </div>
     </div>,
 
-    // Alignment Check
+    // Step 5: Alignment Check
     <div key="alignment" className="space-y-6 fade-in">
       <Alert className="bg-cosmic/5 border-cosmic/20">
         <AlertDescription className="text-earth leading-relaxed">
@@ -236,8 +213,8 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
   className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
   style={{
     backgroundColor: "rgba(255, 255, 255, 0.01)", // Translucent background
-    backdropFilter: "blur(8px)", // Blur effect
-    "-webkit-backdrop-filter": "blur(8px)", // Safari-specific
+    backdropFilter: "blur(8px)",
+    "-webkit-backdrop-filter": "blur(8px)",
   }}
 >
       <CardHeader className="border-b border-stone/10">
@@ -254,7 +231,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
                 : step === 2
                 ? 'Map Your Journey'
                 : step === 3
-                ? 'Body Awareness Check'
+                ? 'Reflection'
                 : 'Alignment Check'}
             </span>
           </div>
@@ -273,22 +250,24 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
           >
             Back
           </Button>
-          <Button 
-            variant="cosmic"
-            onClick={() => {
-              if (step === steps.length - 1) {
-                onComplete();
-              } else {
-                if (step === 0 && !goal.trim()) {
-                  alert('Please enter your goal before continuing.');
-                  return;
+          {step < steps.length - 1 && (
+            <Button 
+              variant="cosmic"
+              onClick={() => {
+                if (step === steps.length - 1) {
+                  onComplete();
+                } else {
+                  if (step === 0 && !goal.trim()) {
+                    alert('Please enter your goal before continuing.');
+                    return;
+                  }
+                  setStep((prev) => prev + 1);
                 }
-                setStep((prev) => prev + 1);
-              }
-            }}
-          >
-            {step === steps.length - 1 ? 'Continue to Beliefs' : 'Continue'}
-          </Button>
+              }}
+            >
+              {step === steps.length - 1 ? 'Complete' : 'Continue'}
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
