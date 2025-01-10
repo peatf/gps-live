@@ -9,7 +9,7 @@ export const Card = ({ children, className }) => (
       "min-h-[90vh] w-[95vw]", // Increased height and width
       "hover:shadow-xl",
       "border border-cosmic/5",
-      "bg-white/[0.08]", // Much more transparent
+      "bg-transparent", // Much more transparent
       "backdrop-blur-xl",
       className
     )}
