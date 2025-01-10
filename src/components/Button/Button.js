@@ -14,37 +14,36 @@ export const Button = ({
     "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300 overflow-hidden";
 
   const sizeStyles = {
-    default: "h-12 px-6", // Increased height
+    default: "h-12 px-6",
     sm: "h-10 px-4 text-xs",
     lg: "h-14 px-8 text-lg",
   };
 
   const variantStyles = {
     primary: "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-105",
-    outline: "border-2 border-cosmic/30 text-cosmic bg-white/80 hover:bg-cosmic/5",
-    ghost: "text-cosmic hover:bg-cosmic/5",
+    outline: "bg-gradient-to-r from-silver-300/30 to-silver-500/30 text-silver-600 hover:from-silver-300/40 hover:to-silver-500/40",
+    ghost: "bg-gradient-to-r from-silver-300/20 to-silver-500/20 text-silver-600 hover:from-silver-300/30 hover:to-silver-500/30"
   };
 
-  // Enhanced glossy effect
-  const glossyEffect = 
+  const glossyEffect = `
     before:content-[''] before:absolute before:inset-0 
     before:bg-gradient-to-b before:from-white/30 before:to-transparent 
     before:rounded-full before:opacity-50
     after:content-[''] after:absolute after:inset-0 
     after:bg-gradient-to-t after:from-black/10 after:to-transparent 
     after:rounded-full after:opacity-20
-  ;
+  `;
 
-  // Enhanced hover and active states
-  const interactionEffects = 
+  const interactionEffects = `
     hover:shadow-lg hover:-translate-y-0.5
     active:shadow-inner active:translate-y-0.5
     disabled:opacity-50 disabled:pointer-events-none
     transition-all duration-200
-  ;
+  `;
 
-  // Bubble effect shadow
-  const bubbleShadow = "shadow-[0_4px_14px_0_rgba(62,84,184,0.2)]";
+  const bubbleShadow = variant === 'primary' 
+    ? "shadow-[0_4px_14px_0_rgba(62,84,184,0.2)]"
+    : "shadow-[0_4px_14px_0_rgba(0,0,0,0.1)]";
 
   return (
     <button
@@ -58,8 +57,8 @@ export const Button = ({
         interactionEffects,
         bubbleShadow,
         "disabled:opacity-50 disabled:cursor-not-allowed",
-        // Ensure text doesn't get cut off on mobile
         "whitespace-normal break-words min-h-[48px]",
+        "backdrop-blur-sm",
         className
       )}
       {...props}
