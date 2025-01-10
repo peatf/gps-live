@@ -13,13 +13,16 @@
     --radius: 0.5rem;
   }
 
+  /* Ensure no white background */
   body {
     @apply text-earth antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    background-color: transparent; /* No background color */
   }
 
   html {
     scroll-behavior: smooth;
+    background-color: transparent; /* No background color */
   }
 }
 
@@ -30,24 +33,25 @@
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 16px;
-  margin: 0 auto;
   display: inline-block; /* Fits content dynamically */
   max-width: 1200px;
+  text-align: center; /* Centers content inside */
+  margin: auto; /* Ensures the container itself is centered */
 }
 
 /* Translucent card and form container */
 .card, .form-container {
-  background-color: transparent; /* Removed the white background */
-  backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.2); /* Translucent white */
+  backdrop-filter: blur(8px); /* Adjusted blur for consistency */
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 /* Translucent header card */
 .header-card {
   background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent */
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(8px); /* Same blur as other cards */
   border-radius: 16px;
   padding: 16px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
