@@ -5,41 +5,35 @@ export const Button = ({
   children,
   onClick,
   disabled,
-  variant = "primary", // Default to primary for navigation buttons
+  variant = "primary",
   size = "default",
   className,
   ...props
 }) => {
   const baseStyles =
-    "relative inline-flex items-center justify-center rounded-full text-sm font-medium overflow-hidden transition-all duration-300 backdrop-blur-sm";
+    "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-200 overflow-hidden";
 
   const sizeStyles = {
-    default: "h-12 px-6",
-    sm: "h-10 px-4 text-xs",
-    lg: "h-14 px-8 text-lg",
+    default: "h-10 px-6",
+    sm: "h-8 px-4 text-xs",
+    lg: "h-12 px-8 text-lg",
   };
 
   const variantStyles = {
-    primary: `
-      bg-gradient-to-r from-blue-500/60 to-blue-700/60 text-white
-      hover:from-blue-500/80 hover:to-blue-700/80
-      border border-blue-500/40 hover:border-blue-500
-      shadow-md hover:shadow-lg
-    `,
-    outline: `
-      border border-white/30 text-earth
-      hover:border-white/50 hover:bg-white/10
-    `,
-    ghost: `
-      text-earth border border-white/20
-      hover:bg-white/10 hover:border-white/30
-    `,
+    primary:
+      "bg-gradient-to-r from-silver-300 to-silver-500 text-white shadow-md hover:shadow-lg",
+    outline:
+      "border border-silver-300 text-silver-600 bg-transparent hover:bg-silver-100",
+    ghost: "bg-transparent text-silver-600 hover:bg-silver-100",
   };
 
-  const interactionEffects = `
-    hover:-translate-y-0.5 active:translate-y-0.5
-    disabled:pointer-events-none disabled:opacity-50
-  `;
+  const glossyEffect =
+    "before:content-[''] before:absolute before:inset-0 before:rounded-full " +
+    "before:bg-gradient-to-t before:from-white/40 before:to-transparent " +
+    "before:opacity-50 before:blur-sm";
+
+  const hoverEffect =
+    "hover:before:opacity-80 hover:scale-105 active:scale-95";
 
   return (
     <button
@@ -49,15 +43,14 @@ export const Button = ({
         baseStyles,
         sizeStyles[size],
         variantStyles[variant],
-        interactionEffects,
-        "whitespace-normal break-words min-h-[48px]",
+        glossyEffect,
+        hoverEffect,
+        "disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}
       {...props}
     >
-      <span className="relative z-10 flex items-center justify-center px-2">
-        {children}
-      </span>
+      <span className="relative z-10">{children}</span>
     </button>
   );
 };
