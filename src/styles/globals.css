@@ -142,3 +142,28 @@ body {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+:root {
+  --pale-yellow: rgba(255, 249, 196, 0.7); /* Soft yellow background */
+  --pale-yellow-glow: rgba(255, 249, 196, 0.5); /* Glow effect color */
+}
+
+/* Glowing pale yellow effect */
+.glowing-screen {
+  background: var(--pale-yellow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--pale-yellow-glow);
+  box-shadow: 0 0 15px var(--pale-yellow-glow), 0 0 30px var(--pale-yellow-glow);
+  animation: pulse 3s infinite alternate; /* Pulsing animation */
+}
+
+/* Keyframes for the pulsing glow */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 10px var(--pale-yellow-glow);
+  }
+  100% {
+    box-shadow: 0 0 30px var(--pale-yellow-glow);
+  }
+}
+
