@@ -302,31 +302,46 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       </CardHeader>
       <CardContent className="space-y-6 p-6">
         {steps[step]}
-        <div className="flex justify-between pt-4 border-t border-stone/10">
-          <Button
-            variant="outline"
-            onClick={() => step === 0 ? onBack() : setStep((prev) => prev - 1)}
-            className="text-earth hover:text-cosmic transition-colors"
-          >
-            Back
-          </Button>
-          <Button 
-            variant="cosmic"
-            onClick={() => {
-              if (step === steps.length - 1) {
-                onComplete();
-              } else {
-                if (step === 0 && !goal.trim()) {
-                  alert('Please enter your goal before continuing.');
-                  return;
-                }
-                setStep((prev) => prev + 1);
-              }
-            }}
-          >
-            {step === steps.length - 1 ? 'Continue to Beliefs' : 'Continue'}
-          </Button>
-        </div>
+        // In JourneyFlow.js, update the navigation buttons section:
+
+<div className="flex justify-between pt-6 border-t border-stone/10">
+  <Button
+    variant="outline"
+    onClick={() => step === 0 ? onBack() : setStep((prev) => prev - 1)}
+    className="text-earth hover:text-cosmic transition-colors"
+  >
+    <ArrowLeft className="w-4 h-4 mr-2" />
+    Back
+  </Button>
+  <Button 
+    variant="primary"
+    onClick={() => {
+      if (step === steps.length - 1) {
+        onComplete();
+      } else {
+        if (step === 0 && !goal.trim()) {
+          alert('Please enter your goal before continuing.');
+          return;
+        }
+        setStep((prev) => prev + 1);
+      }
+    }}
+  >
+    {step === 0 ? (
+      <>Continue to Timeline <ArrowRight className="w-4 h-4 ml-2" /></>
+    ) : step === 1 ? (
+      <>Continue to Journey Map <ArrowRight className="w-4 h-4 ml-2" /></>
+    ) : step === 2 ? (
+      <>Continue to Body Awareness <ArrowRight className="w-4 h-4 ml-2" /></>
+    ) : step === 3 ? (
+      <>Continue to Alignment <ArrowRight className="w-4 h-4 ml-2" /></>
+    ) : step === 4 ? (
+      <>Continue to Proximity Map <ArrowRight className="w-4 h-4 ml-2" /></>
+    ) : (
+      <>Continue Proximity Map <ArrowRight className="w-4 h-4 ml-2" /></>
+    )}
+  </Button>
+</div>
       </CardContent>
     </Card>
   );
