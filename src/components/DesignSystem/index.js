@@ -64,7 +64,6 @@ export const MetallicButton = React.forwardRef(({
       }}
       {...props}
     >
-      {/* Y2K shine effect */}
       <div 
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{
@@ -79,6 +78,8 @@ export const MetallicButton = React.forwardRef(({
     </button>
   );
 });
+
+MetallicButton.displayName = 'MetallicButton';
 
 // Enhanced Card with Y2K styling
 export const MetallicCard = ({ children, className }) => (
@@ -119,6 +120,8 @@ export const MetallicInput = React.forwardRef(({ className, ...props }, ref) => 
     {...props}
   />
 ));
+
+MetallicInput.displayName = 'MetallicInput';
 
 // Enhanced Slider with Y2K styling
 export const MetallicSlider = ({ value, min, max, step, onChange, className }) => {
@@ -163,7 +166,6 @@ export const MetallicSlider = ({ value, min, max, step, onChange, className }) =
 
   return (
     <div className="relative w-full h-12 flex items-center px-2">
-      {/* Inset Track */}
       <div 
         ref={trackRef}
         className="absolute h-4 w-full rounded-full"
@@ -172,7 +174,6 @@ export const MetallicSlider = ({ value, min, max, step, onChange, className }) =
           boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
         }}
       >
-        {/* Progress fill */}
         <div
           className="absolute h-full rounded-full"
           style={{
@@ -182,7 +183,6 @@ export const MetallicSlider = ({ value, min, max, step, onChange, className }) =
         />
       </div>
 
-      {/* Bubble Handle */}
       <div 
         ref={handleRef}
         className="absolute w-8 h-8 rounded-full cursor-pointer transform -translate-y-1/2 top-1/2 hover:scale-110 transition-transform"
@@ -199,7 +199,7 @@ export const MetallicSlider = ({ value, min, max, step, onChange, className }) =
       />
     </div>
   );
-});
+};
 
 // Typing animation container with Y2K glow effect
 export const TypewriterText = ({ children, className }) => {
@@ -282,46 +282,43 @@ export const MetallicAlert = ({ children, variant = 'info', className }) => {
   );
 };
 
-// Add these animations to your globals.css
-const styles = `
-@keyframes shine {
-  0% {
-    transform: translateX(-100%);
-  }
-  60% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-@keyframes glow {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(255,248,206,0.3), inset 0 0 20px rgba(255,248,206,0.2);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(255,248,206,0.4), inset 0 0 25px rgba(255,248,206,0.3);
-  }
-}
-
-.animate-pulse-subtle {
-  animation: pulse 3s infinite ease-in-out;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.9;
-  }
-}
-`;
-
-// Add the styles to the document
+// Add keyframe animations to your globals.css
 if (typeof document !== 'undefined') {
   const styleSheet = document.createElement('style');
-  styleSheet.textContent = styles;
+  styleSheet.textContent = `
+    @keyframes shine {
+      0% {
+        transform: translateX(-100%);
+      }
+      60% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 10px rgba(255,248,206,0.3), inset 0 0 20px rgba(255,248,206,0.2);
+      }
+      50% {
+        box-shadow: 0 0 15px rgba(255,248,206,0.4), inset 0 0 25px rgba(255,248,206,0.3);
+      }
+    }
+
+    .animate-pulse-subtle {
+      animation: pulse 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.9;
+      }
+    }
+  `;
   document.head.appendChild(styleSheet);
 }
