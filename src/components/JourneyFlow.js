@@ -1,296 +1,253 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
-import { Button } from './Button/Button';
-import { Slider } from './Slider/Slider';
-import { Input } from './Input/Input';
-import { Alert, AlertDescription } from './Alert/Alert';
-import { Map, Heart, Activity, Plus, X } from 'lucide-react';
+import React from 'react';
 import { cn } from '../utils/cn';
+import { Map, Heart, Activity, ArrowRight, ArrowLeft, Plus, X } from 'lucide-react';
 
-// Move alphabet to the top level, outside the component
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+// Typography component with all-caps Helvetica styling
+export const Title = ({ children, className }) => (
+  <h2 
+    className={cn(
+      "font-['Helvetica Neue', Helvetica, Arial] tracking-wide uppercase",
+      "text-xl font-medium text-earth/90",
+      className
+    )}
+    style={{
+      textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+    }}
+  >
+    {children}
+  </h2>
+);
 
-export default function JourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
-  const {
-    goal = '',
-    targetDate = '',
-    daysUntilTarget = 0,
-    currentPosition = 0,
-    selectedSensations = [],
-    likertScores = {
-      safety: 3,
-      confidence: 3,
-      openness: 3,
-      deserving: 3,
-      belief: 3,
-      anticipation: 3,
-      appreciation: 3,
-    },
-  } = journeyData;
-
-  const [step, setStep] = useState(0);
-
-  const sensationCategories = {
-    physical: ['Tension', 'Relaxation', 'Warmth', 'Coolness', 'Tingling', 'Pressure'],
-    emotional: ['Lightness', 'Heaviness', 'Expansion', 'Contraction', 'Flow', 'Stillness'],
-    energetic: ['Vibration', 'Pulsing', 'Radiating', 'Centering', 'Opening', 'Grounding']
+// Enhanced Button with metallic gradient and translucent effects
+export const MetallicButton = React.forwardRef(({ 
+  children, 
+  variant = 'primary',
+  size = 'default',
+  className,
+  ...props 
+}, ref) => {
+  const baseStyles = "relative group overflow-hidden rounded-md transition-all duration-300";
+  const variantStyles = {
+    primary: "bg-gradient-to-br from-cosmic/90 via-cosmic/80 to-cosmic/70 text-white shadow-cosmic/20",
+    secondary: "bg-gradient-to-br from-sage/90 via-sage/80 to-sage/70 text-white shadow-sage/20",
+    outline: "bg-gradient-to-br from-stone/30 via-stone/20 to-stone/10 border border-stone/20 text-earth shadow-stone/10",
+    ghost: "hover:bg-stone/5 text-cosmic hover:text-cosmic-dark"
   };
-
-  const toggleSensation = (sensation) => {
-    setJourneyData(prev => ({
-      ...prev,
-      selectedSensations: prev.selectedSensations?.includes(sensation)
-        ? prev.selectedSensations.filter(s => s !== sensation)
-        : [...(prev.selectedSensations || []), sensation]
-    }));
+  const sizeStyles = {
+    default: "px-4 py-2",
+    sm: "px-3 py-1.5 text-sm",
+    lg: "px-6 py-3 text-lg"
   };
-
-  useEffect(() => {
-    if (targetDate) {
-      const days = Math.ceil((new Date(targetDate) - new Date()) / (1000 * 60 * 60 * 24));
-      setJourneyData((prev) => ({ ...prev, daysUntilTarget: days }));
-    }
-  }, [targetDate, setJourneyData]);
-
-
-  const steps = [
-    // Goal Setting
-    <div key="goal-setting" className="space-y-6 fade-in">
-      <Alert className="bg-sage/5 border-sage/20">
-        <AlertDescription className="text-earth leading-relaxed">
-          Take a moment to reflect on your next goal in your business. What is it that you deeply 
-          desire to experience by a certain date? Please be as clear as feels natural to you, 
-          whatever 'clear goal or desire' means in this moment.
-        </AlertDescription>
-      </Alert>
-      <div className="space-y-3">
-        <label className="text-sm font-medium text-earth">Share your goal</label>
-        <Input
-          type="text"
-          value={goal}
-          onChange={(e) => setJourneyData({ ...journeyData, goal: e.target.value })}
-          placeholder="Enter your goal here"
-          className="input focus:border-cosmic"
-        />
-      </div>
-    </div>,
-
-    // Timeline Selection
-    <div key="date" className="space-y-6 fade-in">
-      <Alert className="bg-cosmic/5 border-cosmic/20">
-        <AlertDescription className="text-earth leading-relaxed">
-          I invite you to choose a date for your goal—not as a deadline but for the sake of honest 
-          evaluation. A goal can manifest at any time, but having a date allows it to become more 
-          real in your mind, making it better for proximity mapping.
-        </AlertDescription>
-      </Alert>
-      <div className="space-y-3">
-        <label className="text-sm font-medium text-earth">Choose a target date</label>
-        <Input
-          type="date"
-          value={targetDate}
-          onChange={(e) => setJourneyData({ ...journeyData, targetDate: e.target.value })}
-          className="input focus:border-cosmic"
-        />
-      </div>
-      {targetDate && (
-        <div className="text-sm text-cosmic">
-          This date is {daysUntilTarget} days away.
-          <br />
-          The halfway point would be in {Math.ceil(daysUntilTarget / 2)} days.
-        </div>
-      )}
-    </div>,
-
-    // Current Position
-    <div key="current" className="space-y-6 fade-in">
-      <Alert className="bg-sage/5 border-sage/20">
-        <AlertDescription className="text-earth leading-relaxed">
-          If the reality you're experiencing your goal/desire in is Z, what letter are you located 
-          at in relationship to that?
-        </AlertDescription>
-      </Alert>
-      <div className="space-y-4">
-        <div className="flex justify-between text-sm text-dove">
-          {alphabet.map((letter, index) => (
-            <span
-              key={letter}
-              className={cn(
-                "text-sm transition-colors",
-                index === currentPosition ? "text-cosmic font-medium" : ""
-              )}
-            >
-              {letter}
-            </span>
-          ))}
-        </div>
-        <Slider
-          value={[currentPosition]}
-          min={0}
-          max={25}
-          step={1}
-          onValueChange={(value) =>
-            setJourneyData({ ...journeyData, currentPosition: value[0] })
-          }
-        />
-      </div>
-    </div>,
-
-    // Body Awareness Check
-    <div key="somatic" className="space-y-6 fade-in">
-      <Alert className="bg-cosmic/5 border-cosmic/20">
-        <AlertDescription className="text-earth leading-relaxed">
-          Notice in your body: When you look at this journey from {alphabet[currentPosition]} to Z, 
-          what do you feel? Choose the sensations that describe what you're feeling best.
-        </AlertDescription>
-      </Alert>
-
-      {selectedSensations?.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-4 bg-sage/5 rounded-lg fade-in">
-          {selectedSensations.map((sensation) => (
-            <span
-              key={sensation}
-              className="flex items-center gap-1 px-3 py-1 bg-sage/10 text-sage rounded-full text-sm"
-            >
-              {sensation}
-              <button
-                onClick={() => toggleSensation(sensation)}
-                className="hover:text-cosmic transition-colors"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {Object.entries(sensationCategories).map(([category, sensations]) => (
-        <div key={category} className="space-y-3">
-          <h3 className="text-sm font-medium text-earth capitalize">{category} Sensations</h3>
-          <div className="grid grid-cols-2 gap-2">
-            {sensations.map((sensation) => (
-              <Button
-                key={sensation}
-                variant={selectedSensations?.includes(sensation) ? 'cosmic' : 'outline'}
-                className="justify-start transition-all duration-200"
-                onClick={() => toggleSensation(sensation)}
-              >
-                {selectedSensations?.includes(sensation) ? (
-                  <X className="w-4 h-4 mr-2" />
-                ) : (
-                  <Plus className="w-4 h-4 mr-2" />
-                )}
-                {sensation}
-              </Button>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>,
-
-    // Alignment Check
-    <div key="alignment" className="space-y-6 fade-in">
-      <Alert className="bg-cosmic/5 border-cosmic/20">
-        <AlertDescription className="text-earth leading-relaxed">
-          How true do these statements feel in your body right now?
-        </AlertDescription>
-      </Alert>
-      <div className="space-y-6">
-        {Object.entries({
-          safety: "I feel safe and open to receiving this opportunity or experience",
-          confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
-          anticipation: "I consistently expect and anticipate that I will receive what I work towards and desire",
-          openness: "I can maintain my focus and open connection to my desired result even if it takes time",
-          deserving: "I feel deserving of this experience",
-          belief: "I believe this is possible for me",
-          appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly"
-        }).map(([key, statement]) => (
-          <div key={key} className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-earth">{statement}</span>
-              <span className="text-sm text-cosmic">{likertScores[key]}/5</span>
-            </div>
-            <Slider
-              value={[likertScores[key]]}
-              min={1}
-              max={5}
-              step={1}
-              onValueChange={(newValue) =>
-                setJourneyData({
-                  ...journeyData,
-                  likertScores: {
-                    ...likertScores,
-                    [key]: newValue[0],
-                  },
-                })
-              }
-            />
-          </div>
-        ))}
-      </div>
-    </div>,
-  ];
 
   return (
-<Card
-  className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
-  style={{
-    backgroundColor: "rgba(255, 255, 255, 0.01)", // Translucent background
-    backdropFilter: "blur(8px)", // Blur effect
-    "-webkit-backdrop-filter": "blur(8px)", // Safari-specific
-  }}
->
-      <CardHeader className="border-b border-stone/10">
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {step <= 2 && <Map className="w-5 h-5 text-cosmic" />}
-            {step === 3 && <Heart className="w-5 h-5 text-cosmic" />}
-            {step === 4 && <Activity className="w-5 h-5 text-cosmic" />}
-            <span className="text-xl font-medium text-sage">
-              {step === 0
-                ? 'Set Your Goal'
-                : step === 1
-                ? 'Choose Your Timeline'
-                : step === 2
-                ? 'Map Your Journey'
-                : step === 3
-                ? 'Body Awareness Check'
-                : 'Alignment Check'}
-            </span>
+    <button
+      ref={ref}
+      className={cn(
+        baseStyles,
+        variantStyles[variant],
+        sizeStyles[size],
+        "shadow-lg hover:shadow-xl",
+        "backdrop-blur-sm",
+        "transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200",
+        className
+      )}
+      {...props}
+    >
+      {/* Radial gradient overlay */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          background: 'radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 70%)'
+        }}
+      />
+      {/* Content container */}
+      <div className="relative flex items-center justify-center gap-2">
+        {children}
+      </div>
+    </button>
+  );
+});
+
+// Card with chrome-like border effect
+export const MetallicCard = ({ children, className }) => (
+  <div
+    className={cn(
+      "rounded-lg backdrop-blur-md",
+      "bg-gradient-to-br from-white/5 to-transparent",
+      "shadow-lg",
+      className
+    )}
+    style={{
+      boxShadow: `
+        0 0 0 1px rgba(255,255,255,0.1),
+        0 4px 6px -1px rgba(0,0,0,0.1),
+        0 2px 4px -1px rgba(0,0,0,0.06),
+        inset 0 0 0 1px rgba(255,255,255,0.05)
+      `
+    }}
+  >
+    {children}
+  </div>
+);
+
+// Enhanced Input with metallic styling
+export const MetallicInput = React.forwardRef(({ className, ...props }, ref) => (
+  <input
+    ref={ref}
+    className={cn(
+      "w-full px-4 py-2 rounded-md",
+      "bg-gradient-to-br from-white/10 to-transparent",
+      "border border-stone/20",
+      "backdrop-blur-sm",
+      "text-earth placeholder:text-dove/70",
+      "focus:outline-none focus:ring-2 focus:ring-cosmic/30",
+      "transition-all duration-200",
+      className
+    )}
+    style={{
+      boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)'
+    }}
+    {...props}
+  />
+));
+
+// Enhanced Slider with metallic styling
+export const MetallicSlider = ({ value, min, max, step, onChange, className }) => (
+  <div className="relative w-full h-6 flex items-center">
+    <div 
+      className="absolute h-2 w-full rounded-full overflow-hidden"
+      style={{
+        background: 'linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)'
+      }}
+    >
+      <div
+        className="absolute h-full bg-gradient-to-r from-cosmic/80 to-cosmic/60"
+        style={{ width: `${((value - min) / (max - min)) * 100}%` }}
+      />
+    </div>
+    <input
+      type="range"
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      onChange={onChange}
+      className={cn(
+        "absolute w-full h-2 opacity-0 cursor-pointer",
+        className
+      )}
+    />
+    <div 
+      className="absolute w-4 h-4 rounded-full bg-white shadow-lg transform -translate-y-1/2 top-1/2"
+      style={{ 
+        left: `calc(${((value - min) / (max - min)) * 100}% - 8px)`,
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        border: '2px solid rgba(255,255,255,0.9)'
+      }}
+    />
+  </div>
+);
+
+// Typing animation container for AI responses
+export const TypewriterText = ({ children, className }) => {
+  const [displayText, setDisplayText] = React.useState('');
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const text = React.useMemo(() => children?.toString() || '', [children]);
+
+  React.useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 30);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, text]);
+
+  return (
+    <div className={cn(
+      "font-mono text-earth/90",
+      "border-l-2 border-cosmic/30 pl-4",
+      className
+    )}>
+      {displayText}
+      {currentIndex < text.length && (
+        <span className="animate-pulse text-cosmic">|</span>
+      )}
+    </div>
+  );
+};
+
+// Alert component with metallic styling
+export const MetallicAlert = ({ children, variant = 'info', className }) => {
+  const variantStyles = {
+    info: "from-cosmic/20 to-cosmic/10 border-cosmic/30",
+    success: "from-sage/20 to-sage/10 border-sage/30",
+    warning: "from-yellow-500/20 to-yellow-500/10 border-yellow-500/30",
+    error: "from-burgundy/20 to-burgundy/10 border-burgundy/30"
+  };
+
+  return (
+    <div className={cn(
+      "rounded-lg p-4",
+      "bg-gradient-to-br",
+      "border backdrop-blur-sm",
+      variantStyles[variant],
+      className
+    )}>
+      {children}
+    </div>
+  );
+};
+
+// Example usage demonstration
+export default function DesignSystemDemo() {
+  const [sliderValue, setSliderValue] = React.useState(50);
+  
+  return (
+    <div className="space-y-8 p-6">
+      <MetallicCard className="p-6">
+        <Title>Enhanced Design System</Title>
+        
+        <div className="mt-6 space-y-6">
+          <MetallicAlert variant="info">
+            <TypewriterText>
+              This is an example of the typewriter effect with metallic styling...
+            </TypewriterText>
+          </MetallicAlert>
+          
+          <div className="space-y-4">
+            <MetallicInput 
+              placeholder="Enter your goal here..."
+            />
+            
+            <div className="space-y-2">
+              <label className="text-sm text-earth/70">Adjust Value</label>
+              <MetallicSlider
+                value={sliderValue}
+                min={0}
+                max={100}
+                step={1}
+                onChange={(e) => setSliderValue(Number(e.target.value))}
+              />
+            </div>
           </div>
-          <span className="text-sm text-dove">
-            {step + 1} of {steps.length}
-          </span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6 p-6">
-        {steps[step]}
-        <div className="flex justify-between pt-4 border-t border-stone/10">
-          <Button
-            variant="outline"
-            onClick={() => step === 0 ? onBack() : setStep((prev) => prev - 1)}
-            className="text-earth hover:text-cosmic transition-colors"
-          >
-            Back
-          </Button>
-          <Button 
-            variant="cosmic"
-            onClick={() => {
-              if (step === steps.length - 1) {
-                onComplete();
-              } else {
-                if (step === 0 && !goal.trim()) {
-                  alert('Please enter your goal before continuing.');
-                  return;
-                }
-                setStep((prev) => prev + 1);
-              }
-            }}
-          >
-            {step === steps.length - 1 ? 'Continue to Beliefs' : 'Continue'}
-          </Button>
+          
+          <div className="flex gap-4">
+            <MetallicButton variant="primary">
+              Primary Action
+            </MetallicButton>
+            <MetallicButton variant="secondary">
+              Secondary Action
+            </MetallicButton>
+            <MetallicButton variant="outline">
+              Outline Button
+            </MetallicButton>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </MetallicCard>
+    </div>
   );
 }
