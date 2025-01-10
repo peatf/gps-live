@@ -8,7 +8,7 @@ export const Card = ({ children, className }) => (
       className
     )}
     style={{
-      backgroundColor: "rgba(255, 255, 255, 0.1)", // Ensure translucency
+      backgroundColor: "rgba(255, 255, 255, 0.01)", // Ensure translucency
       backdropFilter: "blur(8px)", // Add blur effect
       border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for contrast
     }}
