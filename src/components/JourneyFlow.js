@@ -303,7 +303,6 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       </CardHeader>
       <CardContent className="space-y-6 p-6">
         {steps[step]}
-        // In JourneyFlow.js, update the navigation buttons section:
 
 <div className="flex justify-between pt-6 border-t border-stone/10">
   <Button
