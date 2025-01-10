@@ -4,9 +4,7 @@
 
 @layer base {
   :root {
-    --background: 34 20% 97%;
     --foreground: 30 10% 15%;
-    --card: 34 20% 97%;
     --card-foreground: 30 10% 15%;
     --popover: 0 0% 100%;
     --popover-foreground: 30 10% 15%;
@@ -16,23 +14,20 @@
     --radius: 0.5rem;
   }
 
-  /* Make the background translucent instead of beige */
+  /* Remove background color from body and html */
   body {
-    background-color: rgba(255, 255, 255, 0.1); /* Translucent background */
     @apply text-earth antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   html {
     scroll-behavior: smooth;
-    background-color: rgba(255, 255, 255, 0.1); /* Matches body */
   }
 }
 
 /* Translucent app container */
 .app-container {
-  backdrop-filter: blur(12px); /* Applies the blur */
-  background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+  backdrop-filter: blur(12px); /* Applies blur */
   border-radius: 16px; /* Rounds the edges */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
   padding: 16px;
