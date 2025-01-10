@@ -112,15 +112,15 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
         </Alert>
 
         {/* Goal Summary */}
-        <Alert className="bg-cosmic/5 border-cosmic/20 scale-in">
-          <AlertDescription>
-            <p className="font-medium text-cosmic">Your Current Goal:</p>
-            <p className="text-earth mt-2">{journeyData.goal}</p>
-            <p className="text-sm text-cosmic/80 mt-2">
-              Target Date: {new Date(journeyData.targetDate).toLocaleDateString()}
-            </p>
-          </AlertDescription>
-        </Alert>
+        <Alert className="goal-alert">
+  <AlertDescription>
+    <p className="font-medium text-cosmic">Your Current Goal:</p>
+    <p className="text-earth mt-2">{journeyData.goal}</p>
+    <p className="text-sm text-cosmic/80 mt-2">
+      Target Date: {new Date(journeyData.targetDate).toLocaleDateString()}
+    </p>
+  </AlertDescription>
+</Alert>
 
         {/* Scope Slider */}
         <div className="space-y-4 fade-up">
