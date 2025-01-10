@@ -282,7 +282,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     <div className="mt-6">
       <DiagnosticFlow />
     </div>
-  </div>,
+  </div>
   ];
 
   return (
