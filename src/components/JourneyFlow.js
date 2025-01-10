@@ -1,13 +1,13 @@
-import DiagnosticFlow from './DiagnosticFlow';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+// src/components/JourneyFlow.js
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Slider } from './Slider/Slider';
 import { Input } from './Input/Input';
 import { Alert, AlertDescription } from './Alert/Alert';
-import { Map, Heart, Activity, Plus, X } from 'lucide-react';
+import { Map, Heart, Activity, Plus, X, ArrowRight, ArrowLeft } from 'lucide-react';
 import { cn } from '../utils/cn';
+import DiagnosticFlow from './DiagnosticFlow';
 
 // Move alphabet to the top level, outside the component
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
