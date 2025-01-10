@@ -196,30 +196,29 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           </Alert>
         )}
 
-        <div className="flex justify-between pt-4 border-t border-stone/10">
-          <Button 
-            variant="outline" 
-            className="text-earth hover:text-cosmic transition-colors"
-            onClick={onBack}
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <Button
-            variant="cosmic"
-            onClick={() => {
-              setJourneyData((prev) => ({
-                ...prev,
-                likertScores: sliderValues,
-                adjustedGoal,
-              }));
-              onComplete();
-            }}
-          >
-            Complete Journey
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-        </div>
+        <div className="flex justify-between pt-6 border-t border-stone/10">
+  <Button 
+    variant="outline" 
+    className="text-earth hover:text-cosmic transition-colors"
+    onClick={onBack}
+  >
+    <ArrowLeft className="w-4 h-4 mr-2" />
+    Back
+  </Button>
+  <Button
+    variant="primary"
+    onClick={() => {
+      setJourneyData((prev) => ({
+        ...prev,
+        likertScores: sliderValues,
+        adjustedGoal,
+      }));
+      onComplete();
+    }}
+  >
+    Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
+  </Button>
+</div>
       </CardContent>
     </Card>
   );
