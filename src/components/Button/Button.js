@@ -22,8 +22,8 @@ export const Button = ({
 
   const variantStyles = {
     primary: "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-105",
-    outline: "border-2 border-cosmic/20 text-cosmic bg-white/[0.08] hover:bg-white/[0.12]",
-    ghost: "bg-white/[0.05] text-cosmic hover:bg-white/[0.08]",
+    outline: "bg-gradient-to-r from-silver-300/30 to-silver-500/30 text-silver-600 hover:from-silver-300/40 hover:to-silver-500/40",
+    ghost: "bg-gradient-to-r from-silver-300/20 to-silver-500/20 text-silver-600 hover:from-silver-300/30 hover:to-silver-500/30"
   };
 
   const glossyEffect = `
@@ -42,7 +42,9 @@ export const Button = ({
     transition-all duration-200
   `;
 
-  const bubbleShadow = "shadow-[0_4px_14px_0_rgba(62,84,184,0.2)]";
+  const bubbleShadow = variant === 'primary' 
+    ? "shadow-[0_4px_14px_0_rgba(62,84,184,0.2)]"
+    : "shadow-[0_4px_14px_0_rgba(0,0,0,0.1)]";
 
   return (
     <button
