@@ -10,44 +10,41 @@ export const Button = ({
   className,
   ...props
 }) => {
-  const baseStyles = "inline-flex items-center justify-center rounded-md text-sm font-medium transition-all duration-200";
-  
+  const baseStyles =
+    "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-200 overflow-hidden";
+
   const sizeStyles = {
-    default: "h-9 px-4 py-2",
-    sm: "h-8 rounded-md px-3 text-xs",
-    lg: "h-10 rounded-md px-8",
-    icon: "h-9 w-9",
-  };
-  
-  const variantStyles = {
-    primary: "bg-sage/90 text-white hover:bg-sage shadow-sm glass-effect",
-    cosmic: "bg-cosmic/90 text-white hover:bg-cosmic shadow-cosmic glass-effect",
-    outline: "border border-stone/20 hover:border-cosmic/20 bg-transparent hover:bg-stone/5 glass-effect",
-    ghost: "hover:bg-stone/5 hover:text-cosmic glass-effect",
-    link: "text-cosmic underline-offset-4 hover:underline",
+    default: "h-10 px-6",
+    sm: "h-8 px-4 text-xs",
+    lg: "h-12 px-8 text-lg",
   };
 
-  const bubbleEffect = "before:content-[''] before:absolute before:inset-0 before:rounded-md before:bg-gradient-to-b before:from-white/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity";
+  const variantStyles = {
+    primary:
+      "bg-gradient-to-r from-silver-200 to-silver-400 text-white shadow-md hover:shadow-lg",
+    outline:
+      "border border-silver-300 text-silver-600 bg-transparent hover:bg-silver-100",
+    ghost: "bg-transparent text-silver-600 hover:bg-silver-100",
+  };
+
+  const bubbleEffect =
+    "before:content-[''] before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-white/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity";
 
   return (
     <button
+      onClick={onClick}
+      disabled={disabled}
       className={cn(
         baseStyles,
         sizeStyles[size],
         variantStyles[variant],
         bubbleEffect,
-        "relative overflow-hidden",
-        "hover:scale-[1.02] active:scale-[0.98]",
-        "disabled:opacity-50 disabled:pointer-events-none",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}
-      onClick={onClick}
-      disabled={disabled}
       {...props}
     >
-      <div className="relative z-10 flex items-center justify-center gap-2">
-        {children}
-      </div>
+      <span className="relative z-10">{children}</span>
     </button>
   );
 };
