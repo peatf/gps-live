@@ -36,11 +36,11 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
   };
 
   const toggleSensation = (sensation) => {
-    setJourneyData(prev => ({
+    setJourneyData((prev) => ({
       ...prev,
       selectedSensations: prev.selectedSensations?.includes(sensation)
-        ? prev.selectedSensations.filter(s => s !== sensation)
-        : [...(prev.selectedSensations || []), sensation]
+        ? prev.selectedSensations.filter((s) => s !== sensation)
+        : [...(prev.selectedSensations || []), sensation],
     }));
   };
 
@@ -56,8 +56,8 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     <div key="goal-setting" className="space-y-6 fade-in">
       <Alert className="bg-sage/5 border-sage/20">
         <AlertDescription className="text-earth leading-relaxed">
-          Take a moment to reflect on your next goal in your business. What is it that you deeply 
-          desire to experience by a certain date? Please be as clear as feels natural to you, 
+          Take a moment to reflect on your next goal in your business. What is it that you deeply
+          desire to experience by a certain date? Please be as clear as feels natural to you,
           whatever 'clear goal or desire' means in this moment.
         </AlertDescription>
       </Alert>
@@ -77,8 +77,8 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     <div key="date" className="space-y-6 fade-in">
       <Alert className="bg-cosmic/5 border-cosmic/20">
         <AlertDescription className="text-earth leading-relaxed">
-          I invite you to choose a date for your goal—not as a deadline but for the sake of honest 
-          evaluation. A goal can manifest at any time, but having a date allows it to become more 
+          I invite you to choose a date for your goal—not as a deadline but for the sake of honest
+          evaluation. A goal can manifest at any time, but having a date allows it to become more
           real in your mind, making it better for proximity mapping.
         </AlertDescription>
       </Alert>
@@ -104,7 +104,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     <div key="current" className="space-y-6 fade-in">
       <Alert className="bg-sage/5 border-sage/20">
         <AlertDescription className="text-earth leading-relaxed">
-          If the reality you're experiencing your goal/desire in is Z, what letter are you located 
+          If the reality you're experiencing your goal/desire in is Z, what letter are you located
           at in relationship to that?
         </AlertDescription>
       </Alert>
@@ -114,8 +114,8 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
             <span
               key={letter}
               className={cn(
-                "text-sm transition-colors",
-                index === currentPosition ? "text-cosmic font-medium" : ""
+                'text-sm transition-colors',
+                index === currentPosition ? 'text-cosmic font-medium' : ''
               )}
             >
               {letter}
@@ -134,8 +134,58 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       </div>
     </div>,
 
-    // Step 4: Reflective Step (New)
-    <div key="reflective-step" className="space-y-6 fade-in">
+    // Step 4: Body Awareness Check
+    <div key="somatic" className="space-y-6 fade-in">
+      <Alert className="bg-cosmic/5 border-cosmic/20">
+        <AlertDescription className="text-earth leading-relaxed">
+          Notice in your body: When you look at this journey from {alphabet[currentPosition]} to Z,
+          what do you feel? Choose the sensations that describe what you're feeling best.
+        </AlertDescription>
+      </Alert>
+      {selectedSensations?.length > 0 && (
+        <div className="flex flex-wrap gap-2 p-4 bg-sage/5 rounded-lg fade-in">
+          {selectedSensations.map((sensation) => (
+            <span
+              key={sensation}
+              className="flex items-center gap-1 px-3 py-1 bg-sage/10 text-sage rounded-full text-sm"
+            >
+              {sensation}
+              <button
+                onClick={() => toggleSensation(sensation)}
+                className="hover:text-cosmic transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+      {Object.entries(sensationCategories).map(([category, sensations]) => (
+        <div key={category} className="space-y-3">
+          <h3 className="text-sm font-medium text-earth capitalize">{category} Sensations</h3>
+          <div className="grid grid-cols-2 gap-2">
+            {sensations.map((sensation) => (
+              <Button
+                key={sensation}
+                variant={selectedSensations?.includes(sensation) ? 'cosmic' : 'outline'}
+                className="justify-start transition-all duration-200"
+                onClick={() => toggleSensation(sensation)}
+              >
+                {selectedSensations?.includes(sensation) ? (
+                  <X className="w-4 h-4 mr-2" />
+                ) : (
+                  <Plus className="w-4 h-4 mr-2" />
+                )}
+                {sensation}
+              </Button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>,
+
+    // Step 5: Reflection (Final Step)
+    <div key="reflection" className="space-y-6 fade-in">
       <Card className="glass-effect p-6 rounded-3xl shadow-md animate-fade-in">
         <CardContent className="space-y-4">
           <h2 className="text-cosmic font-bold text-xl">
@@ -158,71 +208,29 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       <div className="flex justify-end pt-4">
         <Button
           variant="cosmic"
-          onClick={() => setStep((prev) => prev + 1)}
+          onClick={onComplete}
         >
-          Next
+          Continue to Beliefs
         </Button>
-      </div>
-    </div>,
-
-    // Step 5: Alignment Check
-    <div key="alignment" className="space-y-6 fade-in">
-      <Alert className="bg-cosmic/5 border-cosmic/20">
-        <AlertDescription className="text-earth leading-relaxed">
-          How true do these statements feel in your body right now?
-        </AlertDescription>
-      </Alert>
-      <div className="space-y-6">
-        {Object.entries({
-          safety: "I feel safe and open to receiving this opportunity or experience",
-          confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
-          anticipation: "I consistently expect and anticipate that I will receive what I work towards and desire",
-          openness: "I can maintain my focus and open connection to my desired result even if it takes time",
-          deserving: "I feel deserving of this experience",
-          belief: "I believe this is possible for me",
-          appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly"
-        }).map(([key, statement]) => (
-          <div key={key} className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-earth">{statement}</span>
-              <span className="text-sm text-cosmic">{likertScores[key]}/5</span>
-            </div>
-            <Slider
-              value={[likertScores[key]]}
-              min={1}
-              max={5}
-              step={1}
-              onValueChange={(newValue) =>
-                setJourneyData({
-                  ...journeyData,
-                  likertScores: {
-                    ...likertScores,
-                    [key]: newValue[0],
-                  },
-                })
-              }
-            />
-          </div>
-        ))}
       </div>
     </div>,
   ];
 
   return (
-<Card
-  className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
-  style={{
-    backgroundColor: "rgba(255, 255, 255, 0.01)", // Translucent background
-    backdropFilter: "blur(8px)",
-    "-webkit-backdrop-filter": "blur(8px)",
-  }}
->
+    <Card
+      className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
+      style={{
+        backgroundColor: 'rgba(255, 255, 255, 0.01)',
+        backdropFilter: 'blur(8px)',
+        WebkitBackdropFilter: 'blur(8px)',
+      }}
+    >
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {step <= 2 && <Map className="w-5 h-5 text-cosmic" />}
-            {step === 3 && <Heart className="w-5 h-5 text-cosmic" />}
-            {step === 4 && <Activity className="w-5 h-5 text-cosmic" />}
+            {step <= 1 && <Map className="w-5 h-5 text-cosmic" />}
+            {step === 2 && <Activity className="w-5 h-5 text-cosmic" />}
+            {step >= 3 && <Heart className="w-5 h-5 text-cosmic" />}
             <span className="text-xl font-medium text-sage">
               {step === 0
                 ? 'Set Your Goal'
@@ -231,8 +239,8 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
                 : step === 2
                 ? 'Map Your Journey'
                 : step === 3
-                ? 'Reflection'
-                : 'Alignment Check'}
+                ? 'Body Awareness Check'
+                : 'Reflection'}
             </span>
           </div>
           <span className="text-sm text-dove">
@@ -245,29 +253,11 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         <div className="flex justify-between pt-4 border-t border-stone/10">
           <Button
             variant="outline"
-            onClick={() => step === 0 ? onBack() : setStep((prev) => prev - 1)}
+            onClick={() => (step === 0 ? onBack() : setStep((prev) => prev - 1))}
             className="text-earth hover:text-cosmic transition-colors"
           >
             Back
           </Button>
-          {step < steps.length - 1 && (
-            <Button 
-              variant="cosmic"
-              onClick={() => {
-                if (step === steps.length - 1) {
-                  onComplete();
-                } else {
-                  if (step === 0 && !goal.trim()) {
-                    alert('Please enter your goal before continuing.');
-                    return;
-                  }
-                  setStep((prev) => prev + 1);
-                }
-              }}
-            >
-              {step === steps.length - 1 ? 'Complete' : 'Continue'}
-            </Button>
-          )}
         </div>
       </CardContent>
     </Card>
