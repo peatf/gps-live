@@ -112,7 +112,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
         </Alert>
 
         {/* Goal Summary */}
-        <Alert className="goal-alert">
+        <AAlert className="bg-cosmic/5 border-cosmic/20 scale-in">
   <AlertDescription>
     <p className="font-medium text-cosmic">Your Current Goal:</p>
     <p className="text-earth mt-2">{journeyData.goal}</p>
