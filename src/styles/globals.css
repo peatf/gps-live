@@ -94,16 +94,21 @@ body {
 
 /* Glass effect utilities */
 .glass-effect {
-  background: var(--bg-transparent);
-  backdrop-filter: blur(var(--blur-amount));
-  -webkit-backdrop-filter: blur(var(--blur-amount));
+  background: rgba(255, 255, 255, 0.08); /* More transparent */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.01);
-  backdrop-filter: blur(var(--blur-amount));
-  -webkit-backdrop-filter: blur(var(--blur-amount));
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Bubble effects */
@@ -137,8 +142,13 @@ body {
 
 /* App container */
 .app-container {
-  min-height: 150vh;
+  min-height: 100vh;
+  width: 100vw;
   background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1rem;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
