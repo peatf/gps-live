@@ -13,11 +13,11 @@ export const Card = ({ children, className }) => (
       "backdrop-blur-xl",
       className
     )}
-    style={{
-      backdropFilter: 'blur(12px)',
-      WebkitBackdropFilter: 'blur(12px)',
-      background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02))'
-    }}
+  style={{
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  backgroundColor: 'rgba(255, 255, 255, 0.01)', // Semi-transparent solid background
+}}
   >
     {children}
   </div>
