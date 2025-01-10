@@ -26,72 +26,59 @@
   }
 }
 
-/* Translucent and blurred background for the app */
+/* Translucent and blurred app container */
 .app-container {
-  backdrop-filter: blur(12px);
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px); /* Applies the blur */
+  background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+  border-radius: 16px; /* Rounds the edges */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
   padding: 16px;
   margin: auto;
   max-width: 1200px;
 }
 
-@layer components {
-  .button {
-    @apply inline-flex items-center justify-center rounded-md text-sm font-medium 
-           transition-all duration-300 ease-in-out
-           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cosmic 
-           focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50
-           hover:scale-[1.02] active:scale-[0.98];
+/* Existing animations */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
   }
-
-  .button-primary {
-    @apply bg-sage text-white hover:bg-sage-light shadow-sm;
-  }
-
-  .button-cosmic {
-    @apply bg-cosmic text-white hover:bg-cosmic-light shadow-md;
-  }
-
-  .button-outline {
-    @apply border bg-background hover:bg-stone hover:border-cosmic-light;
-  }
-
-  .card {
-    @apply rounded-lg border border-stone/20 bg-cloud/80 backdrop-blur-sm
-           shadow-sm transition-all duration-300 hover:shadow-md;
-  }
-
-  .alert {
-    @apply relative w-full rounded-lg border p-4 transition-all duration-300
-           [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 
-           [&>svg]:top-4 [&>svg]:text-foreground [&>svg~*]:pl-7;
-  }
-
-  .alert-cosmic {
-    @apply bg-cosmic/10 text-cosmic-dark border-cosmic/20;
-  }
-
-  .input {
-    @apply flex h-10 w-full rounded-md border bg-background px-3 py-2 
-           text-sm transition-all duration-200
-           file:border-0 file:bg-transparent file:text-sm file:font-medium
-           placeholder:text-dove hover:border-cosmic-light
-           focus-visible:outline-none focus-visible:ring-2
-           focus-visible:ring-cosmic focus-visible:ring-offset-2;
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Custom animations */
+@keyframes fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .fade-up {
-  @apply animate-fade-in-up;
+  animation: fade-in-up 0.5s ease-out;
 }
 
 .fade-down {
-  @apply animate-fade-in-down;
+  animation: fade-in-down 0.5s ease-out;
 }
 
 .scale-in {
-  @apply animate-scale-in;
+  animation: scale-in 0.4s ease-out;
 }
