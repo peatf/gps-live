@@ -210,7 +210,7 @@ export const TypewriterText = ({ children, className }) => {
 
   useEffect(() => {
     const newText = children?.toString() || '';
-    
+
     if (textRef.current !== newText) {
       textRef.current = newText;
       indexRef.current = 0;
@@ -269,6 +269,7 @@ if (typeof document !== 'undefined') {
         transform: translateX(100%);
       }
     }
+
     @keyframes glow {
       0%, 100% {
         box-shadow: 0 0 10px rgba(255,248,206,0.3), inset 0 0 20px rgba(255,248,206,0.2);
@@ -277,9 +278,11 @@ if (typeof document !== 'undefined') {
         box-shadow: 0 0 15px rgba(255,248,206,0.4), inset 0 0 25px rgba(255,248,206,0.3);
       }
     }
+
     .animate-pulse-subtle {
       animation: pulse 3s infinite ease-in-out;
     }
+
     @keyframes pulse {
       0%, 100% {
         opacity: 1;
