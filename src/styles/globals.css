@@ -22,18 +22,18 @@
 
   /* App container adjustments */
   .app-container {
-    height: auto !important; /* Adjust height to content */
+    height: 100% !important; /* Fill the parent container */
     max-height: none !important; /* Remove any height constraints */
     overflow: visible !important; /* Ensure no content is hidden */
-    background-color: transparent !important; /* Remove background */
-    backdrop-filter: blur(12px); /* Optional blur effect */
+    background-color: rgba(255, 255, 255, 0.1) !important; /* Translucent background */
+    backdrop-filter: blur(8px); /* Optional blur effect */
     box-shadow: none !important; /* Remove shadow */
     animation: fade-in-up 0.8s ease-out; /* Add fade-in animation */
   }
 
   /* Parent container (Squarespace Fluid Engine Block) */
   .sqs-block {
-    height: auto !important; /* Allow it to grow dynamically */
+    height: 100% !important; /* Fill the Fluid Engine box */
     max-height: none !important; /* Remove height limits */
     overflow: visible !important; /* Prevent content cut-off */
     background-color: transparent !important; /* Remove background color */
@@ -42,8 +42,8 @@
 
   /* Card and form elements */
   .card, .form-container, .header-card {
-    background-color: transparent !important; /* Remove white backgrounds */
-    backdrop-filter: blur(8px); /* Optional blur for cards */
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Make cards more translucent */
+    backdrop-filter: blur(6px); /* Optional blur for cards */
     border: none !important; /* Remove borders */
     box-shadow: none !important; /* Remove shadows */
     animation: fade-in-down 0.8s ease-out; /* Add fade-in-down animation */
@@ -51,14 +51,14 @@
 
   /* Input, textarea, and button adjustments */
   input, textarea, button {
-    background-color: transparent !important; /* Remove backgrounds */
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Make inputs more translucent */
     border: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border for usability */
     padding: 8px;
     border-radius: 4px; /* Slightly rounded corners */
   }
 
   /* Debugging: Uncomment these to visualize boundaries if needed */
-  /* 
+  /*
   .app-container, .sqs-block, body, html {
     border: 2px solid red !important; /* Debugging */
   }
