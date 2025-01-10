@@ -172,11 +172,13 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
           <Button 
-            onClick={onContinue}
-            className="bg-cosmic text-white hover:bg-cosmic-light px-6 py-3 rounded-lg"
-          >
-            Continue to Alignment <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+  onClick={onContinue}
+  variant="primary" // Use the predefined "primary" variant
+  className="px-6 py-3 rounded-full" // Ensure consistent rounded styling
+>
+  Continue to Alignment <ArrowRight className="w-4 h-4 ml-2" />
+</Button>
+
 </div>
       </CardContent>
     </Card>
