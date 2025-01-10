@@ -1,5 +1,4 @@
 // src/components/Card/Card.js
-
 import React from "react";
 import { cn } from "../../utils/cn";
 
@@ -7,12 +6,18 @@ export const Card = ({ children, className }) => (
   <div
     className={cn(
       "relative rounded-3xl shadow-lg transition-all duration-300",
-      "min-h-[85vh]", // Takes up more vertical space
+      "min-h-[85vh]",
       "hover:shadow-xl",
-      "border border-cosmic/10 backdrop-blur-md",
-      "bg-white/[0.65]", // Slightly more opaque background
+      "border border-cosmic/5",
+      "bg-white/[0.25]", // Reduced opacity for more transparency
+      "backdrop-blur-xl", // Increased blur for better glass effect
       className
     )}
+    style={{
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
+      background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1))'
+    }}
   >
     {children}
   </div>
@@ -21,7 +26,10 @@ export const Card = ({ children, className }) => (
 export const CardHeader = ({ children, className }) => (
   <div
     className={cn(
-      "px-8 py-6 rounded-t-3xl border-b border-cosmic/10", // Increased padding
+      "px-8 py-6 rounded-t-3xl",
+      "border-b border-cosmic/10",
+      "bg-white/[0.15]", // Subtle contrast for header
+      "backdrop-blur-md",
       className
     )}
   >
@@ -32,7 +40,7 @@ export const CardHeader = ({ children, className }) => (
 export const CardTitle = ({ children, className }) => (
   <h2
     className={cn(
-      "text-2xl font-semibold text-cosmic", // Increased size and using cosmic color
+      "text-2xl font-semibold text-cosmic",
       className
     )}
   >
@@ -43,7 +51,8 @@ export const CardTitle = ({ children, className }) => (
 export const CardContent = ({ children, className }) => (
   <div
     className={cn(
-      "p-8 space-y-6", // Increased padding
+      "p-8 space-y-6",
+      "bg-white/[0.05]", // Very subtle background
       className
     )}
   >
