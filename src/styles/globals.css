@@ -13,43 +13,56 @@
     --radius: 0.5rem;
   }
 
+  /* Ensure full transparency and height */
   body, html {
-    background-color: transparent !important; /* Ensure full transparency */
+    background-color: transparent !important;
     height: 100% !important;
-    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important; /* Prevent scrollbars */
   }
 
-  .sqs-block {
-    height: 100% !important;
-    min-height: 100vh !important; /* Ensure it fills the viewport */
-    overflow: visible !important;
-  }
-
+  /* Ensure app container stretches */
   .app-container {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Ensures it stretches properly */
-    align-items: stretch; /* Ensures children stretch fully */
-    height: 100% !important; /* Full height for the app container */
-    min-height: 100vh !important; /* Ensure at least the height of the viewport */
-    max-height: none !important;
-    background-color: rgba(255, 255, 255, 0.05) !important; /* Slightly more transparent */
+    justify-content: stretch;
+    align-items: stretch;
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Light translucency */
     backdrop-filter: blur(12px); /* Optional blur effect */
-    overflow: visible !important;
-    box-shadow: none !important;
+    overflow: visible;
     animation: fade-in-up 0.8s ease-out;
   }
 
+  /* Ensure Squarespace Fluid Engine box stretches fully */
+  .sqs-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
+    height: 100% !important;
+    min-height: 100vh !important; /* Ensure it fills the viewport */
+    overflow: visible !important;
+    background-color: transparent !important; /* Remove background color */
+    box-shadow: none !important; /* Remove shadows */
+  }
+
+  /* Style for cards and form elements */
   .card, .form-container, .header-card {
-    background-color: rgba(255, 255, 255, 0.1) !important; /* Restored and adjusted transparency */
-    backdrop-filter: blur(8px); /* Optional blur effect */
-    border: 1px solid rgba(0, 0, 0, 0.1); /* Add subtle border for distinction */
+    background-color: rgba(255, 255, 255, 0.1) !important; /* Enhanced translucency */
+    backdrop-filter: blur(8px); /* Blur for distinction */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border for styling */
     box-shadow: none !important;
     animation: fade-in-down 0.8s ease-out;
   }
 
+  /* Input, textarea, and button adjustments */
   input, textarea, button {
-    background-color: rgba(255, 255, 255, 0.05) !important; /* Adjust translucency */
+    background-color: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 8px;
     border-radius: 4px;
