@@ -16,21 +16,21 @@
   body, html {
     background-color: transparent !important; /* Ensure full transparency */
     height: 100% !important;
-    overflow-y: visible !important;
+    overflow: visible !important;
   }
 
   .app-container {
-    height: 100% !important;
+    height: 100% !important; /* Ensure it fills the fluid engine box */
     max-height: none !important;
     overflow: visible !important;
-    background-color: rgba(255, 255, 255, 0.1) !important; /* Adjust translucency */
-    backdrop-filter: blur(8px); /* Optional blur effect */
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Slightly more transparent */
+    backdrop-filter: blur(12px); /* Optional blur effect */
     box-shadow: none !important;
     animation: fade-in-up 0.8s ease-out;
   }
 
   .sqs-block {
-    height: 100% !important;
+    height: 100% !important; /* Ensure it matches the full height */
     max-height: none !important;
     overflow: visible !important;
     background-color: transparent !important;
@@ -38,9 +38,9 @@
   }
 
   .card, .form-container, .header-card {
-    background-color: rgba(255, 255, 255, 0.05) !important; /* Adjust translucency */
-    backdrop-filter: blur(6px); /* Optional blur effect */
-    border: none !important;
+    background-color: rgba(255, 255, 255, 0.1) !important; /* Restored and adjusted transparency */
+    backdrop-filter: blur(8px); /* Optional blur effect */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Add subtle border for distinction */
     box-shadow: none !important;
     animation: fade-in-down 0.8s ease-out;
   }
