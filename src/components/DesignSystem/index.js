@@ -23,12 +23,12 @@ export const Title = ({ children, className }) => (
 );
 
 // Enhanced Button with Y2K metallic styling
-export const MetallicButton = React.forwardRef(({ 
-  children, 
+export const MetallicButton = React.forwardRef(({
+  children,
   variant = 'primary',
   size = 'default',
   className,
-  ...props 
+  ...props
 }, ref) => {
   const baseStyles = "relative group overflow-hidden rounded-2xl transition-all duration-300";
   const variantStyles = {
@@ -55,7 +55,7 @@ export const MetallicButton = React.forwardRef(({
         className
       )}
       style={{
-        [y2kMetalGradient]: true,
+        background: y2kMetalGradient,
         boxShadow: `
           0 2px 4px rgba(0,0,0,0.1),
           inset 0 1px 2px rgba(255,255,255,0.9),
@@ -90,7 +90,7 @@ export const MetallicCard = ({ children, className }) => (
       className
     )}
     style={{
-      [y2kMetalGradient]: true,
+      background: y2kMetalGradient,
       boxShadow: `
         0 4px 6px rgba(0,0,0,0.1),
         inset 0 1px 2px rgba(255,255,255,0.9),
@@ -114,7 +114,7 @@ export const MetallicInput = React.forwardRef(({ className, ...props }, ref) => 
       className
     )}
     style={{
-      [y2kInsetGradient]: true,
+      background: y2kInsetGradient,
       boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1), inset 0 -1px 1px rgba(255,255,255,0.7)'
     }}
     {...props}
@@ -188,7 +188,7 @@ export const MetallicSlider = ({ value, min, max, step, onChange, className }) =
         className="absolute w-8 h-8 rounded-full cursor-pointer transform -translate-y-1/2 top-1/2 hover:scale-110 transition-transform"
         style={{
           left: `calc(${((value - min) / (max - min)) * 100}% - 16px)`,
-          [y2kMetalGradient]: true,
+          background: y2kMetalGradient,
           boxShadow: `
             0 2px 4px rgba(0,0,0,0.2),
             inset 0 1px 2px rgba(255,255,255,0.9),
@@ -211,7 +211,6 @@ export const TypewriterText = ({ children, className }) => {
   useEffect(() => {
     const newText = children?.toString() || '';
     
-    // Only restart if content actually changes
     if (textRef.current !== newText) {
       textRef.current = newText;
       indexRef.current = 0;
@@ -255,33 +254,6 @@ export const TypewriterText = ({ children, className }) => {
   );
 };
 
-// Alert component with Y2K styling
-export const MetallicAlert = ({ children, variant = 'info', className }) => {
-  const variantStyles = {
-    info: "border-cosmic/30",
-    success: "border-sage/30",
-    warning: "border-yellow-500/30",
-    error: "border-burgundy/30"
-  };
-
-  return (
-    <div 
-      className={cn(
-        "rounded-2xl p-6",
-        "border backdrop-blur-sm",
-        variantStyles[variant],
-        className
-      )}
-      style={{
-        [y2kInsetGradient]: true,
-        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.1), inset 0 -1px 1px rgba(255,255,255,0.7)'
-      }}
-    >
-      {children}
-    </div>
-  );
-};
-
 // Add keyframe animations to your globals.css
 if (typeof document !== 'undefined') {
   const styleSheet = document.createElement('style');
@@ -297,7 +269,6 @@ if (typeof document !== 'undefined') {
         transform: translateX(100%);
       }
     }
-
     @keyframes glow {
       0%, 100% {
         box-shadow: 0 0 10px rgba(255,248,206,0.3), inset 0 0 20px rgba(255,248,206,0.2);
@@ -306,11 +277,9 @@ if (typeof document !== 'undefined') {
         box-shadow: 0 0 15px rgba(255,248,206,0.4), inset 0 0 25px rgba(255,248,206,0.3);
       }
     }
-
     .animate-pulse-subtle {
       animation: pulse 3s infinite ease-in-out;
     }
-
     @keyframes pulse {
       0%, 100% {
         opacity: 1;
