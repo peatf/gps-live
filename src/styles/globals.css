@@ -16,17 +16,20 @@
     --radius: 0.5rem;
   }
 
+  /* Make the background translucent instead of beige */
   body {
-    @apply bg-stone text-earth antialiased;
+    background-color: rgba(255, 255, 255, 0.1); /* Translucent background */
+    @apply text-earth antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   html {
     scroll-behavior: smooth;
+    background-color: rgba(255, 255, 255, 0.1); /* Matches body */
   }
 }
 
-/* Translucent and blurred app container */
+/* Translucent app container */
 .app-container {
   backdrop-filter: blur(12px); /* Applies the blur */
   background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
@@ -35,6 +38,15 @@
   padding: 16px;
   margin: auto;
   max-width: 1200px;
+}
+
+/* Translucent card or form container */
+.card, .form-container {
+  background-color: rgba(255, 255, 255, 0.2); /* Translucent white */
+  backdrop-filter: blur(12px); /* Adds blur */
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 /* Existing animations */
