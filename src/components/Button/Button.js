@@ -26,14 +26,6 @@ export const Button = ({
     ghost: "bg-gradient-to-r from-silver-300/20 to-silver-500/20 text-silver-600 hover:from-silver-300/30 hover:to-silver-500/30"
   };
 
-  const glossyEffect = `
-    before:content-[''] before:absolute before:inset-0 
-    before:bg-gradient-to-b before:from-white/30 before:to-transparent 
-    before:rounded-full before:opacity-50
-    after:content-[''] after:absolute after:inset-0 
-    after:bg-gradient-to-t after:from-black/10 after:to-transparent 
-    after:rounded-full after:opacity-20
-  `;
 
   const interactionEffects = `
     hover:shadow-lg hover:-translate-y-0.5
