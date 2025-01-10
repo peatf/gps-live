@@ -13,48 +13,38 @@
     --radius: 0.5rem;
   }
 
-  /* Ensure no white background */
+  /* No background for body and html */
   body {
     @apply text-earth antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
-    background-color: transparent; /* No background color */
+    background-color: transparent; /* Fully transparent */
   }
 
   html {
     scroll-behavior: smooth;
-    background-color: transparent; /* No background color */
+    background-color: transparent; /* Fully transparent */
   }
 }
 
-/* Adjusted app container */
+/* Updated app container */
 .app-container {
-  backdrop-filter: blur(12px);
-  background-color: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px); /* Blurred background only */
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
   padding: 16px;
-  display: inline-block; /* Fits content dynamically */
-  max-width: 1200px;
-  text-align: center; /* Centers content inside */
-  margin: auto; /* Ensures the container itself is centered */
+  margin: 0 auto;
+  display: block; /* Dynamically adjust based on content */
+  width: 100%; /* Allow app to stretch fully */
+  max-width: none; /* Removes the fixed width constraint */
 }
 
-/* Translucent card and form container */
-.card, .form-container {
-  background-color: rgba(255, 255, 255, 0.2); /* Translucent white */
-  backdrop-filter: blur(8px); /* Adjusted blur for consistency */
-  border-radius: 16px;
+/* Removed white/translucent backgrounds from cards */
+.card, .form-container, .header-card {
+  background-color: transparent; /* No background */
+  backdrop-filter: none; /* No blur */
+  border-radius: 16px; /* Optional: Keep rounded corners */
   padding: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-/* Translucent header card */
-.header-card {
-  background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent */
-  backdrop-filter: blur(8px); /* Same blur as other cards */
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: none; /* Removed shadow for clean transparency */
 }
 
 /* Animations */
@@ -91,7 +81,6 @@
   }
 }
 
-/* Animation classes */
 .fade-up {
   animation: fade-in-up 0.5s ease-out;
 }
