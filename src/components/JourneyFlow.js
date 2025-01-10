@@ -1,253 +1,297 @@
-import React from 'react';
-import { cn } from '../utils/cn';
-import { Map, Heart, Activity, ArrowRight, ArrowLeft, Plus, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Map, Heart, Activity, ArrowRight, ArrowLeft } from 'lucide-react';
+import { 
+  Title, 
+  MetallicButton, 
+  MetallicCard, 
+  MetallicInput, 
+  MetallicSlider,
+  MetallicAlert,
+  TypewriterText 
+} from './DesignSystem';
 
-// Typography component with all-caps Helvetica styling
-export const Title = ({ children, className }) => (
-  <h2 
-    className={cn(
-      "font-['Helvetica Neue', Helvetica, Arial] tracking-wide uppercase",
-      "text-xl font-medium text-earth/90",
-      className
-    )}
-    style={{
-      textShadow: '0 1px 2px rgba(0,0,0,0.1)'
-    }}
-  >
-    {children}
-  </h2>
-);
+export default function EnhancedJourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
+  const [step, setStep] = useState(0);
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-// Enhanced Button with metallic gradient and translucent effects
-export const MetallicButton = React.forwardRef(({ 
-  children, 
-  variant = 'primary',
-  size = 'default',
-  className,
-  ...props 
-}, ref) => {
-  const baseStyles = "relative group overflow-hidden rounded-md transition-all duration-300";
-  const variantStyles = {
-    primary: "bg-gradient-to-br from-cosmic/90 via-cosmic/80 to-cosmic/70 text-white shadow-cosmic/20",
-    secondary: "bg-gradient-to-br from-sage/90 via-sage/80 to-sage/70 text-white shadow-sage/20",
-    outline: "bg-gradient-to-br from-stone/30 via-stone/20 to-stone/10 border border-stone/20 text-earth shadow-stone/10",
-    ghost: "hover:bg-stone/5 text-cosmic hover:text-cosmic-dark"
-  };
-  const sizeStyles = {
-    default: "px-4 py-2",
-    sm: "px-3 py-1.5 text-sm",
-    lg: "px-6 py-3 text-lg"
-  };
+  // Goal Setting Step
+  const GoalSettingStep = () => (
+    <div className="space-y-6 animate-fade-in">
+      <MetallicAlert variant="info">
+        <TypewriterText className="leading-relaxed">
+          Take a moment to reflect on your next goal in your business. What is it that you deeply 
+          desire to experience by a certain date? Please be as clear as feels natural to you, 
+          whatever 'clear goal or desire' means in this moment.
+        </TypewriterText>
+      </MetallicAlert>
 
-  return (
-    <button
-      ref={ref}
-      className={cn(
-        baseStyles,
-        variantStyles[variant],
-        sizeStyles[size],
-        "shadow-lg hover:shadow-xl",
-        "backdrop-blur-sm",
-        "transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200",
-        className
-      )}
-      {...props}
-    >
-      {/* Radial gradient overlay */}
-      <div 
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{
-          background: 'radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 70%)'
-        }}
-      />
-      {/* Content container */}
-      <div className="relative flex items-center justify-center gap-2">
-        {children}
+      <div className="space-y-3">
+        <label className="text-sm font-medium text-earth/80 uppercase tracking-wide">
+          Share your goal
+        </label>
+        <MetallicInput
+          value={journeyData.goal}
+          onChange={(e) => setJourneyData({ ...journeyData, goal: e.target.value })}
+          placeholder="Enter your goal here"
+          className="w-full"
+        />
       </div>
-    </button>
+    </div>
   );
-});
 
-// Card with chrome-like border effect
-export const MetallicCard = ({ children, className }) => (
-  <div
-    className={cn(
-      "rounded-lg backdrop-blur-md",
-      "bg-gradient-to-br from-white/5 to-transparent",
-      "shadow-lg",
-      className
-    )}
-    style={{
-      boxShadow: `
-        0 0 0 1px rgba(255,255,255,0.1),
-        0 4px 6px -1px rgba(0,0,0,0.1),
-        0 2px 4px -1px rgba(0,0,0,0.06),
-        inset 0 0 0 1px rgba(255,255,255,0.05)
-      `
-    }}
-  >
-    {children}
-  </div>
-);
+  // Timeline Selection Step
+  const TimelineStep = () => (
+    <div className="space-y-6 animate-fade-in">
+      <MetallicAlert variant="info">
+        <TypewriterText className="leading-relaxed">
+          I invite you to choose a date for your goal—not as a deadline but for the sake of honest 
+          evaluation. A goal can manifest at any time, but having a date allows it to become more 
+          real in your mind, making it better for proximity mapping.
+        </TypewriterText>
+      </MetallicAlert>
 
-// Enhanced Input with metallic styling
-export const MetallicInput = React.forwardRef(({ className, ...props }, ref) => (
-  <input
-    ref={ref}
-    className={cn(
-      "w-full px-4 py-2 rounded-md",
-      "bg-gradient-to-br from-white/10 to-transparent",
-      "border border-stone/20",
-      "backdrop-blur-sm",
-      "text-earth placeholder:text-dove/70",
-      "focus:outline-none focus:ring-2 focus:ring-cosmic/30",
-      "transition-all duration-200",
-      className
-    )}
-    style={{
-      boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)'
-    }}
-    {...props}
-  />
-));
+      <div className="space-y-3">
+        <label className="text-sm font-medium text-earth/80 uppercase tracking-wide">
+          Choose a target date
+        </label>
+        <MetallicInput
+          type="date"
+          value={journeyData.targetDate}
+          onChange={(e) => setJourneyData({ ...journeyData, targetDate: e.target.value })}
+          className="w-full"
+        />
+      </div>
 
-// Enhanced Slider with metallic styling
-export const MetallicSlider = ({ value, min, max, step, onChange, className }) => (
-  <div className="relative w-full h-6 flex items-center">
-    <div 
-      className="absolute h-2 w-full rounded-full overflow-hidden"
-      style={{
-        background: 'linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
-        boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.1)'
-      }}
-    >
-      <div
-        className="absolute h-full bg-gradient-to-r from-cosmic/80 to-cosmic/60"
-        style={{ width: `${((value - min) / (max - min)) * 100}%` }}
+      {journeyData.targetDate && (
+        <div className="text-cosmic space-y-1">
+          <p>This date is {journeyData.daysUntilTarget} days away.</p>
+          <p>The halfway point would be in {Math.ceil(journeyData.daysUntilTarget / 2)} days.</p>
+        </div>
+      )}
+    </div>
+  );
+
+  const steps = [
+    <GoalSettingStep key="goal" />,
+    <TimelineStep key="timeline" />,
+    <CurrentPositionStep key="position" />,
+    <BodyAwarenessStep key="awareness" />,
+    <AlignmentCheckStep key="alignment" />,
+    // Current Position Step
+const CurrentPositionStep = () => (
+  <div className="space-y-6 animate-fade-in">
+    <MetallicAlert variant="info">
+      <TypewriterText className="leading-relaxed">
+        If the reality you're experiencing your goal/desire in is Z, what letter are you located 
+        at in relationship to that?
+      </TypewriterText>
+    </MetallicAlert>
+
+    <div className="space-y-4">
+      <div className="flex justify-between px-1">
+        {alphabet.map((letter, index) => (
+          <span
+            key={letter}
+            className={`text-sm transition-colors ${
+              index === journeyData.currentPosition 
+                ? "text-cosmic font-medium scale-110 transform transition-transform" 
+                : "text-earth/50"
+            }`}
+          >
+            {letter}
+          </span>
+        ))}
+      </div>
+      <MetallicSlider
+        value={journeyData.currentPosition}
+        min={0}
+        max={25}
+        step={1}
+        onChange={(e) => setJourneyData({ 
+          ...journeyData, 
+          currentPosition: Number(e.target.value) 
+        })}
       />
     </div>
-    <input
-      type="range"
-      min={min}
-      max={max}
-      step={step}
-      value={value}
-      onChange={onChange}
-      className={cn(
-        "absolute w-full h-2 opacity-0 cursor-pointer",
-        className
-      )}
-    />
-    <div 
-      className="absolute w-4 h-4 rounded-full bg-white shadow-lg transform -translate-y-1/2 top-1/2"
-      style={{ 
-        left: `calc(${((value - min) / (max - min)) * 100}% - 8px)`,
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        border: '2px solid rgba(255,255,255,0.9)'
-      }}
-    />
   </div>
 );
 
-// Typing animation container for AI responses
-export const TypewriterText = ({ children, className }) => {
-  const [displayText, setDisplayText] = React.useState('');
-  const [currentIndex, setCurrentIndex] = React.useState(0);
-  const text = React.useMemo(() => children?.toString() || '', [children]);
+// Body Awareness Step
+const BodyAwarenessStep = () => {
+  const sensationCategories = {
+    physical: ['Tension', 'Relaxation', 'Warmth', 'Coolness', 'Tingling', 'Pressure'],
+    emotional: ['Lightness', 'Heaviness', 'Expansion', 'Contraction', 'Flow', 'Stillness'],
+    energetic: ['Vibration', 'Pulsing', 'Radiating', 'Centering', 'Opening', 'Grounding']
+  };
 
-  React.useEffect(() => {
-    if (currentIndex < text.length) {
-      const timeout = setTimeout(() => {
-        setDisplayText(prev => prev + text[currentIndex]);
-        setCurrentIndex(prev => prev + 1);
-      }, 30);
-
-      return () => clearTimeout(timeout);
-    }
-  }, [currentIndex, text]);
-
-  return (
-    <div className={cn(
-      "font-mono text-earth/90",
-      "border-l-2 border-cosmic/30 pl-4",
-      className
-    )}>
-      {displayText}
-      {currentIndex < text.length && (
-        <span className="animate-pulse text-cosmic">|</span>
-      )}
-    </div>
-  );
-};
-
-// Alert component with metallic styling
-export const MetallicAlert = ({ children, variant = 'info', className }) => {
-  const variantStyles = {
-    info: "from-cosmic/20 to-cosmic/10 border-cosmic/30",
-    success: "from-sage/20 to-sage/10 border-sage/30",
-    warning: "from-yellow-500/20 to-yellow-500/10 border-yellow-500/30",
-    error: "from-burgundy/20 to-burgundy/10 border-burgundy/30"
+  const toggleSensation = (sensation) => {
+    setJourneyData(prev => ({
+      ...prev,
+      selectedSensations: prev.selectedSensations?.includes(sensation)
+        ? prev.selectedSensations.filter(s => s !== sensation)
+        : [...(prev.selectedSensations || []), sensation]
+    }));
   };
 
   return (
-    <div className={cn(
-      "rounded-lg p-4",
-      "bg-gradient-to-br",
-      "border backdrop-blur-sm",
-      variantStyles[variant],
-      className
-    )}>
-      {children}
-    </div>
-  );
-};
+    <div className="space-y-6 animate-fade-in">
+      <MetallicAlert variant="info">
+        <TypewriterText className="leading-relaxed">
+          Notice in your body: When you look at this journey from {alphabet[journeyData.currentPosition]} to Z, 
+          what do you feel? Choose the sensations that describe what you're feeling best.
+        </TypewriterText>
+      </MetallicAlert>
 
-// Example usage demonstration
-export default function DesignSystemDemo() {
-  const [sliderValue, setSliderValue] = React.useState(50);
-  
-  return (
-    <div className="space-y-8 p-6">
-      <MetallicCard className="p-6">
-        <Title>Enhanced Design System</Title>
-        
-        <div className="mt-6 space-y-6">
-          <MetallicAlert variant="info">
-            <TypewriterText>
-              This is an example of the typewriter effect with metallic styling...
-            </TypewriterText>
-          </MetallicAlert>
-          
-          <div className="space-y-4">
-            <MetallicInput 
-              placeholder="Enter your goal here..."
-            />
-            
-            <div className="space-y-2">
-              <label className="text-sm text-earth/70">Adjust Value</label>
-              <MetallicSlider
-                value={sliderValue}
-                min={0}
-                max={100}
-                step={1}
-                onChange={(e) => setSliderValue(Number(e.target.value))}
-              />
-            </div>
-          </div>
-          
-          <div className="flex gap-4">
-            <MetallicButton variant="primary">
-              Primary Action
-            </MetallicButton>
-            <MetallicButton variant="secondary">
-              Secondary Action
-            </MetallicButton>
-            <MetallicButton variant="outline">
-              Outline Button
-            </MetallicButton>
+      {journeyData.selectedSensations?.length > 0 && (
+        <div className="flex flex-wrap gap-2 p-4 rounded-lg bg-gradient-to-br from-cosmic/10 to-transparent backdrop-blur-sm">
+          {journeyData.selectedSensations.map((sensation) => (
+            <span
+              key={sensation}
+              className="flex items-center gap-1 px-3 py-1 rounded-full text-sm"
+              style={{
+                background: 'linear-gradient(to right, rgba(78,84,200,0.1), rgba(78,84,200,0.05))',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
+              }}
+            >
+              {sensation}
+              <button
+                onClick={() => toggleSensation(sensation)}
+                className="text-cosmic/70 hover:text-cosmic transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {Object.entries(sensationCategories).map(([category, sensations]) => (
+        <div key={category} className="space-y-3">
+          <h3 className="text-sm font-medium text-earth/80 uppercase tracking-wide capitalize">
+            {category} Sensations
+          </h3>
+          <div className="grid grid-cols-2 gap-2">
+            {sensations.map((sensation) => (
+              <MetallicButton
+                key={sensation}
+                variant={journeyData.selectedSensations?.includes(sensation) ? 'primary' : 'outline'}
+                size="sm"
+                className="justify-start transition-all duration-200"
+                onClick={() => toggleSensation(sensation)}
+              >
+                {journeyData.selectedSensations?.includes(sensation) ? (
+                  <X className="w-4 h-4 mr-2" />
+                ) : (
+                  <Plus className="w-4 h-4 mr-2" />
+                )}
+                {sensation}
+              </MetallicButton>
+            ))}
           </div>
         </div>
-      </MetallicCard>
+      ))}
+    </div>
+  );
+};
+
+// Alignment Check Step
+const AlignmentCheckStep = () => {
+  const alignmentStatements = {
+    safety: "I feel safe and open to receiving this opportunity or experience",
+    confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
+    anticipation: "I consistently expect and anticipate that I will receive what I work towards and desire",
+    openness: "I can maintain my focus and open connection to my desired result even if it takes time",
+    deserving: "I feel deserving of this experience",
+    belief: "I believe this is possible for me",
+    appreciation: "I feel a sense of appreciation for this area in my business as it is now"
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <MetallicAlert variant="info">
+        <TypewriterText className="leading-relaxed">
+          How true do these statements feel in your body right now?
+        </TypewriterText>
+      </MetallicAlert>
+
+      <div className="space-y-6">
+        {Object.entries(alignmentStatements).map(([key, statement]) => (
+          <div key={key} className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-sm text-earth/80">{statement}</span>
+              <span className="text-sm text-cosmic">{journeyData.likertScores[key]}/5</span>
+            </div>
+            <MetallicSlider
+              value={journeyData.likertScores[key]}
+              min={1}
+              max={5}
+              step={1}
+              onChange={(e) =>
+                setJourneyData({
+                  ...journeyData,
+                  likertScores: {
+                    ...journeyData.likertScores,
+                    [key]: Number(e.target.value),
+                  },
+                })
+              }
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
+  ];
+
+  return (
+    <MetallicCard className="w-full max-w-4xl mx-auto">
+      <div className="border-b border-stone/10 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {step <= 2 && <Map className="w-5 h-5 text-cosmic" />}
+            {step === 3 && <Heart className="w-5 h-5 text-cosmic" />}
+            {step === 4 && <Activity className="w-5 h-5 text-cosmic" />}
+            <Title>
+              {step === 0
+                ? 'Set Your Goal'
+                : step === 1
+                ? 'Choose Your Timeline'
+                : step === 2
+                ? 'Map Your Journey'
+                : step === 3
+                ? 'Body Awareness Check'
+                : 'Alignment Check'}
+            </Title>
+          </div>
+          <span className="text-sm text-dove">
+            {step + 1} of {steps.length}
+          </span>
+        </div>
+      </div>
+
+      <div className="p-6 space-y-6">
+        {steps[step]}
+
+        <div className="flex justify-between pt-4 border-t border-stone/10">
+          <MetallicButton
+            variant="outline"
+            onClick={() => step === 0 ? onBack() : setStep((prev) => prev - 1)}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </MetallicButton>
+          
+          <MetallicButton
+            variant="primary"
+            onClick={() => {
+              if (step === steps.length - 1) {
+                onComplete();
+              } else {
+                if (step === 0 && !journeyData.goal.trim()) {
+                  alert('Please enter your goal before continuing.');
+                  return;
+                }
+                setStep((prev) => prev + 1);
+              }
