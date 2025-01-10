@@ -1,3 +1,5 @@
+// src/components/JourneyFlow.js
+
 import React, { useState } from 'react';
 import { Map, Heart, Activity, ArrowRight, ArrowLeft, Plus, X } from 'lucide-react';
 import { 
@@ -8,9 +10,9 @@ import {
   MetallicSlider,
   MetallicAlert,
   TypewriterText 
-} from '../components/DesignSystem';
+} from './DesignSystem';
 
-export default function EnhancedJourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
+export default function JourneyFlow({ journeyData, setJourneyData, onComplete, onBack }) {
   const [step, setStep] = useState(0);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
@@ -63,10 +65,12 @@ export default function EnhancedJourneyFlow({ journeyData, setJourneyData, onCom
       </div>
 
       {journeyData.targetDate && (
-        <div className="text-cosmic space-y-1">
-          <p>This date is {journeyData.daysUntilTarget} days away.</p>
-          <p>The halfway point would be in {Math.ceil(journeyData.daysUntilTarget / 2)} days.</p>
-        </div>
+        <MetallicAlert variant="success" className="mt-4">
+          <div className="text-cosmic space-y-1">
+            <p>This date is {journeyData.daysUntilTarget} days away.</p>
+            <p>The halfway point would be in {Math.ceil(journeyData.daysUntilTarget / 2)} days.</p>
+          </div>
+        </MetallicAlert>
       )}
     </div>
   );
@@ -137,24 +141,18 @@ export default function EnhancedJourneyFlow({ journeyData, setJourneyData, onCom
         </MetallicAlert>
 
         {journeyData.selectedSensations?.length > 0 && (
-          <div className="flex flex-wrap gap-2 p-4 rounded-lg bg-gradient-to-br from-cosmic/10 to-transparent backdrop-blur-sm">
+          <div className="flex flex-wrap gap-2 p-4">
             {journeyData.selectedSensations.map((sensation) => (
-              <span
+              <MetallicButton
                 key={sensation}
-                className="flex items-center gap-1 px-3 py-1 rounded-full text-sm"
-                style={{
-                  background: 'linear-gradient(to right, rgba(78,84,200,0.1), rgba(78,84,200,0.05))',
-                  boxShadow: '0 1px 2px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
-                }}
+                variant="primary"
+                size="sm"
+                className="flex items-center gap-1"
+                onClick={() => toggleSensation(sensation)}
               >
                 {sensation}
-                <button
-                  onClick={() => toggleSensation(sensation)}
-                  className="text-cosmic/70 hover:text-cosmic transition-colors"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
+                <X className="w-3 h-3" />
+              </MetallicButton>
             ))}
           </div>
         )}
@@ -299,6 +297,7 @@ export default function EnhancedJourneyFlow({ journeyData, setJourneyData, onCom
             }}
           >
             {step === steps.length - 1 ? 'Continue to Beliefs' : 'Continue'}
+            <ArrowRight className="w-4 h-4 ml-2" />
           </MetallicButton>
         </div>
       </div>
