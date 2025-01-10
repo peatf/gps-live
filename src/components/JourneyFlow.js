@@ -60,13 +60,13 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     <div key="goal-setting" className="space-y-6 fade-in">
       <Alert className="bg-sage/5 border-sage/20">
         <AlertDescription className="text-earth leading-relaxed">
-          Take a moment to reflect on your next goal in your business. What is it that you deeply 
-          desire to experience by a certain date? Please be as clear as feels natural to you, 
-          whatever 'clear goal or desire' means in this moment.
-        </AlertDescription>
+  Pause, take a breath, and consider: What is one goal or experience you’d like to bring 
+  into reality in your business? There’s no need for perfect clarity here, simply note 
+  what feels most important or exciting to you right now.
+</AlertDescription>
       </Alert>
       <div className="space-y-3">
-        <label className="text-sm font-medium text-earth">Share your goal</label>
+        <label className="text-sm font-medium text-earth">Express your desired experience:</label>
         <Input
           type="text"
           value={goal}
@@ -81,13 +81,13 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     <div key="date" className="space-y-6 fade-in">
       <Alert className="bg-cosmic/5 border-cosmic/20">
         <AlertDescription className="text-earth leading-relaxed">
-          I invite you to choose a date for your goal—not as a deadline but for the sake of honest 
-          evaluation. A goal can manifest at any time, but having a date allows it to become more 
-          real in your mind, making it better for proximity mapping.
-        </AlertDescription>
+  I invite you to choose a date for your goal, not as a deadline but for the sake of honest 
+  evaluation and reflection. A goal can manifest at any time, but having a date allows it 
+  to become more real in your mind.
+</AlertDescription>
       </Alert>
       <div className="space-y-3">
-        <label className="text-sm font-medium text-earth">Choose a target date</label>
+        <label className="text-sm font-medium text-earth">Choose a date you’d like to experience this by:</label>
         <Input
           type="date"
           value={targetDate}
@@ -108,9 +108,10 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     <div key="current" className="space-y-6 fade-in">
       <Alert className="bg-sage/5 border-sage/20">
         <AlertDescription className="text-earth leading-relaxed">
-          If the reality you're experiencing your goal/desire in is Z, what letter are you located 
-          at in relationship to that?
-        </AlertDescription>
+  Take a second to close your eyes and imagine your goal or desire as point Z on a map of 
+  your reality. If you're tracing your journey to Z, what letter would you place yourself 
+  at right now?
+</AlertDescription>
       </Alert>
       <div className="space-y-4">
         <div className="flex justify-between text-sm text-dove">
@@ -142,9 +143,14 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     <div key="somatic" className="space-y-6 fade-in">
       <Alert className="bg-cosmic/5 border-cosmic/20">
         <AlertDescription className="text-earth leading-relaxed">
-          Notice in your body: When you look at this journey from {alphabet[currentPosition]} to Z, 
-          what do you feel? Choose the sensations that describe what you're feeling best.
-        </AlertDescription>
+  Take a moment to tune into your body. Check sensationally how you relate to this journey 
+  from point A to Z. 
+  <ol className="list-decimal ml-6">
+    <li>Imagine your goal as a place you are moving toward.</li>
+    <li>Notice any physical sensations or emotions that arise as you think about your progress.</li>
+    <li>Select from the panel below the sensations that feel most relevant to you right now.</li>
+  </ol>
+</AlertDescription>
       </Alert>
 
       {selectedSensations?.length > 0 && (
@@ -194,8 +200,11 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
     <div key="alignment" className="space-y-6 fade-in">
       <Alert className="bg-cosmic/5 border-cosmic/20">
         <AlertDescription className="text-earth leading-relaxed">
-          How true do these statements feel in your body right now?
-        </AlertDescription>
+  Here you’ll take a moment to explore your internal agreement in these seven important areas. 
+  It’s encouraged that you’re open with yourself around this and free from self-judgement. 
+  Simply notice what resonates in your body or mind as you read each one. Move the scale to 
+  reflect how true each statement feels.
+</AlertDescription>
       </Alert>
       <div className="space-y-6">
         {Object.entries({
@@ -237,11 +246,23 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
   <div key="river-intro" className="space-y-6 fade-in">
     <Alert className="bg-sage/5 border-sage/20">
       <AlertDescription className="text-earth leading-relaxed">
-        Imagine crossing a river, hopping from stone to stone. Each stone represents steps 
-        toward your goal—some are within reach, others require effort, and some demand bold 
-        leaps. This practice invites you to tune into three things:
-      </AlertDescription>
+  The next step is Proximity Mapping. Awareness of proximity matters—imagine crossing a river, 
+  hopping from stone to stone. Each stone represents steps toward your goal, some are within 
+  reach, others require effort, and some demand bold leaps. This practice invites you to tune 
+  into three things:
+  <ul className="list-disc ml-6">
+    <li>What's within your grasp? Solid, reachable, and ready for action.</li>
+    <li>What can you reach with a stretch? These steps push you further.</li>
+    <li>When are you ready to leap? Bold moves that demand trust, risk, and readiness.</li>
+  </ul>
+</AlertDescription>
     </Alert>
+    <Alert className="bg-sage/5 border-sage/20 fade-in">
+  <AlertDescription className="text-earth leading-relaxed">
+    This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
+    Trust your process.
+  </AlertDescription>
+</Alert>
 
     <div className="space-y-4">
       <div className="space-y-2">
