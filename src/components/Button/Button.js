@@ -1,4 +1,3 @@
-// src/components/Button/Button.js
 import React from "react";
 import { cn } from "../../utils/cn";
 
@@ -12,35 +11,24 @@ export const Button = ({
   ...props
 }) => {
   const baseStyles =
-    "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300 overflow-hidden";
+    "relative inline-flex items-center justify-center rounded-full text-sm font-medium overflow-hidden transition-all duration-300";
 
   const sizeStyles = {
-    default: "h-12 px-6",
+    default: "h-12 px-6", // Default button size
     sm: "h-10 px-4 text-xs",
     lg: "h-14 px-8 text-lg",
   };
 
   const variantStyles = {
-    primary: "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-105",
-    outline: "bg-gradient-to-r from-silver-300/30 to-silver-500/30 text-silver-600 hover:from-silver-300/40 hover:to-silver-500/40",
-    ghost: "bg-gradient-to-r from-silver-300/20 to-silver-500/20 text-silver-600 hover:from-silver-300/30 hover:to-silver-500/30"
+    primary: "bg-white/10 backdrop-blur-sm text-earth hover:text-cosmic hover:bg-white/20 border border-white/20 hover:border-white/40 shadow-md hover:shadow-lg",
+    outline: "border border-white/20 text-earth hover:text-cosmic hover:bg-white/10 hover:border-white/30",
+    ghost: "text-earth hover:bg-white/10",
   };
- 
-  const glossyEffect =
-    "before:content-[''] before:absolute before:inset-0 before:rounded-full " +
-    "before:bg-gradient-to-t before:from-white/40 before:to-transparent " +
-    "before:opacity-50 before:blur-sm";
 
   const interactionEffects = `
-    hover:shadow-lg hover:-translate-y-0.5
-    active:shadow-inner active:translate-y-0.5
-    disabled:opacity-50 disabled:pointer-events-none
-    transition-all duration-200
+    hover:-translate-y-0.5 active:translate-y-0.5
+    disabled:pointer-events-none disabled:opacity-50
   `;
-
-  const bubbleShadow = variant === 'primary' 
-    ? "shadow-[0_4px_14px_0_rgba(62,84,184,0.2)]"
-    : "shadow-[0_4px_14px_0_rgba(0,0,0,0.1)]";
 
   return (
     <button
@@ -50,12 +38,8 @@ export const Button = ({
         baseStyles,
         sizeStyles[size],
         variantStyles[variant],
-        glossyEffect,
         interactionEffects,
-        bubbleShadow,
-        "disabled:opacity-50 disabled:cursor-not-allowed",
         "whitespace-normal break-words min-h-[48px]",
-        "backdrop-blur-sm",
         className
       )}
       {...props}
