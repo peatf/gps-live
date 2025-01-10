@@ -13,23 +13,56 @@
     --radius: 0.5rem;
   }
 
+  /* Ensure full transparency for the background */
   body, html {
-    background-color: transparent !important; /* Ensure full transparency */
+    background-color: transparent !important;
+    height: 100% !important; /* Allow full height */
+    overflow-y: visible !important; /* Prevent hidden vertical scrollbars */
   }
 
-  .app-container, .card, .form-container, .header-card, .sqs-block, .content {
-    background-color: transparent !important; /* Remove white backgrounds */
-    backdrop-filter: blur(12px); /* Optional blur */
-    box-shadow: none; /* Remove shadows */
+  /* App container adjustments */
+  .app-container {
+    height: auto !important; /* Adjust height to content */
+    max-height: none !important; /* Remove any height constraints */
+    overflow: visible !important; /* Ensure no content is hidden */
+    background-color: transparent !important; /* Remove background */
+    backdrop-filter: blur(12px); /* Optional blur effect */
+    box-shadow: none !important; /* Remove shadow */
     animation: fade-in-up 0.8s ease-out; /* Add fade-in animation */
   }
 
+  /* Parent container (Squarespace Fluid Engine Block) */
+  .sqs-block {
+    height: auto !important; /* Allow it to grow dynamically */
+    max-height: none !important; /* Remove height limits */
+    overflow: visible !important; /* Prevent content cut-off */
+    background-color: transparent !important; /* Remove background color */
+    box-shadow: none !important; /* Remove shadow */
+  }
+
+  /* Card and form elements */
+  .card, .form-container, .header-card {
+    background-color: transparent !important; /* Remove white backgrounds */
+    backdrop-filter: blur(8px); /* Optional blur for cards */
+    border: none !important; /* Remove borders */
+    box-shadow: none !important; /* Remove shadows */
+    animation: fade-in-down 0.8s ease-out; /* Add fade-in-down animation */
+  }
+
+  /* Input, textarea, and button adjustments */
   input, textarea, button {
-    background-color: transparent !important;
+    background-color: transparent !important; /* Remove backgrounds */
     border: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border for usability */
     padding: 8px;
-    border-radius: 4px;
+    border-radius: 4px; /* Slightly rounded corners */
   }
+
+  /* Debugging: Uncomment these to visualize boundaries if needed */
+  /* 
+  .app-container, .sqs-block, body, html {
+    border: 2px solid red !important; /* Debugging */
+  }
+  */
 
   /* Animation classes */
   .fade-up {
@@ -42,5 +75,39 @@
 
   .scale-in {
     animation: scale-in 0.5s ease-out;
+  }
+}
+
+/* Keyframes for animations */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
