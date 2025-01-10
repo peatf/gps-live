@@ -165,18 +165,18 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
         {/* Navigation */}
         <div className="flex justify-between pt-6 border-t border-stone/10">
   <Button 
-  variant="ghost"
-  onClick={someFunction}
-  className="mt-2"
->
-    <ArrowLeft className="w-4 h-4 mr-2" /> Back
-  </Button>
-  <Button 
-    variant="primary"
-    onClick={onContinue}
-  >
-    Continue to Alignment <ArrowRight className="w-4 h-4 ml-2" />
-  </Button>
+            variant="outline" 
+            onClick={onBack}
+            className="text-earth hover:text-cosmic transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back
+          </Button>
+          <Button 
+            onClick={onContinue}
+            className="bg-cosmic text-white hover:bg-cosmic-light px-6 py-3 rounded-lg"
+          >
+            Continue to Alignment <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
 </div>
       </CardContent>
     </Card>
