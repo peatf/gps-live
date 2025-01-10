@@ -2,11 +2,16 @@ import React from "react";
 import { cn } from "../../utils/cn";
 
 export const Card = ({ children, className }) => (
-  <div className={cn(
-    "rounded-lg border border-stone/20 bg-cloud/80 backdrop-blur-sm",
-    "shadow-sm transition-all duration-300 hover:shadow-md",
-    className
-  )}>
+  <div
+    className={cn(
+      "rounded-lg border border-stone/20 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md",
+      className
+    )}
+    style={{
+      backgroundColor: "rgba(255, 255, 255, 0.1)", // Adjust translucency
+      backdropFilter: "blur(8px)", // Add blur effect
+    }}
+  >
     {children}
   </div>
 );
@@ -28,3 +33,4 @@ export const CardContent = ({ children, className }) => (
     {children}
   </div>
 );
+
