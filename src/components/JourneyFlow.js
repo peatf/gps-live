@@ -1,4 +1,5 @@
 import DiagnosticFlow from './DiagnosticFlow';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
