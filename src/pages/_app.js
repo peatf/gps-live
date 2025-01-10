@@ -1,6 +1,6 @@
 import '../styles/globals.css';
-import ResponsiveContainer from '../components/ResponsiveContainer';
 import { useEffect } from 'react';
+import ResponsiveContainer from '../components/ResponsiveContainer';
 import { setupIframeResizing } from '../utils/iframeUtils';
 
 function MyApp({ Component, pageProps }) {
@@ -10,7 +10,7 @@ function MyApp({ Component, pageProps }) {
   }, []);
 
   return (
-    <div className="app-container">
+    <div className="app-container fade-up">
       <ResponsiveContainer>
         <Component {...pageProps} />
       </ResponsiveContainer>
