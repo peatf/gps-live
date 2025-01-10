@@ -20,25 +20,21 @@ export const Button = ({
   };
 
   const variantStyles = {
-  // Navigation buttons (Progress buttons)
-  primary: `
-    bg-gradient-to-r from-blue-500/60 to-blue-700/60 text-white
-    hover:from-blue-500/80 hover:to-blue-700/80
-    border border-blue-500/40 hover:border-blue-500
-    shadow-md hover:shadow-lg
-  `,
-  // Back buttons and others with a simpler outline style
-  outline: `
-    border border-white/30 text-earth
-    hover:border-white/50 hover:bg-white/10
-  `,
-  // Non-navigation buttons (e.g., toggles for sensations)
-  ghost: `
-    bg-transparent text-earth border border-white/30
-    hover:bg-gray-100 hover:border-gray-300
-    shadow-sm hover:shadow-md
-  `,
-};
+    primary: `
+      bg-gradient-to-r from-blue-500/60 to-blue-700/60 text-white
+      hover:from-blue-500/80 hover:to-blue-700/80
+      border border-blue-500/40 hover:border-blue-500
+      shadow-md hover:shadow-lg
+    `,
+    outline: `
+      border border-white/30 text-earth
+      hover:border-white/50 hover:bg-white/10
+    `,
+    ghost: `
+      text-earth border border-white/20
+      hover:bg-white/10 hover:border-white/30
+    `,
+  };
 
   const interactionEffects = `
     hover:-translate-y-0.5 active:translate-y-0.5
