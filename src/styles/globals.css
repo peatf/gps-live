@@ -4,7 +4,7 @@
 
 :root {
   --text-color: #2F2E2C;
-  --bg-transparent: rgba(248, 247, 245, 0.01);
+  --bg-transparent: rgba(248, 247, 245, 0.005);
   --blur-amount: 8px;
 }
 
