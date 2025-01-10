@@ -4,21 +4,22 @@
 
 /* Root variables for reusable styles */
 :root {
+  --glass-bg: rgba(255, 255, 255, 0.2); /* Translucent background */
+  --glass-border: rgba(255, 255, 255, 0.3); /* Slightly visible border */
+  --blur-amount: 12px; /* Stronger blur for clarity */
+  --shadow-color: rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
   --metallic-gradient: linear-gradient(145deg, #d1d1d1, #f2f2f2, #bfbfbf);
   --bubble-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), inset 0 4px 8px rgba(255, 255, 255, 0.15);
-  --glass-bg: rgba(255, 255, 255, 0.1); /* Glass background effect */
-  --glass-border: rgba(255, 255, 255, 0.2); /* Subtle border for glass elements */
-  --blur-amount: 8px; /* Adjustable blur strength for glass effects */
 }
 
-/* Glass Effect */
+/* Restored glass effect */
 .glass-effect {
   background: var(--glass-bg);
   backdrop-filter: blur(var(--blur-amount));
-  -webkit-backdrop-filter: blur(var(--blur-amount));
+  -webkit-backdrop-filter: blur(var(--blur-amount)); /* For Safari */
   border: 1px solid var(--glass-border);
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px var(--shadow-color); /* Soft shadow */
 }
 
 /* Bubble Styling */
@@ -131,11 +132,23 @@
   -webkit-backdrop-filter: blur(var(--blur-amount));
   border: 1px solid var(--glass-border);
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px var(--shadow-color);
   padding: 1rem;
 }
 
-/* Scrollbar Styling */
+/* Application Container */
+.app-container {
+  min-height: 100vh;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-amount));
+  -webkit-backdrop-filter: blur(var(--blur-amount));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Scrollable Styling */
 .scrollable {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
@@ -149,12 +162,4 @@
 .scrollable::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
-}
-
-/* Application Container */
-.app-container {
-  min-height: 100vh;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--blur-amount));
-  -webkit-backdrop-filter: blur(var(--blur-amount));
 }
