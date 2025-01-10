@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Map, Heart, Activity, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Map, Heart, Activity, ArrowRight, ArrowLeft, Plus, X } from 'lucide-react';
 import { 
   Title, 
   MetallicButton, 
@@ -71,177 +71,178 @@ export default function EnhancedJourneyFlow({ journeyData, setJourneyData, onCom
     </div>
   );
 
+  // Current Position Step
+  const CurrentPositionStep = () => (
+    <div className="space-y-6 animate-fade-in">
+      <MetallicAlert variant="info">
+        <TypewriterText className="leading-relaxed">
+          If the reality you're experiencing your goal/desire in is Z, what letter are you located 
+          at in relationship to that?
+        </TypewriterText>
+      </MetallicAlert>
+
+      <div className="space-y-4">
+        <div className="flex justify-between px-1">
+          {alphabet.map((letter, index) => (
+            <span
+              key={letter}
+              className={`text-sm transition-colors ${
+                index === journeyData.currentPosition 
+                  ? "text-cosmic font-medium scale-110 transform transition-transform" 
+                  : "text-earth/50"
+              }`}
+            >
+              {letter}
+            </span>
+          ))}
+        </div>
+        <MetallicSlider
+          value={journeyData.currentPosition}
+          min={0}
+          max={25}
+          step={1}
+          onChange={(e) => setJourneyData({ 
+            ...journeyData, 
+            currentPosition: Number(e.target.value) 
+          })}
+        />
+      </div>
+    </div>
+  );
+
+  // Body Awareness Step
+  const BodyAwarenessStep = () => {
+    const sensationCategories = {
+      physical: ['Tension', 'Relaxation', 'Warmth', 'Coolness', 'Tingling', 'Pressure'],
+      emotional: ['Lightness', 'Heaviness', 'Expansion', 'Contraction', 'Flow', 'Stillness'],
+      energetic: ['Vibration', 'Pulsing', 'Radiating', 'Centering', 'Opening', 'Grounding']
+    };
+
+    const toggleSensation = (sensation) => {
+      setJourneyData(prev => ({
+        ...prev,
+        selectedSensations: prev.selectedSensations?.includes(sensation)
+          ? prev.selectedSensations.filter(s => s !== sensation)
+          : [...(prev.selectedSensations || []), sensation]
+      }));
+    };
+
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <MetallicAlert variant="info">
+          <TypewriterText className="leading-relaxed">
+            Notice in your body: When you look at this journey from {alphabet[journeyData.currentPosition]} to Z, 
+            what do you feel? Choose the sensations that describe what you're feeling best.
+          </TypewriterText>
+        </MetallicAlert>
+
+        {journeyData.selectedSensations?.length > 0 && (
+          <div className="flex flex-wrap gap-2 p-4 rounded-lg bg-gradient-to-br from-cosmic/10 to-transparent backdrop-blur-sm">
+            {journeyData.selectedSensations.map((sensation) => (
+              <span
+                key={sensation}
+                className="flex items-center gap-1 px-3 py-1 rounded-full text-sm"
+                style={{
+                  background: 'linear-gradient(to right, rgba(78,84,200,0.1), rgba(78,84,200,0.05))',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
+                }}
+              >
+                {sensation}
+                <button
+                  onClick={() => toggleSensation(sensation)}
+                  className="text-cosmic/70 hover:text-cosmic transition-colors"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {Object.entries(sensationCategories).map(([category, sensations]) => (
+          <div key={category} className="space-y-3">
+            <h3 className="text-sm font-medium text-earth/80 uppercase tracking-wide capitalize">
+              {category} Sensations
+            </h3>
+            <div className="grid grid-cols-2 gap-2">
+              {sensations.map((sensation) => (
+                <MetallicButton
+                  key={sensation}
+                  variant={journeyData.selectedSensations?.includes(sensation) ? 'primary' : 'outline'}
+                  size="sm"
+                  className="justify-start transition-all duration-200"
+                  onClick={() => toggleSensation(sensation)}
+                >
+                  {journeyData.selectedSensations?.includes(sensation) ? (
+                    <X className="w-4 h-4 mr-2" />
+                  ) : (
+                    <Plus className="w-4 h-4 mr-2" />
+                  )}
+                  {sensation}
+                </MetallicButton>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Alignment Check Step
+  const AlignmentCheckStep = () => {
+    const alignmentStatements = {
+      safety: "I feel safe and open to receiving this opportunity or experience",
+      confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
+      anticipation: "I consistently expect and anticipate that I will receive what I work towards and desire",
+      openness: "I can maintain my focus and open connection to my desired result even if it takes time",
+      deserving: "I feel deserving of this experience",
+      belief: "I believe this is possible for me",
+      appreciation: "I feel a sense of appreciation for this area in my business as it is now"
+    };
+
+    return (
+      <div className="space-y-6 animate-fade-in">
+        <MetallicAlert variant="info">
+          <TypewriterText className="leading-relaxed">
+            How true do these statements feel in your body right now?
+          </TypewriterText>
+        </MetallicAlert>
+
+        <div className="space-y-6">
+          {Object.entries(alignmentStatements).map(([key, statement]) => (
+            <div key={key} className="space-y-2">
+              <div className="flex justify-between">
+                <span className="text-sm text-earth/80">{statement}</span>
+                <span className="text-sm text-cosmic">{journeyData.likertScores[key]}/5</span>
+              </div>
+              <MetallicSlider
+                value={journeyData.likertScores[key]}
+                min={1}
+                max={5}
+                step={1}
+                onChange={(e) =>
+                  setJourneyData({
+                    ...journeyData,
+                    likertScores: {
+                      ...journeyData.likertScores,
+                      [key]: Number(e.target.value),
+                    },
+                  })
+                }
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   const steps = [
     <GoalSettingStep key="goal" />,
     <TimelineStep key="timeline" />,
     <CurrentPositionStep key="position" />,
     <BodyAwarenessStep key="awareness" />,
-    <AlignmentCheckStep key="alignment" />,
-    // Current Position Step
-const CurrentPositionStep = () => (
-  <div className="space-y-6 animate-fade-in">
-    <MetallicAlert variant="info">
-      <TypewriterText className="leading-relaxed">
-        If the reality you're experiencing your goal/desire in is Z, what letter are you located 
-        at in relationship to that?
-      </TypewriterText>
-    </MetallicAlert>
-
-    <div className="space-y-4">
-      <div className="flex justify-between px-1">
-        {alphabet.map((letter, index) => (
-          <span
-            key={letter}
-            className={`text-sm transition-colors ${
-              index === journeyData.currentPosition 
-                ? "text-cosmic font-medium scale-110 transform transition-transform" 
-                : "text-earth/50"
-            }`}
-          >
-            {letter}
-          </span>
-        ))}
-      </div>
-      <MetallicSlider
-        value={journeyData.currentPosition}
-        min={0}
-        max={25}
-        step={1}
-        onChange={(e) => setJourneyData({ 
-          ...journeyData, 
-          currentPosition: Number(e.target.value) 
-        })}
-      />
-    </div>
-  </div>
-);
-
-// Body Awareness Step
-const BodyAwarenessStep = () => {
-  const sensationCategories = {
-    physical: ['Tension', 'Relaxation', 'Warmth', 'Coolness', 'Tingling', 'Pressure'],
-    emotional: ['Lightness', 'Heaviness', 'Expansion', 'Contraction', 'Flow', 'Stillness'],
-    energetic: ['Vibration', 'Pulsing', 'Radiating', 'Centering', 'Opening', 'Grounding']
-  };
-
-  const toggleSensation = (sensation) => {
-    setJourneyData(prev => ({
-      ...prev,
-      selectedSensations: prev.selectedSensations?.includes(sensation)
-        ? prev.selectedSensations.filter(s => s !== sensation)
-        : [...(prev.selectedSensations || []), sensation]
-    }));
-  };
-
-  return (
-    <div className="space-y-6 animate-fade-in">
-      <MetallicAlert variant="info">
-        <TypewriterText className="leading-relaxed">
-          Notice in your body: When you look at this journey from {alphabet[journeyData.currentPosition]} to Z, 
-          what do you feel? Choose the sensations that describe what you're feeling best.
-        </TypewriterText>
-      </MetallicAlert>
-
-      {journeyData.selectedSensations?.length > 0 && (
-        <div className="flex flex-wrap gap-2 p-4 rounded-lg bg-gradient-to-br from-cosmic/10 to-transparent backdrop-blur-sm">
-          {journeyData.selectedSensations.map((sensation) => (
-            <span
-              key={sensation}
-              className="flex items-center gap-1 px-3 py-1 rounded-full text-sm"
-              style={{
-                background: 'linear-gradient(to right, rgba(78,84,200,0.1), rgba(78,84,200,0.05))',
-                boxShadow: '0 1px 2px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
-              }}
-            >
-              {sensation}
-              <button
-                onClick={() => toggleSensation(sensation)}
-                className="text-cosmic/70 hover:text-cosmic transition-colors"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {Object.entries(sensationCategories).map(([category, sensations]) => (
-        <div key={category} className="space-y-3">
-          <h3 className="text-sm font-medium text-earth/80 uppercase tracking-wide capitalize">
-            {category} Sensations
-          </h3>
-          <div className="grid grid-cols-2 gap-2">
-            {sensations.map((sensation) => (
-              <MetallicButton
-                key={sensation}
-                variant={journeyData.selectedSensations?.includes(sensation) ? 'primary' : 'outline'}
-                size="sm"
-                className="justify-start transition-all duration-200"
-                onClick={() => toggleSensation(sensation)}
-              >
-                {journeyData.selectedSensations?.includes(sensation) ? (
-                  <X className="w-4 h-4 mr-2" />
-                ) : (
-                  <Plus className="w-4 h-4 mr-2" />
-                )}
-                {sensation}
-              </MetallicButton>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-// Alignment Check Step
-const AlignmentCheckStep = () => {
-  const alignmentStatements = {
-    safety: "I feel safe and open to receiving this opportunity or experience",
-    confidence: "I have strong belief in my abilities and trust in my capability to achieve my goals",
-    anticipation: "I consistently expect and anticipate that I will receive what I work towards and desire",
-    openness: "I can maintain my focus and open connection to my desired result even if it takes time",
-    deserving: "I feel deserving of this experience",
-    belief: "I believe this is possible for me",
-    appreciation: "I feel a sense of appreciation for this area in my business as it is now"
-  };
-
-  return (
-    <div className="space-y-6 animate-fade-in">
-      <MetallicAlert variant="info">
-        <TypewriterText className="leading-relaxed">
-          How true do these statements feel in your body right now?
-        </TypewriterText>
-      </MetallicAlert>
-
-      <div className="space-y-6">
-        {Object.entries(alignmentStatements).map(([key, statement]) => (
-          <div key={key} className="space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-earth/80">{statement}</span>
-              <span className="text-sm text-cosmic">{journeyData.likertScores[key]}/5</span>
-            </div>
-            <MetallicSlider
-              value={journeyData.likertScores[key]}
-              min={1}
-              max={5}
-              step={1}
-              onChange={(e) =>
-                setJourneyData({
-                  ...journeyData,
-                  likertScores: {
-                    ...journeyData.likertScores,
-                    [key]: Number(e.target.value),
-                  },
-                })
-              }
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+    <AlignmentCheckStep key="alignment" />
   ];
 
   return (
@@ -295,3 +296,12 @@ const AlignmentCheckStep = () => {
                 }
                 setStep((prev) => prev + 1);
               }
+            }}
+          >
+            {step === steps.length - 1 ? 'Continue to Beliefs' : 'Continue'}
+          </MetallicButton>
+        </div>
+      </div>
+    </MetallicCard>
+  );
+}
