@@ -136,17 +136,17 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
         <div className="flex flex-wrap gap-2 fade-in">
           {Object.keys(alignmentAreas).map((cat) => (
-            <Button
-              key={cat}
-              variant={cat === activeCategory ? 'cosmic' : 'outline'}
-              onClick={() => setActiveCategory(cat)}
-              className="flex items-center gap-2 transition-all duration-200"
-            >
-              {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              {sliderValues[cat] >= 4 && (
-                <CheckCircle2 className="w-4 h-4 text-sage" />
-              )}
-            </Button>
+  <Button
+    key={cat}
+    variant={cat === activeCategory ? 'primary' : 'ghost'}
+    onClick={() => setActiveCategory(cat)}
+    className="flex items-center gap-2 transition-all duration-200"
+  >
+    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+    {sliderValues[cat] >= 4 && (
+      <CheckCircle2 className="w-4 h-4 text-sage" />
+    )}
+  </Button>
           ))}
         </div>
 
@@ -169,12 +169,12 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
               </div>
               <p className="text-earth leading-relaxed">{aiSuggestions[activeCategory].suggestions}</p>
               <Button
-                variant="outline"
-                onClick={() => fetchAISuggestions(activeCategory)}
-                className="mt-2 text-cosmic hover:bg-cosmic/5"
-              >
-                Refresh Insight
-              </Button>
+  variant="ghost"
+  onClick={() => fetchAISuggestions(activeCategory)}
+  className="mt-2"
+>
+  Refresh Insight
+</Button>
             </AlertDescription>
           </Alert>
         )}
