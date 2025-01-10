@@ -1,3 +1,4 @@
+import DiagnosticFlow from './DiagnosticFlow';
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
@@ -229,6 +230,42 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         ))}
       </div>
     </div>,
+// In JourneyFlow.js, add this to your existing steps array:
+
+  // Add this after your existing alignment check step
+  <div key="river-intro" className="space-y-6 fade-in">
+    <Alert className="bg-sage/5 border-sage/20">
+      <AlertDescription className="text-earth leading-relaxed">
+        Imagine crossing a river, hopping from stone to stone. Each stone represents steps 
+        toward your goal—some are within reach, others require effort, and some demand bold 
+        leaps. This practice invites you to tune into three things:
+      </AlertDescription>
+    </Alert>
+
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <div className="flex items-center space-x-2">
+          <div className="w-1 h-1 rounded-full bg-cosmic"/>
+          <span className="text-earth">What's within your grasp? Solid, reachable, and ready for action.</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-1 h-1 rounded-full bg-cosmic"/>
+          <span className="text-earth">What can you reach with a stretch? These steps push you further.</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="w-1 h-1 rounded-full bg-cosmic"/>
+          <span className="text-earth">When are you ready to leap? Bold moves that demand trust, risk, and readiness.</span>
+        </div>
+      </div>
+      <p className="italic text-sage">
+        Each choice brings its own energy and rhythm to your progress.
+      </p>
+    </div>
+
+    <div className="mt-6">
+      <DiagnosticFlow />
+    </div>
+  </div>,
   ];
 
   return (
