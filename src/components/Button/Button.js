@@ -25,7 +25,11 @@ export const Button = ({
     outline: "bg-gradient-to-r from-silver-300/30 to-silver-500/30 text-silver-600 hover:from-silver-300/40 hover:to-silver-500/40",
     ghost: "bg-gradient-to-r from-silver-300/20 to-silver-500/20 text-silver-600 hover:from-silver-300/30 hover:to-silver-500/30"
   };
-
+ 
+  const glossyEffect =
+    "before:content-[''] before:absolute before:inset-0 before:rounded-full " +
+    "before:bg-gradient-to-t before:from-white/40 before:to-transparent " +
+    "before:opacity-50 before:blur-sm";
 
   const interactionEffects = `
     hover:shadow-lg hover:-translate-y-0.5
