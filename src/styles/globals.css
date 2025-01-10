@@ -13,29 +13,14 @@
     --radius: 0.5rem;
   }
 
-  /* Global styles for body and html */
   body, html {
     background-color: transparent !important; /* Ensure full transparency */
     height: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important; /* Prevent default scrollbars */
-  }
-
-  /* Squarespace Fluid Engine Box */
-  .sqs-block {
-    display: flex;
-    flex-direction: column;
-    justify-content: stretch;
-    align-items: stretch;
-    height: 100% !important;
-    min-height: 100vh !important; /* Ensure full vertical fill */
     overflow: hidden !important; /* Prevent unnecessary scrollbars */
-    background-color: transparent !important; /* Remove background color */
-    box-shadow: none !important; /* Remove shadows */
   }
 
-  /* App container */
   .app-container {
     display: flex;
     flex-direction: column;
@@ -44,30 +29,26 @@
     width: 100%;
     height: 100%;
     min-height: 100%;
-    background-color: rgba(255, 255, 255, 0.03) !important; /* Light translucency */
+    background-color: rgba(255, 255, 255, 0.03) !important; /* Lower opacity */
     backdrop-filter: blur(12px); /* Optional blur effect */
-    overflow: auto !important; /* Allow vertical scrolling only when needed */
+    overflow: auto; /* Allow scrolling when necessary */
     box-shadow: none;
     animation: fade-in-up 0.8s ease-out;
   }
 
-  /* Scrollable sections */
-  .scrollable {
-    overflow-y: auto !important; /* Allow vertical scrolling when necessary */
-    max-height: 100%; /* Limit height to container bounds */
-  }
-
-  /* Card and form element styles */
   .card, .form-container, .header-card {
-    background-color: rgba(255, 255, 255, 0.1) !important; /* Enhanced translucency */
-    backdrop-filter: blur(8px); /* Blur for distinction */
-    border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+    background-color: rgba(255, 255, 255, 0.1) !important; /* Adjust translucency */
+    backdrop-filter: blur(8px) !important; /* Add blur effect */
+    border: 1px solid rgba(0, 0, 0, 0.1) !important; /* Subtle border */
     margin-top: 20px; /* Lower the card */
     box-shadow: none !important;
-    animation: fade-in-down 0.8s ease-out;
   }
 
-  /* Input, textarea, and button styles */
+  .scrollable {
+    overflow-y: auto !important; /* Enable scrolling for scrollable sections */
+    max-height: 100%; /* Prevent overflow beyond container */
+  }
+
   input, textarea, button {
     background-color: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -75,7 +56,6 @@
     border-radius: 4px; /* Rounded corners */
   }
 
-  /* Animation utility classes */
   .fade-up {
     animation: fade-in-up 0.8s ease-out;
   }
@@ -89,7 +69,6 @@
   }
 }
 
-/* Keyframes for animations */
 @keyframes fade-in-up {
   0% {
     opacity: 0;
