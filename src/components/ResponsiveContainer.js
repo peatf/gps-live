@@ -3,8 +3,8 @@ import React from 'react';
 
 const ResponsiveContainer = ({ children }) => {
   return (
-    <div className="w-full scale-in">
-      <div className="max-w-screen-xl mx-auto px-4 py-8">{children}</div>
+    <div className="w-full">
+      <div className="w-full px-4 py-8">{children}</div>
     </div>
   );
 };
