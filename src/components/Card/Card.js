@@ -1,12 +1,16 @@
+// src/components/Card/Card.js
+
 import React from "react";
 import { cn } from "../../utils/cn";
 
 export const Card = ({ children, className }) => (
   <div
     className={cn(
-      "relative rounded-3xl shadow-lg transition-all duration-300", // Increased border radius for bubbly effect
-      "hover:shadow-xl hover:scale-105", // Hover interaction for depth and scale
-      "border border-transparent backdrop-blur-md", // Glass-like effect
+      "relative rounded-3xl shadow-lg transition-all duration-300",
+      "min-h-[85vh]", // Takes up more vertical space
+      "hover:shadow-xl",
+      "border border-cosmic/10 backdrop-blur-md",
+      "bg-white/[0.65]", // Slightly more opaque background
       className
     )}
   >
@@ -17,7 +21,7 @@ export const Card = ({ children, className }) => (
 export const CardHeader = ({ children, className }) => (
   <div
     className={cn(
-      "px-6 py-4 rounded-t-3xl border-b border-stone/10", // Rounded top corners
+      "px-8 py-6 rounded-t-3xl border-b border-cosmic/10", // Increased padding
       className
     )}
   >
@@ -28,7 +32,7 @@ export const CardHeader = ({ children, className }) => (
 export const CardTitle = ({ children, className }) => (
   <h2
     className={cn(
-      "text-xl font-semibold text-gray-800", // Consistent text styling
+      "text-2xl font-semibold text-cosmic", // Increased size and using cosmic color
       className
     )}
   >
@@ -39,7 +43,7 @@ export const CardTitle = ({ children, className }) => (
 export const CardContent = ({ children, className }) => (
   <div
     className={cn(
-      "p-6 space-y-4", // Padding and spacing for content elements
+      "p-8 space-y-6", // Increased padding
       className
     )}
   >
