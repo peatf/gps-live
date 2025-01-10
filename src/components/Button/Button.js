@@ -22,7 +22,7 @@ export const Button = ({
   const variantStyles = {
     primary: "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-105",
     outline: "bg-gradient-to-r from-silver-300/30 to-silver-500/30 text-silver-600 hover:from-silver-300/40 hover:to-silver-500/40",
-    ghost: "bg-gradient-to-r from-silver-300/20 to-silver-500/20 text-silver-600 hover:from-silver-300/30 hover:to-silver-500/30"
+    ghost: "bg-transparent text-silver-600 hover:bg-silver-100"
   };
 
   const glossyEffect = `
