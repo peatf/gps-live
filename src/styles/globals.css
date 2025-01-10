@@ -1,63 +1,55 @@
-import React, { useState } from 'react';
-import JourneyFlow from '../components/JourneyFlow';
-import BeliefAdjustment from '../components/BeliefAdjustment';
-import AlignmentAdjustment from '../components/AlignmentAdjustment';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-export default function HomePage() {
-  const [step, setStep] = useState(0);
-  const [journeyData, setJourneyData] = useState({
-    goal: '',
-    targetDate: '',
-    daysUntilTarget: 0,
-    currentPosition: 0,
-    selectedSensations: [],
-    likertScores: {
-      safety: 3,
-      confidence: 3,
-      openness: 3,
-      deserving: 3,
-      belief: 3,
-      anticipation: 3,
-      appreciation: 3,
-    },
-  });
+@layer base {
+  :root {
+    --foreground: 30 10% 15%;
+    --popover: transparent;
+    --popover-foreground: 30 10% 15%;
+    --border: 30 15% 90%;
+    --input: 30 15% 90%;
+    --ring: 221 83% 53%;
+    --radius: 0.5rem;
+  }
 
-  const handleBack = () => setStep(prev => Math.max(0, prev - 1));
-  const handleJourneyFlowComplete = () => setStep(1);
-  const handleBeliefAdjustmentContinue = () => setStep(2);
-  const handleAlignmentAdjustmentComplete = () => {
-    alert('Journey complete! Thank you for participating.');
-    console.log('Final journeyData:', journeyData);
-  };
+  body,
+  html {
+    background-color: transparent !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
-  return (
-    <main className="p-4 min-h-screen bg-transparent">
-      {step === 0 && (
-        <JourneyFlow
-          journeyData={journeyData}
-          setJourneyData={setJourneyData}
-          onComplete={handleJourneyFlowComplete}
-          onBack={handleBack}
-        />
-      )}
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    align-items: stretch;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.01); /* Translucent background */
+    backdrop-filter: blur(10px); /* Add blur effect */
+    overflow-y: auto;
+    box-shadow: none;
+  }
 
-      {step === 1 && (
-        <BeliefAdjustment
-          journeyData={journeyData}
-          setJourneyData={setJourneyData}
-          onContinue={handleBeliefAdjustmentContinue}
-          onBack={handleBack}
-        />
-      )}
+  .card {
+    background-color: rgba(255, 255, 255, 0.03)!important; /* Translucent background for cards */
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: none;
+  }
 
-      {step === 2 && (
-        <AlignmentAdjustment
-          journeyData={journeyData}
-          setJourneyData={setJourneyData}
-          onComplete={handleAlignmentAdjustmentComplete}
-          onBack={handleBack}
-        />
-      )}
-    </main>
-  );
+  @keyframes fade-in-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
