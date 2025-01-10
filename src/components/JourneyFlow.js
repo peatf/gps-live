@@ -258,6 +258,11 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
 </AlertDescription>
     </Alert>
     <Alert className="bg-sage/5 border-sage/20 fade-in">
+  <AlertDescription className="text-earth leading-relaxed">
+    This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
+    Trust your process.
+  </AlertDescription>
+</Alert>
 
     <div className="space-y-4">
       <div className="space-y-2">
@@ -276,14 +281,13 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       </div>
       <p className="italic text-sage">
         Each choice brings its own energy and rhythm to your progress.
-      <p className="italic text-sage">
-    Each choice brings its own energy and rhythm to your progress.
-  </p>
+      </p>
+    </div>
 
-  <div className="mt-6">
-    <DiagnosticFlow />
-  </div>
-</div>
+    <div className="mt-6">
+      <DiagnosticFlow />
+    </div>
+  </div>,
   ];
 
   return (
