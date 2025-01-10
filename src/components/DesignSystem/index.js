@@ -124,58 +124,85 @@ export const MetallicInput = React.forwardRef(({ className, ...props }, ref) => 
 MetallicInput.displayName = 'MetallicInput';
 
 // Enhanced Slider with Y2K styling
-export const MetallicSlider = ({ value, min, max, step, onChange, className }) => {
-  const handleRef = useRef(null);
-  const trackRef = useRef(null);
+export const MetallicSlider = ({ value, min, max, step = 1, onChange, className }) => {
+  const sliderRef = useRef(null);
   const isDragging = useRef(false);
 
-  const updateSliderValue = useCallback((clientX) => {
-    if (trackRef.current) {
-      const rect = trackRef.current.getBoundingClientRect();
-      const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-      const newValue = Math.round((percentage * (max - min) + min) / step) * step;
-      onChange({ target: { value: newValue } });
-    }
-  }, [min, max, step, onChange]);
+  const calculateValue = useCallback((clientX) => {
+    if (!sliderRef.current) return value;
+
+    const rect = sliderRef.current.getBoundingClientRect();
+    const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const rawValue = percentage * (max - min) + min;
+    const steppedValue = Math.round(rawValue / step) * step;
+    return Math.min(max, Math.max(min, steppedValue));
+  }, [min, max, step, value]);
 
   const handleMouseDown = useCallback((e) => {
+    e.preventDefault();
     isDragging.current = true;
-    updateSliderValue(e.clientX);
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  }, [updateSliderValue]);
+    const newValue = calculateValue(e.clientX);
+    onChange(newValue);
 
-  const handleMouseMove = useCallback((e) => {
-    if (isDragging.current) {
-      updateSliderValue(e.clientX);
-    }
-  }, [updateSliderValue]);
+    const handleMouseMove = (e) => {
+      if (isDragging.current) {
+        const newValue = calculateValue(e.clientX);
+        onChange(newValue);
+      }
+    };
 
-  const handleMouseUp = useCallback(() => {
-    isDragging.current = false;
-    document.removeEventListener('mousemove', handleMouseMove);
-    document.removeEventListener('mouseup', handleMouseUp);
-  }, [handleMouseMove]);
-
-  useEffect(() => {
-    return () => {
+    const handleMouseUp = () => {
+      isDragging.current = false;
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [handleMouseMove, handleMouseUp]);
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, [calculateValue, onChange]);
+
+  // Handle touch events
+  const handleTouchStart = useCallback((e) => {
+    e.preventDefault();
+    isDragging.current = true;
+    const touch = e.touches[0];
+    const newValue = calculateValue(touch.clientX);
+    onChange(newValue);
+
+    const handleTouchMove = (e) => {
+      if (isDragging.current) {
+        const touch = e.touches[0];
+        const newValue = calculateValue(touch.clientX);
+        onChange(newValue);
+      }
+    };
+
+    const handleTouchEnd = () => {
+      isDragging.current = false;
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
+  }, [calculateValue, onChange]);
 
   return (
-    <div className="relative w-full h-12 flex items-center px-2">
+    <div 
+      ref={sliderRef}
+      className={cn("relative w-full h-12 flex items-center px-2", className)}
+    >
+      {/* Track background */}
       <div 
-        ref={trackRef}
         className="absolute h-4 w-full rounded-full"
         style={{
           background: 'linear-gradient(to right, #D1D1D1, #E6E6E6)',
           boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
         }}
       >
+        {/* Progress bar */}
         <div
-          className="absolute h-full rounded-full"
+          className="absolute h-full rounded-full transition-all duration-100"
           style={{
             width: `${((value - min) / (max - min)) * 100}%`,
             background: 'linear-gradient(to right, rgba(62,84,184,0.3), rgba(62,84,184,0.2))'
@@ -183,19 +210,26 @@ export const MetallicSlider = ({ value, min, max, step, onChange, className }) =
         />
       </div>
 
+      {/* Slider handle */}
       <div 
-        ref={handleRef}
         className="absolute w-8 h-8 rounded-full cursor-pointer transform -translate-y-1/2 top-1/2 hover:scale-110 transition-transform"
         style={{
           left: `calc(${((value - min) / (max - min)) * 100}% - 16px)`,
-          [y2kMetalGradient]: true,
+          background: 'linear-gradient(145deg, #FFFFFF 0%, #E6E6E6 47%, #FFFFFF 53%, #E6E6E6 100%)',
           boxShadow: `
             0 2px 4px rgba(0,0,0,0.2),
             inset 0 1px 2px rgba(255,255,255,0.9),
             inset 0 -1px 1px rgba(0,0,0,0.1)
-          `
+          `,
+          touchAction: 'none'
         }}
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
+        role="slider"
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={value}
+        tabIndex={0}
       />
     </div>
   );
@@ -205,8 +239,8 @@ export const MetallicSlider = ({ value, min, max, step, onChange, className }) =
 export const TypewriterText = ({ children, className }) => {
   const [displayText, setDisplayText] = useState('');
   const textRef = useRef(children?.toString() || '');
+  const timeoutRef = useRef(null);
   const indexRef = useRef(0);
-  const isTypingRef = useRef(false);
 
   useEffect(() => {
     const newText = children?.toString() || '';
@@ -216,20 +250,26 @@ export const TypewriterText = ({ children, className }) => {
       textRef.current = newText;
       indexRef.current = 0;
       setDisplayText('');
-      isTypingRef.current = true;
+      
+      const typeNextCharacter = () => {
+        if (indexRef.current < textRef.current.length) {
+          setDisplayText(prev => textRef.current.slice(0, indexRef.current + 1));
+          indexRef.current += 1;
+          timeoutRef.current = setTimeout(typeNextCharacter, 30);
+        }
+      };
+
+      // Start typing
+      typeNextCharacter();
     }
 
-    if (isTypingRef.current && indexRef.current < textRef.current.length) {
-      const timeout = setTimeout(() => {
-        indexRef.current++;
-        setDisplayText(textRef.current.slice(0, indexRef.current));
-      }, 30);
-
-      return () => clearTimeout(timeout);
-    } else {
-      isTypingRef.current = false;
-    }
-  }, [children]);
+    // Cleanup function
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [children]); // Only depend on children prop
 
   return (
     <div 
@@ -248,7 +288,7 @@ export const TypewriterText = ({ children, className }) => {
       }}
     >
       {displayText}
-      {isTypingRef.current && (
+      {indexRef.current < textRef.current.length && (
         <span className="animate-pulse text-cosmic">|</span>
       )}
     </div>
