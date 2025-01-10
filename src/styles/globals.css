@@ -63,10 +63,6 @@ body {
   }
 }
 
-@keyframes glassShimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
 
 /* Utility classes */
 .animate-pulse-subtle {
@@ -178,24 +174,17 @@ button {
   min-width: 120px;
 }
 
-/* Glass backgrounds */
-.bg-glass-primary {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+/* Glass effect utilities */
+.glass-effect {
+  background: var(--bg-transparent);
+  backdrop-filter: blur(var(--blur-amount));
+  -webkit-backdrop-filter: blur(var(--blur-amount));
 }
 
-.bg-glass-secondary {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.06) 0%,
-    rgba(255, 255, 255, 0.01) 100%
-  );
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+.glass-card {
+  background: rgba(255, 255, 255, 0.01);
+  backdrop-filter: blur(var(--blur-amount));
+  -webkit-backdrop-filter: blur(var(--blur-amount));
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
