@@ -4,34 +4,45 @@ import { cn } from "../../utils/cn";
 export const Card = ({ children, className }) => (
   <div
     className={cn(
-      "rounded-lg border border-stone/20 shadow-sm transition-all duration-300",
-      "glass-card hover:shadow-md",
+      "relative rounded-3xl shadow-lg transition-all duration-300", // Increased border radius for bubbly effect
+      "hover:shadow-xl hover:scale-105", // Hover interaction for depth and scale
+      "border border-transparent backdrop-blur-md", // Glass-like effect
       className
     )}
-    style={{
-      backgroundColor: "rgba(255, 255, 255, 0.01)",
-      backdropFilter: "blur(8px)",
-      WebkitBackdropFilter: "blur(8px)",
-    }}
   >
     {children}
   </div>
 );
 
 export const CardHeader = ({ children, className }) => (
-  <div className={cn("p-6 border-b border-stone/10", className)}>
+  <div
+    className={cn(
+      "px-6 py-4 rounded-t-3xl border-b border-stone/10", // Rounded top corners
+      className
+    )}
+  >
     {children}
   </div>
 );
 
 export const CardTitle = ({ children, className }) => (
-  <h2 className={cn("text-xl font-medium text-sage", className)}>
+  <h2
+    className={cn(
+      "text-xl font-semibold text-gray-800", // Consistent text styling
+      className
+    )}
+  >
     {children}
   </h2>
 );
 
 export const CardContent = ({ children, className }) => (
-  <div className={cn("p-6 space-y-6", className)}>
+  <div
+    className={cn(
+      "p-6 space-y-4", // Padding and spacing for content elements
+      className
+    )}
+  >
     {children}
   </div>
 );
