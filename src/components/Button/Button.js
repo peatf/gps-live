@@ -21,14 +21,19 @@ export const Button = ({
 
   const variantStyles = {
     primary:
-      "bg-gradient-to-r from-silver-200 to-silver-400 text-white shadow-md hover:shadow-lg",
+      "bg-gradient-to-r from-silver-300 to-silver-500 text-white shadow-md hover:shadow-lg",
     outline:
       "border border-silver-300 text-silver-600 bg-transparent hover:bg-silver-100",
     ghost: "bg-transparent text-silver-600 hover:bg-silver-100",
   };
 
-  const bubbleEffect =
-    "before:content-[''] before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-b before:from-white/10 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity";
+  const glossyEffect =
+    "before:content-[''] before:absolute before:inset-0 before:rounded-full " +
+    "before:bg-gradient-to-t before:from-white/40 before:to-transparent " +
+    "before:opacity-50 before:blur-sm";
+
+  const hoverEffect =
+    "hover:before:opacity-80 hover:scale-105 active:scale-95";
 
   return (
     <button
@@ -38,7 +43,8 @@ export const Button = ({
         baseStyles,
         sizeStyles[size],
         variantStyles[variant],
-        bubbleEffect,
+        glossyEffect,
+        hoverEffect,
         "disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}
