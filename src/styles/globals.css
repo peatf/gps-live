@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --foreground: 30 10% 15%;
-    --popover: 0 0% 100%;
+    --popover: transparent;
     --popover-foreground: 30 10% 15%;
     --border: 30 15% 90%;
     --input: 30 15% 90%;
@@ -13,98 +13,34 @@
     --radius: 0.5rem;
   }
 
-  /* Transparent body and html */
   body, html {
-    background-color: transparent !important; /* Fully transparent */
+    background-color: transparent !important; /* Ensure full transparency */
   }
 
-  /* App container with animations and no white background */
-  .app-container {
-    backdrop-filter: blur(12px); /* Blurred background */
-    background-color: transparent !important; /* Fully transparent */
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    padding: 16px;
-    margin: 0 auto;
-    display: block; /* Adjust dynamically based on content */
-    width: 100%; /* Allow app to stretch */
-    max-width: none; /* No width constraint */
-    animation: fade-in-up 0.5s ease-out; /* Fade-in animation */
-  }
-
-  /* Transparent cards and containers */
-  .card, .form-container, .header-card, .sqs-block, .content {
-    background-color: transparent !important; /* No background */
-    backdrop-filter: blur(8px); /* Optional blur for consistent look */
-    border: none !important; /* Remove borders */
-    box-shadow: none !important; /* Remove shadows */
-    animation: fade-in-down 0.5s ease-out; /* Fade-down animation */
-  }
-
-  /* Remove default form styling */
-  form, input, textarea, button {
-    background-color: transparent !important; /* Fully transparent */
-    border: none; /* Remove borders */
+  .app-container, .card, .form-container, .header-card, .sqs-block, .content {
+    background-color: transparent !important; /* Remove white backgrounds */
+    backdrop-filter: blur(12px); /* Optional blur */
     box-shadow: none; /* Remove shadows */
+    animation: fade-in-up 0.8s ease-out; /* Add fade-in animation */
   }
 
-  /* Styled inputs (optional) */
-  input, textarea {
+  input, textarea, button {
     background-color: transparent !important;
     border: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border for usability */
     padding: 8px;
     border-radius: 4px;
   }
 
-  /* Debugging: Add outlines to visualize elements */
-  * {
-    outline: 1px solid red !important; /* Debug element boundaries */
+  /* Animation classes */
+  .fade-up {
+    animation: fade-in-up 0.8s ease-out;
   }
-}
 
-/* Animations */
-@keyframes fade-in-up {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
+  .fade-down {
+    animation: fade-in-down 0.8s ease-out;
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-@keyframes fade-in-down {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
+  .scale-in {
+    animation: scale-in 0.5s ease-out;
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scale-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Animation utility classes */
-.fade-up {
-  animation: fade-in-up 0.5s ease-out;
-}
-
-.fade-down {
-  animation: fade-in-down 0.5s ease-out;
-}
-
-.scale-in {
-  animation: scale-in 0.4s ease-out;
 }
