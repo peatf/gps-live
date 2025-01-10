@@ -68,7 +68,8 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
   }, [goalScale, letterPosition, setJourneyData]);
 
   return (
-    <Card className="w-full max-w-4xl mx-auto bg-cloud/80 backdrop-blur-sm animate-fade-in">
+    <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
+      style={{ backgroundColor: "rgba(255, 255, 255, 0.1)", backdropFilter: "blur(8px)" }}>
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="text-sage">Proximity Mapping</CardTitle>
       </CardHeader>
