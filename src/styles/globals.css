@@ -185,11 +185,3 @@ button {
   word-break: break-word; /* Break words if they’re too long */
   min-width: 120px; /* Provide a consistent minimum size */
 }
-/* Specific styling for 'Your Current Goal' alert to remove glow */
-.goal-alert {
-  background: rgba(255, 255, 255, 0.1); /* Subtle background */
-  border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
-  box-shadow: none; /* Remove shadow/glow */
-  backdrop-filter: blur(6px); /* Optional: Add slight blur */
-  -webkit-backdrop-filter: blur(6px); /* Safari-specific */
-}
