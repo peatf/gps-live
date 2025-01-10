@@ -135,12 +135,15 @@ body {
   border-radius: 3px;
 }
 
-/* App container */
 .app-container {
-  min-height: 100vh;
-  background: transparent;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  max-width: 1200px; /* Set a smaller maximum width */
+  margin: 0 auto; /* Center the app on the page */
+  padding: 16px; /* Add padding around the content */
+  background-color: rgba(255, 255, 255, 0.05); /* Lighter, more transparent background */
+  backdrop-filter: blur(6px); /* Reduce blur for subtle effect */
+  -webkit-backdrop-filter: blur(6px); /* Safari-specific */
+  border-radius: 16px; /* Rounded corners for a softer look */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 :root {
   --pale-yellow: rgba(255, 249, 196, 0.7); /* Soft yellow background */
