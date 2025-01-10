@@ -69,13 +69,13 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
 
   return (
     <Card
-  className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
-  style={{
-    backgroundColor: "rgba(255, 255, 255, 0.01)", // Translucent background
-    backdropFilter: "blur(8px)", // Blur effect
-    "-webkit-backdrop-filter": "blur(8px)", // Safari-specific
-  }}
->
+      className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
+      style={{
+        backgroundColor: "rgba(255, 255, 255, 0.01)", // Translucent background
+        backdropFilter: "blur(8px)", // Blur effect
+        WebkitBackdropFilter: "blur(8px)", // Safari-specific
+      }}
+    >
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="text-sage">Proximity Mapping</CardTitle>
       </CardHeader>
@@ -162,7 +162,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
                 <span>Congratulations! Your goal is now within reach and aligned with your vision.</span>
               </div>
             ) : (
-              <p>
+              <p className="text-earth">
                 How much does an adjusted goal allow you to move your location on the proximity slider?
               </p>
             )}
@@ -202,7 +202,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
           </Button>
           <Button 
             onClick={onContinue}
-            className="bg-cosmic text-white hover:bg-cosmic-light transition-colors"
+            className="bg-cosmic text-white hover:bg-cosmic-light px-6 py-3 rounded-lg"
           >
             Continue to Alignment <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
