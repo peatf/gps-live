@@ -22,7 +22,7 @@ export const Slider = ({ value, min, max, step, onValueChange, className }) => (
       step={step}
       onChange={(e) => onValueChange([parseInt(e.target.value, 10)])}
       className={cn(
-        "absolute w-full h-4 opacity-0 cursor-pointer",
+        "absolute w-full h-4 cursor-pointer",
         "[&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-8 [&::-webkit-slider-thumb]:h-8",
         "[&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-br",
         "[&::-webkit-slider-thumb]:from-white [&::-webkit-slider-thumb]:to-blue-400",
