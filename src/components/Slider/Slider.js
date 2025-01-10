@@ -1,12 +1,70 @@
-import React from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import { cn } from "../../utils/cn";
 
 export const Slider = ({ value, min, max, step, onValueChange, className }) => {
+  const sliderRef = useRef(null);
+  const isDragging = useRef(false);
+
+  const calculateValue = useCallback((clientX) => {
+    if (!sliderRef.current) return value[0];
+
+    const rect = sliderRef.current.getBoundingClientRect();
+    const percentage = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const rawValue = percentage * (max - min) + min;
+    const steppedValue = Math.round(rawValue / step) * step;
+    return Math.min(max, Math.max(min, steppedValue));
+  }, [min, max, step, value]);
+
+  const handleMove = useCallback((clientX) => {
+    if (isDragging.current) {
+      const newValue = calculateValue(clientX);
+      onValueChange([newValue]);
+    }
+  }, [calculateValue, onValueChange]);
+
+  const handleMouseDown = useCallback((e) => {
+    e.preventDefault();
+    isDragging.current = true;
+    handleMove(e.clientX);
+
+    const handleMouseMove = (e) => handleMove(e.clientX);
+    const handleMouseUp = () => {
+      isDragging.current = false;
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, [handleMove]);
+
+  const handleTouchStart = useCallback((e) => {
+    e.preventDefault();
+    isDragging.current = true;
+    handleMove(e.touches[0].clientX);
+
+    const handleTouchMove = (e) => handleMove(e.touches[0].clientX);
+    const handleTouchEnd = () => {
+      isDragging.current = false;
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
+  }, [handleMove]);
+
   return (
-    <div className="relative flex w-full touch-none select-none items-center">
-      <div className="relative h-2 w-full grow overflow-hidden rounded-full bg-stone/30">
+    <div 
+      ref={sliderRef}
+      className={cn(
+        "relative flex w-full touch-none select-none items-center",
+        className
+      )}
+    >
+      <div className="relative h-2 w-full grow overflow-hidden rounded-full bg-stone/30 glass-effect">
         <div
-          className="absolute h-full bg-cosmic transition-all duration-200"
+          className="absolute h-full bg-cosmic/80 transition-all duration-200"
           style={{
             width: `${((value[0] - min) / (max - min)) * 100}%`
           }}
@@ -32,6 +90,7 @@ export const Slider = ({ value, min, max, step, onValueChange, className }) => {
           "[&::-webkit-slider-thumb]:duration-200",
           "[&::-webkit-slider-thumb]:hover:bg-cosmic-light",
           "[&::-webkit-slider-thumb]:hover:scale-110",
+          "[&::-webkit-slider-thumb]:glass-effect",
           "[&::-moz-range-thumb]:h-4",
           "[&::-moz-range-thumb]:w-4",
           "[&::-moz-range-thumb]:appearance-none",
@@ -43,8 +102,10 @@ export const Slider = ({ value, min, max, step, onValueChange, className }) => {
           "[&::-moz-range-thumb]:duration-200",
           "[&::-moz-range-thumb]:hover:bg-cosmic-light",
           "[&::-moz-range-thumb]:hover:scale-110",
-          className
+          "[&::-moz-range-thumb]:glass-effect"
         )}
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
       />
     </div>
   );
