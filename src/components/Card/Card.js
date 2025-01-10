@@ -4,12 +4,13 @@ import { cn } from "../../utils/cn";
 export const Card = ({ children, className }) => (
   <div
     className={cn(
-      "rounded-lg border border-stone/20 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-md",
+      "rounded-lg border border-stone/20 shadow-sm transition-all duration-300 hover:shadow-md",
       className
     )}
     style={{
-      backgroundColor: "rgba(255, 255, 255, 0.1)", // Adjust translucency
+      backgroundColor: "rgba(255, 255, 255, 0.1)", // Ensure translucency
       backdropFilter: "blur(8px)", // Add blur effect
+      border: "1px solid rgba(0, 0, 0, 0.1)", // Subtle border for contrast
     }}
   >
     {children}
@@ -33,4 +34,3 @@ export const CardContent = ({ children, className }) => (
     {children}
   </div>
 );
-
