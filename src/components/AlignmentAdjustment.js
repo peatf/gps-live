@@ -94,8 +94,14 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   }, [activeCategory, sliderValues, fetchAISuggestions]);
 
   return (
-    <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
-      style={{ backgroundColor: "rgba(255, 255, 255, 0.01)", backdropFilter: "blur(8px)" }}>
+    <Card
+  className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
+  style={{
+    backgroundColor: "rgba(255, 255, 255, 0.01)", // Translucent background
+    backdropFilter: "blur(8px)", // Blur effect
+    "-webkit-backdrop-filter": "blur(8px)", // Safari-specific
+  }}
+>
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="flex items-center gap-2 text-sage">
           <Heart className="w-5 h-5 text-cosmic" />
