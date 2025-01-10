@@ -276,13 +276,14 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       </div>
       <p className="italic text-sage">
         Each choice brings its own energy and rhythm to your progress.
-      </p>
-    </div>
+      <p className="italic text-sage">
+    Each choice brings its own energy and rhythm to your progress.
+  </p>
 
-    <div className="mt-6">
-      <DiagnosticFlow />
-    </div>
+  <div className="mt-6">
+    <DiagnosticFlow />
   </div>
+</div>
   ];
 
   return (
