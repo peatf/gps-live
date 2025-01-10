@@ -19,22 +19,25 @@
     overflow: visible !important;
   }
 
-  .app-container {
-    height: 100% !important; /* Ensure it fills the fluid engine box */
-    max-height: none !important;
+  .sqs-block {
+    height: 100% !important;
+    min-height: 100vh !important; /* Ensure it fills the viewport */
     overflow: visible !important;
-    background-color: rgba(255, 255, 255, 0.05) !important; /* Slightly more transparent */
-    backdrop-filter: blur(12px); /* Optional blur effect */
-    box-shadow: none !important;
-    animation: fade-in-up 0.8s ease-out;
   }
 
-  .sqs-block {
-    height: 100% !important; /* Ensure it matches the full height */
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures it stretches properly */
+    align-items: stretch; /* Ensures children stretch fully */
+    height: 100% !important; /* Full height for the app container */
+    min-height: 100vh !important; /* Ensure at least the height of the viewport */
     max-height: none !important;
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Slightly more transparent */
+    backdrop-filter: blur(12px); /* Optional blur effect */
     overflow: visible !important;
-    background-color: transparent !important;
     box-shadow: none !important;
+    animation: fade-in-up 0.8s ease-out;
   }
 
   .card, .form-container, .header-card {
