@@ -34,7 +34,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="p-4 min-h-screen bg-gray-50">
+    <main className="p-4 min-h-screen bg-transparent">
       {step === 0 && (
         <JourneyFlow
           journeyData={journeyData}
