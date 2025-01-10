@@ -10,7 +10,7 @@ export const Card = ({ children, className }) => (
     style={{
       backgroundColor: "rgba(255, 255, 255, 0.01)", // Ensure translucency
       backdropFilter: "blur(8px)", // Add blur effect
-      -webkitBackdropFilter: "blur(8px)", // Safari-specific
+      "-webkit-backdrop-filter": "blur(8px)", // Safari-specific
     }}
   >
     {children}
