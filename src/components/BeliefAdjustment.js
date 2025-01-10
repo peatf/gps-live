@@ -80,36 +80,6 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
         <CardTitle className="text-sage">Proximity Mapping</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
-        {/* Introductory Text */}
-        <Alert className="bg-sage/5 border-sage/20 fade-in">
-          <AlertDescription className="space-y-4 text-earth">
-            <p className="leading-relaxed">
-              Imagine crossing a river, hopping from stone to stone. Each stone represents steps
-              toward your goal—some are within reach, others require effort, and some demand bold
-              leaps.
-            </p>
-            <div className="space-y-2">
-              <p>This practice invites you to tune into three things:</p>
-              <ul className="list-none space-y-2 pl-4">
-                <li className="flex items-center space-x-2">
-                  <div className="w-1 h-1 rounded-full bg-cosmic"/>
-                  <span>What's within your grasp? Solid, reachable, and ready for action.</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1 h-1 rounded-full bg-cosmic"/>
-                  <span>What can you reach with a stretch? These steps push you further.</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1 h-1 rounded-full bg-cosmic"/>
-                  <span>When are you ready to leap? Bold moves that demand trust, risk, and readiness.</span>
-                </li>
-              </ul>
-            </div>
-            <p className="italic text-sage">
-              Each choice brings its own energy and rhythm to your progress.
-            </p>
-          </AlertDescription>
-        </Alert>
 
         {/* Goal Summary */}
         <Alert className="bg-cosmic/5 border-cosmic/20 scale-in">
