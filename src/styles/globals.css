@@ -13,38 +13,53 @@
     --radius: 0.5rem;
   }
 
-  /* No background for body and html */
-  body {
-    @apply text-earth antialiased;
-    font-feature-settings: "rlig" 1, "calt" 1;
-    background-color: transparent; /* Fully transparent */
+  /* Transparent body and html */
+  body, html {
+    background-color: transparent !important; /* Fully transparent */
   }
 
-  html {
-    scroll-behavior: smooth;
-    background-color: transparent; /* Fully transparent */
+  /* App container with animations and no white background */
+  .app-container {
+    backdrop-filter: blur(12px); /* Blurred background */
+    background-color: transparent !important; /* Fully transparent */
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    padding: 16px;
+    margin: 0 auto;
+    display: block; /* Adjust dynamically based on content */
+    width: 100%; /* Allow app to stretch */
+    max-width: none; /* No width constraint */
+    animation: fade-in-up 0.5s ease-out; /* Fade-in animation */
   }
-}
 
-/* Updated app container */
-.app-container {
-  backdrop-filter: blur(12px); /* Blurred background only */
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-  padding: 16px;
-  margin: 0 auto;
-  display: block; /* Dynamically adjust based on content */
-  width: 100%; /* Allow app to stretch fully */
-  max-width: none; /* Removes the fixed width constraint */
-}
+  /* Transparent cards and containers */
+  .card, .form-container, .header-card, .sqs-block, .content {
+    background-color: transparent !important; /* No background */
+    backdrop-filter: blur(8px); /* Optional blur for consistent look */
+    border: none !important; /* Remove borders */
+    box-shadow: none !important; /* Remove shadows */
+    animation: fade-in-down 0.5s ease-out; /* Fade-down animation */
+  }
 
-/* Removed white/translucent backgrounds from cards */
-.card, .form-container, .header-card {
-  background-color: transparent; /* No background */
-  backdrop-filter: none; /* No blur */
-  border-radius: 16px; /* Optional: Keep rounded corners */
-  padding: 16px;
-  box-shadow: none; /* Removed shadow for clean transparency */
+  /* Remove default form styling */
+  form, input, textarea, button {
+    background-color: transparent !important; /* Fully transparent */
+    border: none; /* Remove borders */
+    box-shadow: none; /* Remove shadows */
+  }
+
+  /* Styled inputs (optional) */
+  input, textarea {
+    background-color: transparent !important;
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Subtle border for usability */
+    padding: 8px;
+    border-radius: 4px;
+  }
+
+  /* Debugging: Add outlines to visualize elements */
+  * {
+    outline: 1px solid red !important; /* Debug element boundaries */
+  }
 }
 
 /* Animations */
@@ -81,6 +96,7 @@
   }
 }
 
+/* Animation utility classes */
 .fade-up {
   animation: fade-in-up 0.5s ease-out;
 }
