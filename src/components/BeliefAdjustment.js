@@ -108,8 +108,10 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             className="w-full"
           />
           <p className="text-sm text-cosmic/80 italic">
-            Reduce the scope by 10% using the slider to see if that makes the goal feel more achievable.
-          </p>
+  "Reduce" the scope by 10% using your imagination to see if that allows the goal to feel 
+  more achievable or approachable. If needed, get some suggestions for scope reduction 
+  by sliding this slider.
+</p>
         </div>
 
         {/* Letter Position Slider */}
@@ -134,8 +136,10 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
               </div>
             ) : (
               <p className="text-earth">
-                How much does an adjusted goal allow you to move your location on the proximity slider?
-              </p>
+  Earlier, you chose a place that represents where you are on your journey to your desire. 
+  First, check and see if you feel able to “stretch” where you see yourself if you’re not 
+  yet at Z.
+</p>
             )}
           </div>
         </div>
