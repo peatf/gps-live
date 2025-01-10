@@ -5,24 +5,35 @@ export const Button = ({
   children,
   onClick,
   disabled,
-  variant = "primary",
+  variant = "primary", // Default to primary for navigation buttons
   size = "default",
   className,
   ...props
 }) => {
   const baseStyles =
-    "relative inline-flex items-center justify-center rounded-full text-sm font-medium overflow-hidden transition-all duration-300";
+    "relative inline-flex items-center justify-center rounded-full text-sm font-medium overflow-hidden transition-all duration-300 backdrop-blur-sm";
 
   const sizeStyles = {
-    default: "h-12 px-6", // Default button size
+    default: "h-12 px-6",
     sm: "h-10 px-4 text-xs",
     lg: "h-14 px-8 text-lg",
   };
 
   const variantStyles = {
-    primary: "bg-white/10 backdrop-blur-sm text-earth hover:text-cosmic hover:bg-white/20 border border-white/20 hover:border-white/40 shadow-md hover:shadow-lg",
-    outline: "border border-white/20 text-earth hover:text-cosmic hover:bg-white/10 hover:border-white/30",
-    ghost: "text-earth hover:bg-white/10",
+    primary: `
+      bg-gradient-to-r from-blue-500/60 to-blue-700/60 text-white
+      hover:from-blue-500/80 hover:to-blue-700/80
+      border border-blue-500/40 hover:border-blue-500
+      shadow-md hover:shadow-lg
+    `,
+    outline: `
+      border border-white/30 text-earth
+      hover:border-white/50 hover:bg-white/10
+    `,
+    ghost: `
+      text-earth border border-white/20
+      hover:bg-white/10 hover:border-white/30
+    `,
   };
 
   const interactionEffects = `
