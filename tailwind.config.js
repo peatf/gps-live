@@ -64,7 +64,7 @@ module.exports = {
         border: "rgb(229 231 235)",
         input: "rgb(229 231 235)",
         ring: "rgb(59 130 246)",
-        background: "rgb(255 255 255)",
+        background: "transparent", // Updated for transparency
         foreground: "rgb(15 23 42)",
       },
       animation: {
