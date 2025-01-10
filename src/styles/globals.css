@@ -137,7 +137,7 @@ body {
 
 /* App container */
 .app-container {
-  min-height: 150vh;
+  min-height: 170vh;
   background: transparent;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
