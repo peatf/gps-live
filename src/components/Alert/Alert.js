@@ -1,36 +1,41 @@
 import React, { useEffect, useRef } from "react";
 import { cn } from "../../utils/cn";
 
-const TypewriterText = ({ children, onComplete }) => {
-  const containerRef = useRef(null);
-  
+const TypewriterText = ({ children }) => {
+  const textRef = useRef(null);
+
   useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const container = containerRef.current;
+    if (!textRef.current) return;
+
     const text = typeof children === 'string' 
       ? children 
-      : children?.props?.children || '';
-    
-    if (!text) return;
-    
-    container.textContent = '';
+      : (children?.props?.children || '');
+      
+    if (!text || typeof text !== 'string') {
+      textRef.current.textContent = children;
+      return;
+    }
+
+    textRef.current.textContent = '';
     let index = 0;
     
     const timer = setInterval(() => {
       if (index < text.length) {
-        container.textContent += text[index];
+        textRef.current.textContent += text[index];
         index++;
       } else {
         clearInterval(timer);
-        if (onComplete) onComplete();
       }
     }, 30);
-    
+
     return () => clearInterval(timer);
-  }, [children, onComplete]);
-  
-  return <div ref={containerRef} className="typewriter-content" />;
+  }, [children]);
+
+  if (React.isValidElement(children)) {
+    return children;
+  }
+
+  return <span ref={textRef} />;
 };
 
 export const Alert = ({ children, variant = "default", className = "" }) => {
@@ -54,16 +59,8 @@ export const Alert = ({ children, variant = "default", className = "" }) => {
   );
 };
 
-export const AlertDescription = ({ children, className = "", onComplete }) => {
-  const content = React.isValidElement(children) 
-    ? children.props.children 
-    : children;
-    
-  return (
-    <div className={cn("text-sm text-earth", className)}>
-      <TypewriterText onComplete={onComplete}>
-        {content}
-      </TypewriterText>
-    </div>
-  );
-};
+export const AlertDescription = ({ children, className = "" }) => (
+  <div className={cn("text-sm text-earth", className)}>
+    <TypewriterText>{children}</TypewriterText>
+  </div>
+);
