@@ -187,28 +187,30 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         )}
 
         {isLoading && (
-          <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
-            <AlertDescription className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-2 border-cosmic border-t-transparent"/>
-              <span className="text-cosmic">Gathering alignment suggestions...</span>
-            </AlertDescription>
-          </Alert>
-        )}
+  <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
+    <AlertDescription className="flex items-center space-x-2">
+      <div className="animate-spin rounded-full h-4 w-4 border-2 border-cosmic border-t-transparent" />
+      <span className="text-cosmic">Gathering alignment suggestions...</span>
+    </AlertDescription>
+  </Alert>
+)}
 
-        {error && (
-          <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
-            <AlertDescription className="flex items-center space-x-2 text-burgundy">
-              <AlertTriangle className="w-4 h-4" />
-              <span>{error}</span>
-            </AlertDescription>
-          </Alert>
-         <Alert className="bg-sage/5 border-sage/20 fade-in">
-  <AlertDescription className="text-earth leading-relaxed">
-    This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
-    Trust your process.
-  </AlertDescription>
-</Alert>
-        )}
+{error && (
+  <>
+    <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
+      <AlertDescription className="flex items-center space-x-2 text-burgundy">
+        <AlertTriangle className="w-4 h-4" />
+        <span>{error}</span>
+      </AlertDescription>
+    </Alert>
+    <Alert className="bg-sage/5 border-sage/20 fade-in">
+      <AlertDescription className="text-earth leading-relaxed">
+        This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
+        Trust your process.
+      </AlertDescription>
+    </Alert>
+  </>
+)}
 
         <div className="flex justify-between pt-6 border-t border-stone/10">
   <Button 
