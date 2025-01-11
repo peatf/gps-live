@@ -8,60 +8,29 @@ const TypewriterText = ({ children, onComplete }) => {
     if (!containerRef.current) return;
     
     const container = containerRef.current;
-    const elements = container.querySelectorAll('.typewriter-content');
-    let currentIndex = 0;
+    const text = typeof children === 'string' 
+      ? children 
+      : children?.props?.children || '';
     
-    const typeNextElement = () => {
-      if (currentIndex >= elements.length) {
+    if (!text) return;
+    
+    container.textContent = '';
+    let index = 0;
+    
+    const timer = setInterval(() => {
+      if (index < text.length) {
+        container.textContent += text[index];
+        index++;
+      } else {
+        clearInterval(timer);
         if (onComplete) onComplete();
-        return;
       }
-      
-      const element = elements[currentIndex];
-      const text = element.getAttribute('data-text');
-      element.textContent = '';
-      
-      let charIndex = 0;
-      const typeChar = () => {
-        if (charIndex < text.length) {
-          element.textContent += text[charIndex];
-          charIndex++;
-          setTimeout(typeChar, 30); // 30ms per character
-        } else {
-          currentIndex++;
-          setTimeout(typeNextElement, 500); // 500ms pause between elements
-        }
-      };
-      
-      typeChar();
-    };
+    }, 30);
     
-    typeNextElement();
-  }, [onComplete]);
+    return () => clearInterval(timer);
+  }, [children, onComplete]);
   
-  const renderContent = (content) => {
-    if (typeof content === 'string') {
-      return <span className="typewriter-content" data-text={content}></span>;
-    }
-    
-    if (Array.isArray(content)) {
-      return content.map((item, index) => (
-        <div key={index} className="typewriter-content" data-text={item}>
-        </div>
-      ));
-    }
-    
-    if (React.isValidElement(content)) {
-      return React.cloneElement(content, {
-        className: cn('typewriter-content', content.props.className),
-        'data-text': content.props.children
-      });
-    }
-    
-    return content;
-  };
-  
-  return <div ref={containerRef}>{renderContent(children)}</div>;
+  return <div ref={containerRef} className="typewriter-content" />;
 };
 
 export const Alert = ({ children, variant = "default", className = "" }) => {
@@ -85,8 +54,16 @@ export const Alert = ({ children, variant = "default", className = "" }) => {
   );
 };
 
-export const AlertDescription = ({ children, className = "", onComplete }) => (
-  <div className={cn("text-sm text-earth", className)}>
-    <TypewriterText onComplete={onComplete}>{children}</TypewriterText>
-  </div>
-);
+export const AlertDescription = ({ children, className = "", onComplete }) => {
+  const content = React.isValidElement(children) 
+    ? children.props.children 
+    : children;
+    
+  return (
+    <div className={cn("text-sm text-earth", className)}>
+      <TypewriterText onComplete={onComplete}>
+        {content}
+      </TypewriterText>
+    </div>
+  );
+};
