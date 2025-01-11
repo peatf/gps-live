@@ -48,7 +48,7 @@ export const Button = ({
       "border border-white/10",
       "hover:bg-white/5",
       "hover:border-white/20",
-      "active:bg-white/10",,
+      "active:bg-white/10",
       "text-earth",
       "justify-start gap-2",
       "group"
