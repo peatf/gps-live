@@ -24,5 +24,11 @@ export const Alert = ({ children, variant = "default", className = "" }) => {
 };
 
 export const AlertDescription = ({ children, className = "" }) => (
-  <div className={cn("text-sm", className)}>{children}</div>
+  <div className={cn("text-sm text-earth", className)}>
+    {typeof children === 'string' ? (
+      <span className="typewriter">{children}</span>
+    ) : (
+      children
+    )}
+  </div>
 );
