@@ -151,7 +151,7 @@ const DiagnosticFlow = () => {
   }, []);
 
   return (
-    <div className="w-full p-4 bg-cloud-light rounded-lg">
+    <div className="w-full p-4 bg-transparent rounded-lg">
       <canvas 
         ref={containerRef}
         width={600}
