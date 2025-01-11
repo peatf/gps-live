@@ -2,40 +2,37 @@ import React, { useEffect, useRef } from "react";
 import { cn } from "../../utils/cn";
 
 const TypewriterText = ({ children }) => {
-  const textRef = useRef(null);
+  const elementRef = useRef(null);
 
   useEffect(() => {
-    if (!textRef.current) return;
+    if (!elementRef.current) return;
 
-    const text = typeof children === 'string' 
-      ? children 
-      : (children?.props?.children || '');
+    // If children is a string, animate it
+    if (typeof children === 'string') {
+      const element = elementRef.current;
+      element.textContent = '';
       
-    if (!text || typeof text !== 'string') {
-      textRef.current.textContent = children;
-      return;
+      let index = 0;
+      const timer = setInterval(() => {
+        if (index < children.length) {
+          element.textContent += children[index];
+          index++;
+        } else {
+          clearInterval(timer);
+        }
+      }, 30);
+
+      return () => clearInterval(timer);
     }
-
-    textRef.current.textContent = '';
-    let index = 0;
-    
-    const timer = setInterval(() => {
-      if (index < text.length) {
-        textRef.current.textContent += text[index];
-        index++;
-      } else {
-        clearInterval(timer);
-      }
-    }, 30);
-
-    return () => clearInterval(timer);
   }, [children]);
 
-  if (React.isValidElement(children)) {
+  // If children is a React element or array, render it directly
+  if (React.isValidElement(children) || Array.isArray(children)) {
     return children;
   }
 
-  return <span ref={textRef} />;
+  // For strings, use the typewriter effect
+  return <div ref={elementRef} className="typewriter-content" />;
 };
 
 export const Alert = ({ children, variant = "default", className = "" }) => {
