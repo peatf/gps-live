@@ -78,7 +78,11 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
       }}
     >
       <CardHeader className="border-b border-stone/10">
-        <CardTitle className="text-sage">Proximity Mapping</CardTitle>
+        <CardTitle className="text-sage">The Next Step: Proximity Mapping</CardTitle>
+<CardDescription className="text-earth leading-relaxed">
+  Earlier, you chose a place that represents where you are on your journey to your desire. 
+  First, check and see if you feel able to “stretch” where you see yourself if you’re not yet at Z.
+</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
 
