@@ -1,127 +1,69 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { cn } from "../../utils/cn";
 
-// Helper to recursively extract text content from any structure
-const extractTextContent = (node) => {
+// Clean utility to extract text content
+const getTextContent = (node) => {
+  if (!node) return '';
   if (typeof node === 'string') return node;
   if (typeof node === 'number') return String(node);
-  if (!node) return '';
-  
-  // Handle arrays
-  if (Array.isArray(node)) {
-    return node.map(extractTextContent).join(' ');
-  }
-  
-  // Handle React elements
-  if (React.isValidElement(node)) {
-    // Extract from children
-    return extractTextContent(node.props.children);
-  }
-  
-  // Handle plain objects with children
-  if (node.children) {
-    return extractTextContent(node.children);
-  }
-  
+  if (Array.isArray(node)) return node.map(getTextContent).join(' ');
+  if (React.isValidElement(node)) return getTextContent(node.props.children);
   return '';
 };
 
-const TypewriterText = ({ children, onComplete }) => {
+// Specialized TypewriterText component
+const TypewriterText = ({ children }) => {
   const elementRef = useRef(null);
-  const [isTyping, setIsTyping] = useState(true);
-  const [content, setContent] = useState('');
+  const timeoutsRef = useRef([]);
 
   useEffect(() => {
-    if (!elementRef.current) return;
+    const element = elementRef.current;
+    if (!element) return;
 
-    // Reset state when children change
-    setIsTyping(true);
-    setContent('');
+    // Clear previous content and timeouts
+    element.textContent = '';
+    timeoutsRef.current.forEach(clearTimeout);
+    timeoutsRef.current = [];
 
-    // Extract text to type
-    const textContent = extractTextContent(children);
-    let timeouts = [];
-
-    // Handle empty or invalid content
-    if (!textContent) {
-      setIsTyping(false);
-      if (onComplete) onComplete();
+    // Get text to type
+    const text = getTextContent(children);
+    if (!text) {
+      element.textContent = children;
       return;
     }
 
     // Type each character
     let currentIndex = 0;
-    const typeChar = () => {
-      if (currentIndex < textContent.length) {
-        setContent(prev => prev + textContent[currentIndex]);
+    const type = () => {
+      if (currentIndex < text.length) {
+        element.textContent += text[currentIndex];
         currentIndex++;
-        timeouts.push(setTimeout(typeChar, 30));
-      } else {
-        setIsTyping(false);
-        if (onComplete) onComplete();
+        const timeout = setTimeout(type, 30);
+        timeoutsRef.current.push(timeout);
       }
     };
 
-    timeouts.push(setTimeout(typeChar, 0));
+    type();
 
-    // Cleanup timeouts
-    return () => timeouts.forEach(clearTimeout);
-  }, [children, onComplete]);
+    // Cleanup function
+    return () => {
+      timeoutsRef.current.forEach(clearTimeout);
+      timeoutsRef.current = [];
+    };
+  }, [children]);
 
-  // If content is a React element or component, handle specially
+  // Handle different content types
   if (React.isValidElement(children)) {
-    if (isTyping) {
-      // During typing, render the structure with our typed content
-      return React.cloneElement(children, {
-        ...children.props,
-        children: content || '\u00A0' // Use non-breaking space if empty
-      });
-    }
-    // After typing complete, render original element
-    return children;
+    return React.cloneElement(children, {
+      ref: elementRef,
+      className: cn(children.props.className, "whitespace-pre-wrap")
+    });
   }
 
-  // For plain text or other content
-  return (
-    <div 
-      ref={elementRef}
-      className="whitespace-pre-wrap"
-    >
-      {isTyping ? content || '\u00A0' : children}
-    </div>
-  );
+  return <div ref={elementRef} className="whitespace-pre-wrap" />;
 };
 
-const ContentRenderer = ({ children }) => {
-  if (!children) return null;
-
-  // Handle arrays (like list items)
-  if (Array.isArray(children)) {
-    return children.map((child, index) => (
-      <ContentRenderer key={index}>{child}</ContentRenderer>
-    ));
-  }
-
-  // Handle React elements
-  if (React.isValidElement(children)) {
-    // If it's an element with children, process them
-    if (children.props.children) {
-      return React.cloneElement(children, {
-        ...children.props,
-        children: <ContentRenderer>{children.props.children}</ContentRenderer>
-      });
-    }
-    return children;
-  }
-
-  // Handle plain text with typewriter
-  if (typeof children === 'string' || typeof children === 'number') {
-    return <TypewriterText>{children}</TypewriterText>;
-  }
-
-  return children;
-};
-
+// Main Alert components
 export const Alert = ({ children, variant = "default", className = "" }) => {
   const variantStyles = {
     default: "bg-yellow-50/30 border-yellow-300/30 text-yellow-900 glowing-screen",
@@ -143,8 +85,18 @@ export const Alert = ({ children, variant = "default", className = "" }) => {
   );
 };
 
-export const AlertDescription = ({ children, className = "" }) => (
-  <div className={cn("text-sm text-earth", className)}>
-    <ContentRenderer>{children}</ContentRenderer>
-  </div>
-);
+export const AlertDescription = ({ children, className = "" }) => {
+  if (!children) return null;
+
+  return (
+    <div className={cn("text-sm text-earth", className)}>
+      {typeof children === 'object' && children.props?.children ? (
+        React.cloneElement(children, {
+          children: <TypewriterText>{children.props.children}</TypewriterText>
+        })
+      ) : (
+        <TypewriterText>{children}</TypewriterText>
+      )}
+    </div>
+  );
+};
