@@ -79,22 +79,28 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     >
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="text-sage">Proximity Mapping</CardTitle>
+        <div className="text-earth leading-relaxed mt-2">
+          This tool helps you explore where you are in your journey and what steps feel aligned. This is about noticing what feels true and actionable for you. Earlier chose a place that represents where you are on your journey to your desire, first check and see if you feel able to "stretch" where you see yourself if you’re not yet at Z.
+        </div>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
 
         {/* Goal Summary */}
         <Alert className="bg-cosmic/5 border-cosmic/20 scale-in">
-  <AlertDescription>
-    <p className="font-medium text-cosmic">Your Current Goal:</p>
-    <p className="text-earth mt-2">{journeyData.goal}</p>
-    <p className="text-sm text-cosmic/80 mt-2">
-      Target Date: {new Date(journeyData.targetDate).toLocaleDateString()}
-    </p>
-  </AlertDescription>
-</Alert>
+          <AlertDescription>
+            <p className="font-medium text-cosmic">Your Current Goal:</p>
+            <p className="text-earth mt-2">{journeyData.goal}</p>
+            <p className="text-sm text-cosmic/80 mt-2">
+              Target Date: {new Date(journeyData.targetDate).toLocaleDateString()}
+            </p>
+          </AlertDescription>
+        </Alert>
 
         {/* Scope Slider */}
         <div className="space-y-4 fade-up">
+          <p className="text-sm text-cosmic/80 italic">
+            “Reduce” the scope by 10% using your imagination to see if that allows the goal to feel more achievable or approachable. If needed, get some suggestions for scope reduction by sliding this slider.
+          </p>
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-earth">Adjust Goal Scope</span>
             <span className="text-sm text-dove">{goalScale}%</span>
@@ -107,9 +113,6 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             onValueChange={handleScaleChange}
             className="w-full"
           />
-          <p className="text-sm text-cosmic/80 italic">
-            Reduce the scope by 10% using the slider to see if that makes the goal feel more achievable.
-          </p>
         </div>
 
         {/* Letter Position Slider */}
@@ -164,7 +167,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
 
         {/* Navigation */}
         <div className="flex justify-between pt-6 border-t border-stone/10">
-  <Button 
+          <Button 
             variant="outline" 
             onClick={onBack}
             className="text-earth hover:text-cosmic transition-colors"
@@ -172,14 +175,13 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             <ArrowLeft className="w-4 h-4 mr-2" /> Back
           </Button>
           <Button 
-  onClick={onContinue}
-  variant="primary" // Use the predefined "primary" variant
-  className="px-6 py-3 rounded-full" // Ensure consistent rounded styling
->
-  Continue to Alignment <ArrowRight className="w-4 h-4 ml-2" />
-</Button>
-
-</div>
+            onClick={onContinue}
+            variant="primary"
+            className="px-6 py-3 rounded-full"
+          >
+            Continue to Alignment <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
