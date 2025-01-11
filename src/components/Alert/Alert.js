@@ -1,38 +1,58 @@
 import React, { useEffect, useRef } from "react";
 import { cn } from "../../utils/cn";
 
+// Helper to safely convert content to string
+const getTextContent = (content) => {
+  if (typeof content === 'string') return content;
+  if (Array.isArray(content)) return content.join(' ');
+  if (content?.props?.children) {
+    if (typeof content.props.children === 'string') return content.props.children;
+    if (Array.isArray(content.props.children)) {
+      return content.props.children
+        .map(child => typeof child === 'string' ? child : '')
+        .join(' ');
+    }
+  }
+  return '';
+};
+
+// Helper to check if content should have typewriter effect
+const shouldAnimate = (content) => {
+  if (typeof content === 'string') return true;
+  if (content?.props?.children && typeof content.props.children === 'string') return true;
+  return false;
+};
+
 const TypewriterText = ({ children }) => {
   const elementRef = useRef(null);
 
   useEffect(() => {
-    if (!elementRef.current) return;
+    if (!elementRef.current || !shouldAnimate(children)) return;
 
-    // If children is a string, animate it
-    if (typeof children === 'string') {
-      const element = elementRef.current;
-      element.textContent = '';
-      
-      let index = 0;
-      const timer = setInterval(() => {
-        if (index < children.length) {
-          element.textContent += children[index];
-          index++;
-        } else {
-          clearInterval(timer);
-        }
-      }, 30);
+    const text = getTextContent(children);
+    const element = elementRef.current;
+    element.textContent = '';
+    
+    let index = 0;
+    const timer = setInterval(() => {
+      if (index < text.length) {
+        element.textContent += text[index];
+        index++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 30);
 
-      return () => clearInterval(timer);
-    }
+    return () => clearInterval(timer);
   }, [children]);
 
-  // If children is a React element or array, render it directly
-  if (React.isValidElement(children) || Array.isArray(children)) {
+  // If content isn't suitable for animation, render it directly
+  if (!shouldAnimate(children)) {
     return children;
   }
 
-  // For strings, use the typewriter effect
-  return <div ref={elementRef} className="typewriter-content" />;
+  // For animatable content, use the typewriter effect
+  return <div ref={elementRef} />;
 };
 
 export const Alert = ({ children, variant = "default", className = "" }) => {
