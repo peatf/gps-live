@@ -1,4 +1,3 @@
-// src/components/Button/Button.js
 import React from "react";
 import { cn } from "../../utils/cn";
 
@@ -11,8 +10,7 @@ export const Button = ({
   className,
   ...props
 }) => {
-  const baseStyles = 
-    "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300";
+  const baseStyles = "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300";
 
   const sizeStyles = {
     default: "px-6 py-3",
@@ -20,35 +18,45 @@ export const Button = ({
     lg: "px-8 py-4 text-lg",
   };
 
+  // Updated variants to use glass effect by default except for primary buttons
   const variantStyles = {
     primary: "bg-cosmic text-white hover:bg-cosmic-light",
-    outline: "border border-silver-600/50 text-silver-600 hover:bg-silver-100/10 bg-transparent",
-    ghost: "text-silver-600 hover:bg-silver-100/10 bg-transparent shadow-sm shadow-white/10 hover:shadow-white/20"
+    outline: `
+      bg-transparent
+      backdrop-filter backdrop-blur-sm
+      border border-silver-600/20
+      hover:border-silver-600/30
+      text-silver-600
+      hover:bg-silver-100/5
+    `,
+    ghost: `
+      bg-transparent
+      backdrop-filter backdrop-blur-sm
+      text-silver-600
+      hover:bg-silver-100/5
+      border border-transparent
+    `
   };
 
-  // Updated mobile styles
-  const mobileStyles = `
-    @media (max-width: 640px) {
-      font-size: 14px;
-      padding: 0.75rem 1rem;
-      min-width: ${variant === 'primary' ? '120px' : 'auto'};
-    }
-  `;
-
-  // Special treatment for sensation buttons
+  // Detect button type from className to apply appropriate glass effects
+  const isNavButton = className?.includes('outline') || className?.includes('ghost');
   const isSensationButton = className?.includes('sensation-button');
-  const sensationStyles = isSensationButton ? `
-    flex items-center justify-start gap-2
-    shadow-[0_2px_4px_rgba(0,0,0,0.05)]
-    border border-white/20
-    backdrop-filter backdrop-blur-sm
-    hover:shadow-[0_4px_8px_rgba(0,0,0,0.1)]
-    transition-all duration-300
-    overflow-hidden
-    whitespace-normal
-    text-left
-    w-full
-  ` : '';
+  const isSelected = props.selected || className?.includes('selected');
+
+  // Special glass effects based on button type
+  const glassStyles = cn(
+    !isNavButton && !variant.includes('primary') && `
+      shadow-[0_2px_8px_rgba(0,0,0,0.02)]
+      hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)]
+      active:shadow-[0_2px_4px_rgba(0,0,0,0.02)]
+    `,
+    isSensationButton && `
+      backdrop-filter backdrop-blur-sm
+      active:transform active:scale-[0.98]
+      transition-all duration-200
+    `,
+    isSelected && "bg-cosmic text-white"
+  );
 
   return (
     <button
@@ -58,17 +66,13 @@ export const Button = ({
         baseStyles,
         sizeStyles[size],
         variantStyles[variant],
+        glassStyles,
         "disabled:opacity-50 disabled:cursor-not-allowed",
-        sensationStyles,
-        mobileStyles,
         className
       )}
       {...props}
     >
-      <span className={cn(
-        "relative z-10 flex items-center justify-center gap-2",
-        isSensationButton ? "w-full" : "px-1"
-      )}>
+      <span className="relative z-10 flex items-center justify-center gap-2">
         {children}
       </span>
     </button>
