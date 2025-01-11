@@ -1,58 +1,125 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { cn } from "../../utils/cn";
 
-// Helper to safely convert content to string
-const getTextContent = (content) => {
-  if (typeof content === 'string') return content;
-  if (Array.isArray(content)) return content.join(' ');
-  if (content?.props?.children) {
-    if (typeof content.props.children === 'string') return content.props.children;
-    if (Array.isArray(content.props.children)) {
-      return content.props.children
-        .map(child => typeof child === 'string' ? child : '')
-        .join(' ');
-    }
+// Helper to recursively extract text content from any structure
+const extractTextContent = (node) => {
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (!node) return '';
+  
+  // Handle arrays
+  if (Array.isArray(node)) {
+    return node.map(extractTextContent).join(' ');
   }
+  
+  // Handle React elements
+  if (React.isValidElement(node)) {
+    // Extract from children
+    return extractTextContent(node.props.children);
+  }
+  
+  // Handle plain objects with children
+  if (node.children) {
+    return extractTextContent(node.children);
+  }
+  
   return '';
 };
 
-// Helper to check if content should have typewriter effect
-const shouldAnimate = (content) => {
-  if (typeof content === 'string') return true;
-  if (content?.props?.children && typeof content.props.children === 'string') return true;
-  return false;
-};
-
-const TypewriterText = ({ children }) => {
+const TypewriterText = ({ children, onComplete }) => {
   const elementRef = useRef(null);
+  const [isTyping, setIsTyping] = useState(true);
+  const [content, setContent] = useState('');
 
   useEffect(() => {
-    if (!elementRef.current || !shouldAnimate(children)) return;
+    if (!elementRef.current) return;
 
-    const text = getTextContent(children);
-    const element = elementRef.current;
-    element.textContent = '';
-    
-    let index = 0;
-    const timer = setInterval(() => {
-      if (index < text.length) {
-        element.textContent += text[index];
-        index++;
+    // Reset state when children change
+    setIsTyping(true);
+    setContent('');
+
+    // Extract text to type
+    const textContent = extractTextContent(children);
+    let timeouts = [];
+
+    // Handle empty or invalid content
+    if (!textContent) {
+      setIsTyping(false);
+      if (onComplete) onComplete();
+      return;
+    }
+
+    // Type each character
+    let currentIndex = 0;
+    const typeChar = () => {
+      if (currentIndex < textContent.length) {
+        setContent(prev => prev + textContent[currentIndex]);
+        currentIndex++;
+        timeouts.push(setTimeout(typeChar, 30));
       } else {
-        clearInterval(timer);
+        setIsTyping(false);
+        if (onComplete) onComplete();
       }
-    }, 30);
+    };
 
-    return () => clearInterval(timer);
-  }, [children]);
+    timeouts.push(setTimeout(typeChar, 0));
 
-  // If content isn't suitable for animation, render it directly
-  if (!shouldAnimate(children)) {
+    // Cleanup timeouts
+    return () => timeouts.forEach(clearTimeout);
+  }, [children, onComplete]);
+
+  // If content is a React element or component, handle specially
+  if (React.isValidElement(children)) {
+    if (isTyping) {
+      // During typing, render the structure with our typed content
+      return React.cloneElement(children, {
+        ...children.props,
+        children: content || '\u00A0' // Use non-breaking space if empty
+      });
+    }
+    // After typing complete, render original element
     return children;
   }
 
-  // For animatable content, use the typewriter effect
-  return <div ref={elementRef} />;
+  // For plain text or other content
+  return (
+    <div 
+      ref={elementRef}
+      className="whitespace-pre-wrap"
+    >
+      {isTyping ? content || '\u00A0' : children}
+    </div>
+  );
+};
+
+const ContentRenderer = ({ children }) => {
+  if (!children) return null;
+
+  // Handle arrays (like list items)
+  if (Array.isArray(children)) {
+    return children.map((child, index) => (
+      <ContentRenderer key={index}>{child}</ContentRenderer>
+    ));
+  }
+
+  // Handle React elements
+  if (React.isValidElement(children)) {
+    // If it's an element with children, process them
+    if (children.props.children) {
+      return React.cloneElement(children, {
+        ...children.props,
+        children: <ContentRenderer>{children.props.children}</ContentRenderer>
+      });
+    }
+    return children;
+  }
+
+  // Handle plain text with typewriter
+  if (typeof children === 'string' || typeof children === 'number') {
+    return <TypewriterText>{children}</TypewriterText>;
+  }
+
+  return children;
 };
 
 export const Alert = ({ children, variant = "default", className = "" }) => {
@@ -78,6 +145,6 @@ export const Alert = ({ children, variant = "default", className = "" }) => {
 
 export const AlertDescription = ({ children, className = "" }) => (
   <div className={cn("text-sm text-earth", className)}>
-    <TypewriterText>{children}</TypewriterText>
+    <ContentRenderer>{children}</ContentRenderer>
   </div>
 );
