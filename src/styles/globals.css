@@ -217,3 +217,73 @@ button {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
+/* Add to your globals.css */
+
+/* Typewriter animation refinements */
+.glowing-screen .typewriter-text {
+  display: block;
+  width: 0;
+  overflow: hidden;
+  position: relative;
+  animation: none; /* We'll add this dynamically */
+  white-space: pre-wrap;
+}
+
+.glowing-screen .typewriter-text.typing {
+  animation: typewriter 2s steps(40, end) forwards;
+}
+
+.glowing-screen .typewriter-text.typing::after {
+  content: '|';
+  position: absolute;
+  right: -1px;
+  width: 2px;
+  height: 100%;
+  background: var(--text-color);
+  animation: blink 0.75s infinite;
+}
+
+/* Ensure card takes up more viewport space */
+.app-container {
+  width: 100vw;
+  min-height: 100vh;
+  padding: 0.5rem;
+}
+
+.card-container {
+  width: 100%;
+  max-width: 1200px; /* Adjust based on your needs */
+  margin: 0 auto;
+  height: calc(100vh - 1rem);
+}
+
+/* Mobile button optimizations */
+@media (max-width: 640px) {
+  button {
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  
+  button span {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  
+  .sensation-button {
+    justify-content: flex-start;
+    text-align: left;
+    width: 100%;
+  }
+  
+  .sensation-button .plus-icon {
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+  
+  .sensation-text {
+    flex: 1;
+    text-align: left;
+  }
+}
