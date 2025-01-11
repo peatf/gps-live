@@ -10,6 +10,7 @@ export const Button = ({
   className,
   ...props
 }) => {
+  // Core styles that all buttons share
   const baseStyles = "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300";
 
   const sizeStyles = {
@@ -18,45 +19,59 @@ export const Button = ({
     lg: "px-8 py-4 text-lg",
   };
 
-  // Updated variants to use glass effect by default except for primary buttons
+  // Glass effect base - used by ghost and sensation buttons
+  const glassBase = `
+    bg-transparent
+    backdrop-filter backdrop-blur-[2px]
+    shadow-[0_2px_5px_rgba(255,255,255,0.1)]
+    transition-all duration-300
+  `;
+
+  // Refined variant styles
   const variantStyles = {
-    primary: "bg-cosmic text-white hover:bg-cosmic-light",
-    outline: `
-      bg-transparent
-      backdrop-filter backdrop-blur-sm
-      border border-silver-600/20
-      hover:border-silver-600/30
-      text-silver-600
-      hover:bg-silver-100/5
-    `,
-    ghost: `
-      bg-transparent
-      backdrop-filter backdrop-blur-sm
-      text-silver-600
-      hover:bg-silver-100/5
-      border border-transparent
-    `
+    // Primary stays solid for CTAs
+    primary: "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-[1.02] active:scale-[0.98]",
+    
+    // Ghost for navigation (like Back button)
+    ghost: cn(
+      glassBase,
+      "border border-white/10",
+      "hover:bg-white/5",
+      "hover:border-white/20",
+      "active:bg-white/10",
+      "text-earth"
+    ),
+    
+    // Special style for sensation buttons
+    sensation: cn(
+      glassBase,
+      "border border-white/5",
+      "hover:bg-white/[0.02]",
+      "hover:border-white/10",
+      "active:bg-white/[0.01]",
+      "text-earth",
+      "justify-start gap-2",
+      "group"
+    ),
+    
+    // Toggle buttons (like alignment section)
+    toggle: cn(
+      glassBase,
+      "border border-white/10",
+      "hover:bg-white/5",
+      "data-[state=active]:bg-cosmic",
+      "data-[state=active]:text-white",
+      "data-[state=active]:border-cosmic",
+      "text-earth"
+    )
   };
 
-  // Detect button type from className to apply appropriate glass effects
-  const isNavButton = className?.includes('outline') || className?.includes('ghost');
+  // Detect button type from props and className
   const isSensationButton = className?.includes('sensation-button');
-  const isSelected = props.selected || className?.includes('selected');
+  const buttonVariant = isSensationButton ? 'sensation' : variant;
 
-  // Special glass effects based on button type
-  const glassStyles = cn(
-    !isNavButton && !variant.includes('primary') && `
-      shadow-[0_2px_8px_rgba(0,0,0,0.02)]
-      hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)]
-      active:shadow-[0_2px_4px_rgba(0,0,0,0.02)]
-    `,
-    isSensationButton && `
-      backdrop-filter backdrop-blur-sm
-      active:transform active:scale-[0.98]
-      transition-all duration-200
-    `,
-    isSelected && "bg-cosmic text-white"
-  );
+  // Handle active/selected states
+  const isActive = props['data-state'] === 'active' || props.selected;
 
   return (
     <button
@@ -65,9 +80,9 @@ export const Button = ({
       className={cn(
         baseStyles,
         sizeStyles[size],
-        variantStyles[variant],
-        glassStyles,
-        "disabled:opacity-50 disabled:cursor-not-allowed",
+        variantStyles[buttonVariant],
+        isActive && "bg-cosmic text-white border-cosmic",
+        disabled && "opacity-50 cursor-not-allowed pointer-events-none",
         className
       )}
       {...props}
@@ -75,6 +90,9 @@ export const Button = ({
       <span className="relative z-10 flex items-center justify-center gap-2">
         {children}
       </span>
+      
+      {/* Subtle gradient overlay for depth */}
+      <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
     </button>
   );
 };
