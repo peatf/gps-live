@@ -19,10 +19,11 @@ export const Button = ({
     lg: "h-14 px-8 text-lg",
   };
 
+  // Updated variant styles with proper transparency
   const variantStyles = {
     primary: "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-105",
-    outline: "bg-gradient-to-r from-silver-300/30 to-silver-500/30 text-silver-600 hover:from-silver-300/40 hover:to-silver-500/40",
-    ghost: "bg-transparent text-silver-600 hover:bg-silver-100"
+    outline: "bg-transparent border border-silver-600 text-silver-600 hover:bg-silver-100/10",
+    ghost: "bg-transparent text-silver-600 hover:bg-silver-100/10"
   };
 
   const glossyEffect = `
@@ -45,6 +46,18 @@ export const Button = ({
     ? "shadow-[0_4px_14px_0_rgba(62,84,184,0.2)]"
     : "shadow-[0_4px_14px_0_rgba(0,0,0,0.1)]";
 
+  // Mobile optimization
+  const mobileStyles = `
+    @media (max-width: 640px) {
+      text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
+      font-size: 0.875rem;
+      min-height: 2.5rem;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+  `;
+
   return (
     <button
       onClick={onClick}
@@ -59,11 +72,12 @@ export const Button = ({
         "disabled:opacity-50 disabled:cursor-not-allowed",
         "whitespace-normal break-words min-h-[48px]",
         "backdrop-blur-sm",
+        mobileStyles,
         className
       )}
       {...props}
     >
-      <span className="relative z-10 flex items-center justify-center px-2">
+      <span className="relative z-10 flex items-center justify-center px-2 transition-transform">
         {children}
       </span>
     </button>
