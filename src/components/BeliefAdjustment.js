@@ -1,6 +1,6 @@
 // src/components/BeliefAdjustment.js
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from './Card/Card';
+import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
@@ -78,11 +78,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
       }}
     >
       <CardHeader className="border-b border-stone/10">
-        <CardTitle className="text-sage">The Next Step: Proximity Mapping</CardTitle>
-<CardDescription className="text-earth leading-relaxed">
-  Earlier, you chose a place that represents where you are on your journey to your desire. 
-  First, check and see if you feel able to “stretch” where you see yourself if you’re not yet at Z.
-</CardDescription>
+        <CardTitle className="text-sage">Proximity Mapping</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
 
@@ -112,10 +108,8 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             className="w-full"
           />
           <p className="text-sm text-cosmic/80 italic">
-  "Reduce" the scope by 10% using your imagination to see if that allows the goal to feel 
-  more achievable or approachable. If needed, get some suggestions for scope reduction 
-  by sliding this slider.
-</p>
+            Reduce the scope by 10% using the slider to see if that makes the goal feel more achievable.
+          </p>
         </div>
 
         {/* Letter Position Slider */}
@@ -140,10 +134,8 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
               </div>
             ) : (
               <p className="text-earth">
-  Earlier, you chose a place that represents where you are on your journey to your desire. 
-  First, check and see if you feel able to “stretch” where you see yourself if you’re not 
-  yet at Z.
-</p>
+                How much does an adjusted goal allow you to move your location on the proximity slider?
+              </p>
             )}
           </div>
         </div>
