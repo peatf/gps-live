@@ -108,6 +108,13 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           <Heart className="w-5 h-5 text-cosmic" />
           <span>Aligning Your Goal</span>
         </CardTitle>
+  <AlertDescription className="text-earth leading-relaxed">
+  Earlier you shared your internal agreement with receiving your desired goal or experience 
+  in the following areas. Aligning your goal is about creating a sense of harmony between 
+  what you desire and where you are. This step invites you to check in with how your goal 
+  feels in your body, mind, and emotions, and to explore what might support the internal 
+  agreement that allows your desire to materialize.
+</AlertDescription>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
         <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
