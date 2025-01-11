@@ -208,14 +208,14 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       </Alert>
       <div className="space-y-6">
         {Object.entries({
-          safety: "Safety: I feel safe and open to receiving this opportunity or experience.",
-  confidence: "Confidence: I have strong belief in my abilities and trust in my capability to achieve my goals.",
-  anticipation: "Anticipation: I consistently expect and anticipate that I will receive what I work towards and desire.",
-  openness: "Openness: I can maintain my focus and open connection to my desired result, even if it takes time.",
-  deserving: "Deserving: I feel deserving of this experience.",
-  belief: "Belief: I believe this is possible for me.",
-  appreciation: "Appreciation: I feel a sense of appreciation for this area in my business as it is now."
-}).map(([key, statement]) => (
+    safety: "Safety: I feel safe and open to receiving this opportunity or experience.",
+    confidence: "Confidence: I have strong belief in my abilities and trust in my capability to achieve my goals.",
+    anticipation: "Anticipation: I consistently expect and anticipate that I will receive what I work towards and desire.",
+    openness: "Openness: I can maintain my focus and open connection to my desired result, even if it takes time.",
+    deserving: "Deserving: I feel deserving of this experience.",
+    belief: "Belief: I believe this is possible for me.",
+    appreciation: "Appreciation: I feel a sense of appreciation for this area in my business as it is now."
+  }).map(([key, statement]) => (
           <div key={key} className="space-y-2">
             <div className="flex justify-between">
               <span className="text-sm text-earth">{statement}</span>
@@ -257,13 +257,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
   </ul>
 </AlertDescription>
     </Alert>
-    <Alert className="bg-sage/5 border-sage/20 fade-in">
-  <AlertDescription className="text-earth leading-relaxed">
-    This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
-    Trust your process.
-  </AlertDescription>
-</Alert>
-
+    
     <div className="space-y-4">
       <div className="space-y-2">
         <div className="flex items-center space-x-2">
