@@ -45,10 +45,10 @@ export const Button = ({
     // Special style for sensation buttons
     sensation: cn(
       glassBase,
-      "border border-white/5",
-      "hover:bg-white/[0.02]",
-      "hover:border-white/10",
-      "active:bg-white/[0.01]",
+      "border border-white/10",
+      "hover:bg-white/5",
+      "hover:border-white/20",
+      "active:bg-white/10",,
       "text-earth",
       "justify-start gap-2",
       "group"
