@@ -172,7 +172,9 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         </div>
       )}
 
-      {Object.entries(sensationCategories).map(([category, sensations]) => (
+      // Update the sensation buttons in JourneyFlow.js
+
+{Object.entries(sensationCategories).map(([category, sensations]) => (
   <div key={category} className="space-y-3">
     <h3 className="text-sm font-medium text-earth capitalize">{category} Sensations</h3>
     <div className="grid grid-cols-2 gap-2">
@@ -180,20 +182,20 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         <Button
           key={sensation}
           variant={selectedSensations?.includes(sensation) ? 'primary' : 'ghost'}
-          className="justify-start transition-all duration-200"
+          className="sensation-button"
           onClick={() => toggleSensation(sensation)}
         >
           {selectedSensations?.includes(sensation) ? (
-            <X className="w-4 h-4 mr-2" />
+            <X className="plus-icon w-4 h-4" />
           ) : (
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="plus-icon w-4 h-4" />
           )}
-          {sensation}
+          <span className="sensation-text">{sensation}</span>
         </Button>
       ))}
     </div>
   </div>
-      ))}
+))}
     </div>,
 
     // Alignment Check
