@@ -1,6 +1,6 @@
 // src/components/BeliefAdjustment.js
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
