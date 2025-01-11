@@ -202,6 +202,12 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
               <span>{error}</span>
             </AlertDescription>
           </Alert>
+         <Alert className="bg-sage/5 border-sage/20 fade-in">
+  <AlertDescription className="text-earth leading-relaxed">
+    This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
+    Trust your process.
+  </AlertDescription>
+</Alert>
         )}
 
         <div className="flex justify-between pt-6 border-t border-stone/10">
