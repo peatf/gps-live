@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Root Variables */
 :root {
   --text-color: #2F2E2C;
   --bg-transparent: rgba(248, 247, 245, 0.005);
@@ -10,6 +11,7 @@
   --pale-yellow-glow: rgba(255, 249, 196, 0.5);
 }
 
+/* Base Styles */
 body {
   color: var(--text-color);
   background: transparent;
@@ -17,7 +19,36 @@ body {
   overflow-x: hidden;
 }
 
-/* Animation keyframes */
+/* Layout & Container Styles */
+.app-container {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  overflow: hidden;
+}
+
+.responsive-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.content-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  padding: 0 1rem;
+}
+
+/* Animation Keyframes */
 @keyframes shine {
   0% { transform: translateX(-100%); }
   60% { transform: translateX(100%); }
@@ -33,7 +64,7 @@ body {
   }
 }
 
-@keyframes typewriter {
+@keyframes typing {
   from { width: 0 }
   to { width: 100% }
 }
@@ -74,7 +105,7 @@ body {
   }
 }
 
-/* Utility classes */
+/* Animation Utility Classes */
 .animate-pulse-subtle {
   animation: pulse 3s infinite ease-in-out;
 }
@@ -91,7 +122,27 @@ body {
   animation: fadeUp 0.5s ease-out;
 }
 
-/* Glass effect utilities */
+/* Typewriter Effects */
+.typewriter-line {
+  overflow: hidden;
+  white-space: pre-wrap;
+  border-right: 2px solid currentColor;
+  width: 0;
+  animation: typing 3s steps(40, end) forwards;
+}
+
+.typewriter-list li {
+  opacity: 0;
+  overflow: hidden;
+  white-space: pre-wrap;
+}
+
+.typewriter-list li.typing {
+  opacity: 1;
+  animation: typing 2s steps(40, end) forwards;
+}
+
+/* Glass Effects */
 .glass-effect {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
@@ -110,7 +161,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Scrollbar styling */
+/* Scrollbar Styles */
 .scrollable {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
@@ -129,22 +180,7 @@ body {
   border-radius: 3px;
 }
 
-/* App container */
-.app-container {
-  min-height: 100vh;
-  width: 100%;
-  background: transparent;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 1rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  overflow-x: hidden;
-  overscroll-behavior: none;
-}
-
-/* Glowing effects with typewriter animation */
+/* Glowing Effects */
 .glowing-screen {
   background: var(--pale-yellow);
   backdrop-filter: blur(8px);
@@ -154,16 +190,7 @@ body {
   animation: pulse 3s infinite alternate;
 }
 
-.glowing-screen .text-earth {
-  display: inline-block;
-  width: 0;
-  overflow: hidden;
-  animation: typewriter 2s steps(40, end) forwards;
-  white-space: pre-wrap;
-  border-right: 2px solid var(--text-color);
-}
-
-/* Button base styles with improved mobile handling */
+/* Button Styles */
 button {
   display: inline-flex;
   align-items: center;
@@ -176,152 +203,24 @@ button {
   transition: all 0.2s ease-in-out;
 }
 
-@media (max-width: 640px) {
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 0.25rem;
+  }
+  
+  .responsive-wrapper {
+    padding: 0.25rem;
+  }
+  
   button {
     font-size: 0.875rem;
     padding: 0.5rem 0.75rem;
     line-height: 1.25;
   }
   
-  /* Ensure proper button text rendering on mobile */
   button span {
     display: inline-block;
     vertical-align: middle;
   }
-}
-
-/* Transparent button backgrounds */
-.btn-transparent {
-  background-color: transparent !important;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-/* Glass backgrounds */
-.bg-glass-primary {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.bg-glass-secondary {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.06) 0%,
-    rgba(255, 255, 255, 0.01) 100%
-  );
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-/* Add to your globals.css */
-
-/* Typewriter animation refinements */
-.glowing-screen .typewriter-text {
-  display: block;
-  width: 0;
-  overflow: hidden;
-  position: relative;
-  animation: none; /* We'll add this dynamically */
-  white-space: pre-wrap;
-}
-
-.glowing-screen .typewriter-text.typing {
-  animation: typewriter 2s steps(40, end) forwards;
-}
-
-.glowing-screen .typewriter-text.typing::after {
-  content: '|';
-  position: absolute;
-  right: -1px;
-  width: 2px;
-  height: 100%;
-  background: var(--text-color);
-  animation: blink 0.75s infinite;
-}
-
-/* Ensure card takes up more viewport space */
-.app-container {
-  width: 100vw;
-  min-height: 100vh;
-  padding: 0.5rem;
-}
-
-.card-container {
-  width: 100%;
-  max-width: 1200px; /* Adjust based on your needs */
-  margin: 0 auto;
-  height: calc(100vh - 1rem);
-}
-
-/* Mobile button optimizations */
-@media (max-width: 640px) {
-  button {
-    min-height: 44px;
-    padding: 0.5rem 1rem;
-    font-size: 14px;
-    line-height: 1.2;
-  }
-  
-  button span {
-    display: inline-block;
-    white-space: nowrap;
-  }
-  
-  .sensation-button {
-    justify-content: flex-start;
-    text-align: left;
-    width: 100%;
-  }
-  
-  .sensation-button .plus-icon {
-    margin-right: 0.5rem;
-    flex-shrink: 0;
-  }
-  
-  .sensation-text {
-    flex: 1;
-    text-align: left;
-  }
-}
-/* Add to globals.css */
-
-.app-container {
-  width: 100vw;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: transparent;
-  overflow: hidden;
-}
-
-.responsive-wrapper {
-  width: 100%;
-  max-width: min(95vw, 1200px);
-  margin: 0 auto;
-  padding: 1rem;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Updated Card styles */
-.card-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  background: rgba(255, 255, 255, 0.01);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 24px;
-  overflow: hidden;
 }
