@@ -6,7 +6,7 @@
 :root {
   --text-color: #2F2E2C;
   --bg-transparent: rgba(248, 247, 245, 0.005);
-  --blur-amount: 4px;
+  --blur-amount: 1px;
   --pale-yellow: rgba(255, 249, 196, 0.7);
   --pale-yellow-glow: rgba(255, 249, 196, 0.5);
 }
