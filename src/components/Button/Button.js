@@ -10,51 +10,27 @@ export const Button = ({
   className,
   ...props
 }) => {
-  const baseStyles =
-    "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300 overflow-hidden";
+  const baseStyles = "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300";
 
   const sizeStyles = {
-    default: "h-12 px-6",
-    sm: "h-10 px-4 text-xs",
-    lg: "h-14 px-8 text-lg",
+    default: "px-6 py-3",
+    sm: "px-4 py-2 text-xs",
+    lg: "px-8 py-4 text-lg",
   };
 
-  // Updated variant styles with proper transparency
   const variantStyles = {
-    primary: "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-105",
-    outline: "bg-transparent border border-silver-600 text-silver-600 hover:bg-silver-100/10",
-    ghost: "bg-transparent text-silver-600 hover:bg-silver-100/10"
+    primary: "bg-cosmic text-white hover:bg-cosmic-light",
+    outline: "border border-silver-600/50 text-silver-600 hover:bg-silver-100/10 bg-transparent",
+    ghost: "text-silver-600 hover:bg-silver-100/10 bg-transparent"
   };
 
-  const glossyEffect = `
-    before:content-[''] before:absolute before:inset-0 
-    before:bg-gradient-to-b before:from-white/30 before:to-transparent 
-    before:rounded-full before:opacity-50
-    after:content-[''] after:absolute after:inset-0 
-    after:bg-gradient-to-t after:from-black/10 after:to-transparent 
-    after:rounded-full after:opacity-20
-  `;
-
-  const interactionEffects = `
-    hover:shadow-lg hover:-translate-y-0.5
-    active:shadow-inner active:translate-y-0.5
-    disabled:opacity-50 disabled:pointer-events-none
-    transition-all duration-200
-  `;
-
-  const bubbleShadow = variant === 'primary' 
-    ? "shadow-[0_4px_14px_0_rgba(62,84,184,0.2)]"
-    : "shadow-[0_4px_14px_0_rgba(0,0,0,0.1)]";
-
-  // Mobile optimization
   const mobileStyles = `
     @media (max-width: 640px) {
-      text-size-adjust: 100%;
-      -webkit-text-size-adjust: 100%;
-      font-size: 0.875rem;
-      min-height: 2.5rem;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
+      font-size: 14px;
+      padding-left: 1rem;
+      padding-right: 1rem;
+      max-width: 100%;
+      white-space: normal;
     }
   `;
 
@@ -66,18 +42,14 @@ export const Button = ({
         baseStyles,
         sizeStyles[size],
         variantStyles[variant],
-        glossyEffect,
-        interactionEffects,
-        bubbleShadow,
         "disabled:opacity-50 disabled:cursor-not-allowed",
-        "whitespace-normal break-words min-h-[48px]",
-        "backdrop-blur-sm",
+        "min-h-[44px]",
         mobileStyles,
         className
       )}
       {...props}
     >
-      <span className="relative z-10 flex items-center justify-center px-2 transition-transform">
+      <span className="relative z-10 flex items-center justify-center gap-2 px-1">
         {children}
       </span>
     </button>
