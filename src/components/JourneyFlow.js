@@ -172,8 +172,6 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
         </div>
       )}
 
-      // Update the sensation buttons in JourneyFlow.js
-
 {Object.entries(sensationCategories).map(([category, sensations]) => (
   <div key={category} className="space-y-3">
     <h3 className="text-sm font-medium text-earth capitalize">{category} Sensations</h3>
