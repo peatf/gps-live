@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       model: "text-davinci-003",
       prompt,
       max_tokens: 100,
-      temperature: 0.7,
+      temperature: 1.23,
     });
 
     // Extract the generated text
