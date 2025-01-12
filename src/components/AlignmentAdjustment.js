@@ -221,7 +221,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     <ArrowLeft className="w-4 h-4 mr-2" />
     Back
   </Button>
-  <<Button
+  <Button
   variant="primary"
   onClick={async () => {
     // Save the current journey data state
