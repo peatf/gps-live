@@ -34,7 +34,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
           journeyData: {
             ...journeyData,
             scale: value[0],
-            type: 'ProximityMapping', // Indicate this is for Proximity Mapping
+            type: 'ProximityMapping',
           },
         }),
       });
@@ -47,17 +47,13 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     } finally {
       setIsLoading(false);
     }
-
-    if (letterPosition === 22) {
-      setCelebrationTriggered(true);
-      setAiResponse('Congratulations! Your goal is now within reach and aligned with your vision.');
-    }
   };
 
+  // Handle Letter Position Slider Changes
   const handleLetterChange = (value) => {
     const newPosition = value[0];
     setLetterPosition(newPosition);
-    setCelebrationTriggered(newPosition === 22);
+    setCelebrationTriggered(newPosition === 22); // Trigger celebration when reaching "W"
   };
 
   useEffect(() => {
