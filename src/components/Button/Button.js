@@ -64,9 +64,9 @@ export const Button = ({
       glassBase,
       "border border-white/10",
       "text-earth",
-      "data-[state=active]:bg-white/[0.04]",
-      "data-[state=active]:border-white/10",
-      "data-[state=active]:text-cosmic"
+     "data-[state=active]:bg-cosmic/10", // A faint cosmic tint for active state
+"data-[state=active]:border-cosmic/30", // Highlight border on active
+"data-[state=active]:text-earth" // Maintain consistent text color
     )
   };
 
