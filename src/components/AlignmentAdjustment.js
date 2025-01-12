@@ -4,19 +4,17 @@ import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Slider } from './Slider/Slider';
-import debounce from 'lodash/debounce';
 import { getCategoryPrompt } from '../utils/alignmentPrompts';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import JourneyPDF from './JourneyPDF';
 
 export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete, onBack }) {
   const [activeCategory, setActiveCategory] = useState('null');
-  const [shouldFetchAdvice, setShouldFetchAdvice] = useState(false);
-  const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [aiSuggestions, setAiSuggestions] = useState(journeyData.latestAiAdvice || {});
   const [sliderValues, setSliderValues] = useState(journeyData.likertScores || {});
+  const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
 
   const alignmentAreas = {
     safety: "I feel safe and open to receiving this opportunity or experience",
@@ -25,7 +23,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     openness: "I can maintain my focus and open connection to my desired result even if it takes time",
     deserving: "I feel deserving of this experience",
     belief: "I believe this is possible for me",
-    appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly"
+    appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly",
   };
 
   const generateCategoryContext = (category, goal) => {
@@ -40,8 +38,8 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     setError(null);
 
     try {
-      const basePrompt = getCategoryPrompt(category, score, journeyData.goal);
-      const contextualText = generateCategoryContext(category, journeyData.goal);
+      const basePrompt = getCategoryPrompt(category, score, adjustedGoal);
+      const contextualText = generateCategoryContext(category, adjustedGoal);
       const finalPrompt = `${basePrompt}\n\n${contextualText}\n\nDoes this help you move this slider up?`;
 
       const response = await fetch('/api/ai', {
@@ -57,12 +55,15 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         }),
       });
 
-      if (!response.ok) throw new Error(`API Error: ${response.status}`);
+      if (!response.ok) throw new Error('Failed to get suggestions');
 
       const data = await response.json();
       setAiSuggestions((prev) => ({
         ...prev,
-        [category]: data.message,
+        [category]: {
+          suggestions: data.message,
+          timestamp: Date.now(),
+        },
       }));
 
       setJourneyData((prev) => ({
@@ -77,20 +78,16 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     } finally {
       setIsLoading(false);
     }
-  }, [journeyData, sliderValues, setJourneyData]);
+  }, [journeyData, sliderValues, adjustedGoal, setJourneyData]);
 
   useEffect(() => {
-    if (shouldFetchAdvice && activeCategory !== 'null') {
+    if (activeCategory !== 'null' && sliderValues[activeCategory] <= 3) {
       fetchAISuggestions(activeCategory);
-      setShouldFetchAdvice(false); // Reset to prevent duplicate calls
     }
-  }, [activeCategory, shouldFetchAdvice, fetchAISuggestions]);
+  }, [activeCategory, sliderValues, fetchAISuggestions]);
 
   const handleCategoryChange = (category) => {
     setActiveCategory(category);
-    if (sliderValues[category] <= 3) {
-      setShouldFetchAdvice(true);
-    }
   };
 
   const handleSliderChange = useCallback((category, value) => {
@@ -107,10 +104,6 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         [category]: newValue,
       },
     }));
-
-    if (newValue <= 3) {
-      setShouldFetchAdvice(true);
-    }
   }, [setJourneyData]);
 
   return (
@@ -121,14 +114,10 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           <span>Aligning Your Goal</span>
         </CardTitle>
         <AlertDescription className="text-earth leading-relaxed">
-          Earlier you shared your internal agreement with receiving your desired goal or experience 
-          in the following areas. Aligning your goal is about creating a sense of harmony between 
-          what you desire and where you are. This step invites you to check in with how your goal 
-          feels in your body, mind, and emotions, and to explore what might support the internal 
-          agreement that allows your desire to materialize.
+          Earlier you shared your internal agreement with receiving your desired goal or experience in the following areas. Aligning your goal is about creating a sense of harmony between what you desire and where you are. This step invites you to check in with how your goal feels in your body, mind, and emotions, and to explore what might support the internal agreement that allows your desire to materialize.
         </AlertDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-6 p-6">
         <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
           <AlertDescription className="space-y-2">
@@ -138,7 +127,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         </Alert>
 
         <div className="space-y-4 fade-in">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between">
             <span className="text-sm font-medium text-earth">{alignmentAreas[activeCategory]}</span>
             <span className="text-sm text-cosmic">{sliderValues[activeCategory] || 1}/5</span>
           </div>
