@@ -145,7 +145,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           {Object.keys(alignmentAreas).map((cat) => (
   <Button
     key={cat}
-    variant={cat === activeCategory ? 'primary' : 'glass'}
+    variant={cat === activeCategory ? 'primary' : 'ghost'}
     onClick={() => setActiveCategory(cat)}
     className="flex items-center gap-2 transition-all duration-200"
   >
@@ -214,7 +214,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
         <div className="flex justify-between pt-6 border-t border-stone/10">
   <Button 
-    variant="outline" 
+    variant="ghost" 
     className="text-earth hover:text-cosmic transition-colors"
     onClick={onBack}
   >
