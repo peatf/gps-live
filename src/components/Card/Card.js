@@ -48,17 +48,12 @@ export const CardTitle = ({ children, className }) => (
 
 export const CardContent = ({ children, className }) => (
   <div
-  className={cn(
+    className={cn(
       "p-8 space-y-6",
       "bg-transparent",
       "h-auto",
       className
     )}
-    style={{
-      maxHeight: 'calc(90vh - 120px)', // Account for header
-      overflowY: 'auto',
-      overflowX: 'hidden'
-    }}
   >
     {children}
   </div>
