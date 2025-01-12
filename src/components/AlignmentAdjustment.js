@@ -11,6 +11,7 @@ import JourneyPDF from './JourneyPDF';
 
 export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete, onBack }) {
   const [activeCategory, setActiveCategory] = useState('null');
+  const [shouldFetchAdvice, setShouldFetchAdvice] = useState(false);
   const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -87,26 +88,38 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   }, [journeyData, sliderValues, setJourneyData]);
 
   const handleSliderChange = useCallback((category, value) => {
-    setSliderValues((prev) => ({
-      ...prev,
-      [category]: value[0],
-    }));
+  const newValue = value[0];
+  setSliderValues((prev) => ({
+    ...prev,
+    [category]: newValue,
+  }));
 
-    setJourneyData((prev) => ({
-      ...prev,
-      likertScores: {
-        ...prev.likertScores,
-        [category]: value[0],
-      },
-    }));
-  }, [setJourneyData]);
+  setJourneyData((prev) => ({
+    ...prev,
+    likertScores: {
+      ...prev.likertScores,
+      [category]: newValue,
+    },
+  }));
+
+    const handleCategoryChange = (category) => {
+  setActiveCategory(category);
+  if (sliderValues[category] <= 3) {
+    setShouldFetchAdvice(true);
+  }
+};
+
+  if (newValue <= 3) {
+    setShouldFetchAdvice(true);
+  }
+}, [setJourneyData]);
 
   useEffect(() => {
-    const score = sliderValues[activeCategory];
-    if (score <= 3) {
-      fetchAISuggestions(activeCategory);
-    }
-  }, [activeCategory, sliderValues, fetchAISuggestions]);
+  if (shouldFetchAdvice && activeCategory !== 'null') {
+    fetchAISuggestions(activeCategory);
+  }
+}, [activeCategory, shouldFetchAdvice, fetchAISuggestions]);
+  
 
   return (
     <Card
@@ -161,7 +174,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             <Button
               key={cat}
               variant={cat === activeCategory ? 'primary' : 'ghost'}
-              onClick={() => setActiveCategory(cat)}
+              onClick={() => handleCategoryChange(cat)}
               className="flex items-center gap-2 transition-all duration-200"
             >
               {cat.charAt(0).toUpperCase() + cat.slice(1)}
