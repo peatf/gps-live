@@ -53,6 +53,27 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       setJourneyData((prev) => ({ ...prev, daysUntilTarget: days }));
     }
   }, [targetDate, setJourneyData]);
+ 
+  // Track initial alignment scores
+useEffect(() => {
+  if (!journeyData.initialScores) {
+    setJourneyData((prev) => ({
+      ...prev,
+      initialScores: { ...journeyData.likertScores },
+    }));
+  }
+}, [journeyData.likertScores, setJourneyData]);
+
+// Track initial letter position
+useEffect(() => {
+  if (journeyData.initialLetterPosition === null) {
+    setJourneyData((prev) => ({
+      ...prev,
+      initialLetterPosition: journeyData.currentPosition,
+    }));
+  }
+}, [journeyData.currentPosition, setJourneyData]);
+
 
 
   const steps = [
