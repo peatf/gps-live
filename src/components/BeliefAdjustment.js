@@ -4,6 +4,7 @@ import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { Slider } from './Slider/Slider';
+import debounce from 'lodash/debounce';
 
 export default function ProximityMapping({ journeyData, setJourneyData, onContinue, onBack }) {
   const [goalScale, setGoalScale] = useState(100);
@@ -20,7 +21,51 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     }
   }, [journeyData.currentPosition]);
 
-  // Handle Scope Slider Changes
+  // Debounced Fetch Proximity Advice
+  const fetchProximityAdvice = useCallback(
+    debounce(async () => {
+      if (letterPosition === journeyData.previousLetterPosition) return; // Avoid redundant fetching
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch('/api/ai', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            journeyData: {
+              ...journeyData,
+              type: 'ProximityMapping',
+              message: `Provide advice for moving from position "${String.fromCharCode(
+                65 + letterPosition
+              )}" towards Z.`,
+            },
+          }),
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch proximity advice');
+
+        const data = await response.json();
+        setJourneyData((prev) => ({
+          ...prev,
+          latestProximityAdvice: data.message,
+          previousLetterPosition: letterPosition, // Save last fetched position
+        }));
+        setAiResponse(data.message || 'Analyzing your journey...');
+      } catch (error) {
+        setError('Unable to fetch proximity advice. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    }, 500),
+    [journeyData, letterPosition, setJourneyData]
+  );
+
+  useEffect(() => {
+    fetchProximityAdvice();
+  }, [letterPosition, fetchProximityAdvice]);
+
   const handleScaleChange = async (value) => {
     setGoalScale(value[0]);
     setIsLoading(true);
@@ -40,6 +85,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
       });
 
       if (!response.ok) throw new Error('AI response error');
+
       const data = await response.json();
       setAiResponse(data.message || 'Analyzing your journey...');
     } catch (error) {
@@ -49,79 +95,21 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     }
   };
 
-  // Handle Letter Position Slider Changes
   const handleLetterChange = (value) => {
     const newPosition = value[0];
     setLetterPosition(newPosition);
 
-    // Store initial position if not already set
     if (journeyData.initialPosition === undefined) {
       setJourneyData((prev) => ({ ...prev, initialPosition: newPosition }));
     }
 
     setJourneyData((prev) => ({ ...prev, currentPosition: newPosition }));
 
-    // Trigger celebration if reaching or exceeding "W"
     setCelebrationTriggered(newPosition >= 22); // "W" is position 22
   };
 
-  useEffect(() => {
-    setJourneyData((prev) => ({
-      ...prev,
-      scale: goalScale,
-      currentPosition: letterPosition,
-    }));
-  }, [goalScale, letterPosition, setJourneyData]);
-
-  // Function to fetch proximity advice
-const fetchProximityAdvice = useCallback(async () => {
-  setIsLoading(true); // Set loading state
-  setError(null); // Clear any previous errors
-
-  try {
-    const response = await fetch('/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        journeyData: {
-          ...journeyData,
-          type: 'ProximityMapping', // Specify this is for proximity mapping
-          message: `Provide advice for moving from position "${String.fromCharCode(65 + letterPosition)}" towards Z.`,
-        },
-      }),
-    });
-
-    if (!response.ok) throw new Error('Failed to fetch proximity advice'); // Handle errors
-
-    const data = await response.json(); // Parse response
-    const proximityAdvice = data.message;
-
-    // Save the advice in journeyData
-    setJourneyData((prev) => ({
-      ...prev,
-      latestProximityAdvice: proximityAdvice,
-    }));
-  } catch (error) {
-    setError(error.message); // Display any error that occurred
-  } finally {
-    setIsLoading(false); // End loading state
-  }
-}, [journeyData, letterPosition, setJourneyData]);
-
-// Trigger advice fetch when letter position changes
-useEffect(() => {
-  fetchProximityAdvice();
-}, [letterPosition, fetchProximityAdvice]);
-
   return (
-    <Card
-      className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
-      style={{
-        backgroundColor: "rgba(255, 255, 255, 0.01)",
-        backdropFilter: "blur(8px)",
-        WebkitBackdropFilter: "blur(8px)",
-      }}
-    >
+    <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in">
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="text-sage">Proximity Mapping</CardTitle>
         <div className="text-earth leading-relaxed mt-2">
@@ -129,8 +117,6 @@ useEffect(() => {
         </div>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
-
-        {/* Goal Summary */}
         <Alert className="bg-cosmic/5 border-cosmic/20 scale-in">
           <AlertDescription>
             <p className="font-medium text-cosmic">Your Current Goal:</p>
@@ -141,7 +127,6 @@ useEffect(() => {
           </AlertDescription>
         </Alert>
 
-        {/* Scope Slider */}
         <div className="space-y-4 fade-up">
           <p className="text-sm text-cosmic/80 italic">
             “Reduce” the scope by {goalScale}% using your imagination to see if that allows the goal to feel more achievable or approachable.
@@ -160,7 +145,6 @@ useEffect(() => {
           />
         </div>
 
-        {/* Letter Position Slider */}
         <div className="space-y-4 fade-up">
           <div className="text-sm font-medium text-earth">
             You are currently at letter{' '}
@@ -188,18 +172,16 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* AI Response */}
         {aiResponse && !celebrationTriggered && (
           <Alert className="bg-sage/5 border-sage/20 scale-in">
             <AlertDescription className="text-earth">{aiResponse}</AlertDescription>
           </Alert>
         )}
 
-        {/* Loading/Error States */}
         {isLoading && (
           <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
             <AlertDescription className="flex items-center space-x-2">
-              <div className="animate-spin h-4 w-4 border-2 border-cosmic border-t-transparent rounded-full"/>
+              <div className="animate-spin h-4 w-4 border-2 border-cosmic border-t-transparent rounded-full" />
               <span className="text-cosmic">Loading suggestions...</span>
             </AlertDescription>
           </Alert>
@@ -210,7 +192,6 @@ useEffect(() => {
           </Alert>
         )}
 
-        {/* Navigation */}
         <div className="flex justify-between pt-6 border-t border-stone/10">
           <Button 
             variant="ghost" 
