@@ -11,8 +11,7 @@ export const Button = ({
   ...props
 }) => {
   // Core styles that all buttons share
-  const baseStyles =
-    "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300";
+  const baseStyles = "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300 before:absolute before:inset-0 before:rounded-full before:z-0";
 
   const sizeStyles = {
     default: "px-6 py-3",
@@ -22,12 +21,17 @@ export const Button = ({
 
   // Glass effect base - used by ghost and sensation buttons
 const glassBase = `
-    bg-white/[0.05]
-    backdrop-blur-md
+    relative
+    bg-white/[0.03]
+    backdrop-filter backdrop-blur-[2px]
+    -webkit-backdrop-filter: blur(2px)
     shadow-[0_2px_5px_rgba(255,255,255,0.05)]
     transition-all duration-500
-    hover:bg-white/[0.08]
-    active:bg-white/[0.12]
+    before:absolute before:inset-0 before:backdrop-blur-[2px]
+    before:-webkit-backdrop-filter: blur(2px)
+    before:rounded-full before:z-0
+    hover:bg-white/[0.06]
+    active:bg-white/[0.08]
   `;
 
   // Refined variant styles
@@ -108,6 +112,11 @@ sensation: cn(
         disabled && "opacity-50 cursor-not-allowed pointer-events-none",
         className
       )}
+      style={{
+        backdropFilter: 'blur(2px)',
+        WebkitBackdropFilter: 'blur(2px)',
+        backgroundColor: 'rgba(255, 255, 255, 0.03)'
+      }}
       {...props}
     >
       <span className="relative z-10 flex items-center justify-center gap-2">
