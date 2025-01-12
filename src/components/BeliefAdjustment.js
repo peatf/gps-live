@@ -14,15 +14,6 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
   const [error, setError] = useState(null);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  // Track final letter position and latest proximity advice
-useEffect(() => {
-  setJourneyData((prev) => ({
-    ...prev,
-    finalLetterPosition: letterPosition,
-    latestProximityAdvice: aiResponse || '',
-  }));
-}, [letterPosition, aiResponse, setJourneyData]);
-
   useEffect(() => {
     if (journeyData.currentPosition !== undefined) {
       setLetterPosition(journeyData.currentPosition);
