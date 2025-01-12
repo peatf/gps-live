@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { Slider } from './Slider/Slider';
-import debounce from 'lodash/debounce';
 
 export default function ProximityMapping({ journeyData, setJourneyData, onContinue, onBack }) {
   const [goalScale, setGoalScale] = useState(100);
@@ -21,9 +20,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     }
   }, [journeyData.currentPosition]);
 
-
-
-const handleScaleChange = async (value) => {
+  const handleScaleChange = async (value) => {
     const newScale = value[0];
     setGoalScale(newScale);
     
@@ -54,17 +51,6 @@ const handleScaleChange = async (value) => {
         setIsLoading(false);
       }
     }
-};
-
-      if (!response.ok) throw new Error('AI response error');
-
-      const data = await response.json();
-      setAiResponse(data.message || 'Analyzing your journey...');
-    } catch (error) {
-      setError('Unable to get suggestions. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleLetterChange = (value) => {
@@ -77,7 +63,12 @@ const handleScaleChange = async (value) => {
 
     setJourneyData((prev) => ({ ...prev, currentPosition: newPosition }));
 
-    setCelebrationTriggered(newPosition >= 22); // "W" is position 22
+    const hasReachedW = newPosition >= 22;
+    setCelebrationTriggered(hasReachedW);
+    
+    if (hasReachedW) {
+      setAiResponse('');
+    }
   };
 
   return (
@@ -85,7 +76,7 @@ const handleScaleChange = async (value) => {
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="text-sage">Proximity Mapping</CardTitle>
         <div className="text-earth leading-relaxed mt-2">
-          This tool helps you explore where you are in your journey and what steps feel aligned. Earlier you chose a place that represents where you are on your journey to your desire; first check and see if you feel able to "stretch" where you see yourself if you’re not yet at Z.
+          This tool helps you explore where you are in your journey and what steps feel aligned. Earlier you chose a place that represents where you are on your journey to your desire; first check and see if you feel able to "stretch" where you see yourself if you're not yet at Z.
         </div>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
@@ -101,7 +92,7 @@ const handleScaleChange = async (value) => {
 
         <div className="space-y-4 fade-up">
           <p className="text-sm text-cosmic/80 italic">
-            “Reduce” the scope by {goalScale}% using your imagination to see if that allows the goal to feel more achievable or approachable.
+            "Reduce" the scope by {goalScale}% using your imagination to see if that allows the goal to feel more achievable or approachable.
           </p>
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-earth">Adjust Goal Scope</span>
@@ -125,7 +116,7 @@ const handleScaleChange = async (value) => {
           <Slider
             value={[letterPosition]}
             min={0}
-            max={25} // "Z" is position 25
+            max={25}
             step={1}
             onValueChange={handleLetterChange}
             className="w-full"
