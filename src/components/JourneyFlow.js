@@ -179,7 +179,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       {sensations.map((sensation) => (
         <Button
           key={sensation}
-          variant={selectedSensations?.includes(sensation) ? 'primary' : 'glass'}
+          variant={selectedSensations?.includes(sensation) ? 'primary' : 'ghost'}
           className="sensation-button"
           onClick={() => toggleSensation(sensation)}
         >
@@ -323,7 +323,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
 
 <div className="flex justify-between pt-6 border-t border-stone/10">
   <Button
-    variant="outline"
+    variant="ghost"
     onClick={() => step === 0 ? onBack() : setStep((prev) => prev - 1)}
     className="text-earth hover:text-cosmic transition-colors"
   >
