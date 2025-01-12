@@ -87,6 +87,13 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     }
   }, [journeyData, sliderValues, setJourneyData]);
 
+  const handleCategoryChange = (category) => {
+  setActiveCategory(category);
+  if (sliderValues[category] <= 3) {
+    setShouldFetchAdvice(true);
+  }
+};
+
   const handleSliderChange = useCallback((category, value) => {
   const newValue = value[0];
   setSliderValues((prev) => ({
@@ -102,12 +109,6 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     },
   }));
 
-    const handleCategoryChange = (category) => {
-  setActiveCategory(category);
-  if (sliderValues[category] <= 3) {
-    setShouldFetchAdvice(true);
-  }
-};
 
   if (newValue <= 3) {
     setShouldFetchAdvice(true);
