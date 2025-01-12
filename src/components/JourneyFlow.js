@@ -301,14 +301,16 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
             {step === 4 && <Activity className="w-5 h-5 text-cosmic" />}
             <span className="text-xl font-medium text-sage">
               {step === 0
-                ? 'Set Your Goal'
-                : step === 1
-                ? 'Choose Your Timeline'
-                : step === 2
-                ? 'Map Your Journey'
-                : step === 3
-                ? 'Body Awareness Check'
-                : 'Alignment Check'}
+        ? 'Set Your Goal'
+        : step === 1
+        ? 'Choose Your Timeline'
+        : step === 2
+        ? 'Map Your Journey'
+        : step === 3
+        ? 'Body Awareness Check'
+        : step === 4
+        ? 'Alignment Check'
+        : 'Intro to Proximity Mapping'}
             </span>
           </div>
           <span className="text-sm text-dove">
