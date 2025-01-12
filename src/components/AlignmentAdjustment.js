@@ -10,7 +10,7 @@ import { PDFDownloadLink } from '@react-pdf/renderer';
 import JourneyPDF from './JourneyPDF';
 
 export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete, onBack }) {
-  const [activeCategory, setActiveCategory] = useState('safety');
+  const [activeCategory, setActiveCategory] = useState('null');
   const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
