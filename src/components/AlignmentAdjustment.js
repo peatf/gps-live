@@ -211,8 +211,6 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     }));
 
     try {
-      console.log("Sending journeyData to /api/download:", journeyData);
-      
       const response = await fetch('/api/download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -220,26 +218,24 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
       });
 
       if (!response.ok) {
-        console.error("Response from /api/download not OK:", response);
         throw new Error('Failed to generate download');
       }
 
-      const { fileName } = await response.json();
+      // Read response as a blob
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
 
-      if (!fileName) {
-        console.error("No fileName returned from /api/download:", fileName);
-        throw new Error('Download failed: No fileName provided.');
-      }
-
-      console.log("File generated successfully:", fileName);
-
+      // Create a link to download the file
       const downloadLink = document.createElement('a');
-      downloadLink.href = `/${fileName}`;
-      downloadLink.download = fileName;
+      downloadLink.href = url;
+      downloadLink.download = `journey-data-${Date.now()}.json`;
       downloadLink.click();
+
+      // Clean up the URL object
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error during download process:", error);
-      alert('Failed to download journey data.'); // Display the error to the user
+      console.error('Error downloading journey data:', error);
+      alert('Failed to download journey data.');
     }
 
     onComplete(); // Proceed with the existing completion logic
@@ -247,6 +243,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 >
   Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
 </Button>
+
         </div>
       </CardContent>
     </Card>
