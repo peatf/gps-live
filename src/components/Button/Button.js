@@ -21,11 +21,13 @@ export const Button = ({
   };
 
   // Glass effect base - used by ghost and sensation buttons
-  const glassBase = `
-    bg-transparent
-    backdrop-filter backdrop-blur-[2px]
-    shadow-[0_2px_5px_rgba(255,255,255,0.1)]
-    transition-all duration-300
+const glassBase = `
+    bg-white/[0.05]
+    backdrop-blur-md
+    shadow-[0_2px_5px_rgba(255,255,255,0.05)]
+    transition-all duration-500
+    hover:bg-white/[0.08]
+    active:bg-white/[0.12]
   `;
 
   // Refined variant styles
@@ -35,13 +37,22 @@ export const Button = ({
       "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-[1.02] active:scale-[0.98]",
     
     // Ghost for navigation (like Back button)
-    ghost: cn(
+   ghost: cn(
       glassBase,
-      "border border-white/10",
-      "hover:bg-white/5",
-      "hover:border-white/20",
-      "active:bg-white/10",
-      "text-earth"
+      "border border-white/5",
+      "hover:border-white/10",
+      "active:border-white/20",
+      "text-earth/90"
+    ),
+    
+sensation: cn(
+      glassBase,
+      "border border-white/5",
+      "hover:border-white/10",
+      "active:border-white/20",
+      "text-earth/90",
+      "justify-start gap-2",
+      "group"
     ),
     
     // Special style for sensation buttons
