@@ -145,7 +145,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           {Object.keys(alignmentAreas).map((cat) => (
   <Button
     key={cat}
-    variant={cat === activeCategory ? 'primary' : 'ghost'}
+    variant={cat === activeCategory ? 'primary' : 'glass'}
     onClick={() => setActiveCategory(cat)}
     className="flex items-center gap-2 transition-all duration-200"
   >
