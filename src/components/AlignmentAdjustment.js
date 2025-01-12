@@ -224,14 +224,12 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   <Button
   variant="primary"
   onClick={async () => {
-    // Save the current journey data state
     setJourneyData((prev) => ({
       ...prev,
       likertScores: sliderValues,
       adjustedGoal,
     }));
 
-    // Handle downloading the journey data
     try {
       const response = await fetch('/api/download', {
         method: 'POST',
@@ -253,8 +251,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
       alert('Failed to download journey data.');
     }
 
-    // Proceed with the existing completion logic
-    onComplete();
+    onComplete(); // Proceed with the existing completion logic
   }}
 >
   Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
