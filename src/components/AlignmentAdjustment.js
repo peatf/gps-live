@@ -1,7 +1,3 @@
-// src/components/AlignmentAdjustment.js
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import JourneyPDF from './JourneyPDF';
-import { saveAs } from 'file-saver';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
@@ -10,6 +6,8 @@ import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2 } f
 import { Slider } from './Slider/Slider';
 import debounce from 'lodash/debounce';
 import { getCategoryPrompt } from '../utils/alignmentPrompts';
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import JourneyPDF from './JourneyPDF';
 
 export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete, onBack }) {
   const [activeCategory, setActiveCategory] = useState('safety');
@@ -99,26 +97,27 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
   return (
     <Card
-  className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
-  style={{
-    backgroundColor: "rgba(255, 255, 255, 0.01)", // Translucent background
-    backdropFilter: "blur(8px)", // Blur effect
-    "-webkit-backdrop-filter": "blur(8px)", // Safari-specific
-  }}
->
+      className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
+      style={{
+        backgroundColor: "rgba(255, 255, 255, 0.01)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+      }}
+    >
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="flex items-center gap-2 text-sage">
           <Heart className="w-5 h-5 text-cosmic" />
           <span>Aligning Your Goal</span>
         </CardTitle>
-  <AlertDescription className="text-earth leading-relaxed">
-  Earlier you shared your internal agreement with receiving your desired goal or experience 
-  in the following areas. Aligning your goal is about creating a sense of harmony between 
-  what you desire and where you are. This step invites you to check in with how your goal 
-  feels in your body, mind, and emotions, and to explore what might support the internal 
-  agreement that allows your desire to materialize.
-</AlertDescription>
+        <AlertDescription className="text-earth leading-relaxed">
+          Earlier you shared your internal agreement with receiving your desired goal or experience 
+          in the following areas. Aligning your goal is about creating a sense of harmony between 
+          what you desire and where you are. This step invites you to check in with how your goal 
+          feels in your body, mind, and emotions, and to explore what might support the internal 
+          agreement that allows your desire to materialize.
+        </AlertDescription>
       </CardHeader>
+      
       <CardContent className="space-y-6 p-6">
         <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
           <AlertDescription className="space-y-2">
@@ -146,17 +145,17 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
         <div className="flex flex-wrap gap-2 fade-in">
           {Object.keys(alignmentAreas).map((cat) => (
-  <Button
-    key={cat}
-    variant={cat === activeCategory ? 'primary' : 'ghost'}
-    onClick={() => setActiveCategory(cat)}
-    className="flex items-center gap-2 transition-all duration-200"
-  >
-    {cat.charAt(0).toUpperCase() + cat.slice(1)}
-    {sliderValues[cat] >= 4 && (
-      <CheckCircle2 className="w-4 h-4 text-sage" />
-    )}
-  </Button>
+            <Button
+              key={cat}
+              variant={cat === activeCategory ? 'primary' : 'ghost'}
+              onClick={() => setActiveCategory(cat)}
+              className="flex items-center gap-2 transition-all duration-200"
+            >
+              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              {sliderValues[cat] >= 4 && (
+                <CheckCircle2 className="w-4 h-4 text-sage" />
+              )}
+            </Button>
           ))}
         </div>
 
@@ -179,96 +178,82 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
               </div>
               <p className="text-earth leading-relaxed">{aiSuggestions[activeCategory].suggestions}</p>
               <Button
-  variant="ghost"
-  onClick={() => fetchAISuggestions(activeCategory)}
-  className="mt-2"
->
-  Refresh Insight
-</Button>
+                variant="ghost"
+                onClick={() => fetchAISuggestions(activeCategory)}
+                className="mt-2"
+              >
+                Refresh Insight
+              </Button>
             </AlertDescription>
           </Alert>
         )}
 
         {isLoading && (
-  <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
-    <AlertDescription className="flex items-center space-x-2">
-      <div className="animate-spin rounded-full h-4 w-4 border-2 border-cosmic border-t-transparent" />
-      <span className="text-cosmic">Gathering alignment suggestions...</span>
-    </AlertDescription>
-  </Alert>
-)}
+          <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
+            <AlertDescription className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-cosmic border-t-transparent" />
+              <span className="text-cosmic">Gathering alignment suggestions...</span>
+            </AlertDescription>
+          </Alert>
+        )}
 
-{error && (
-  <>
-    <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
-      <AlertDescription className="flex items-center space-x-2 text-burgundy">
-        <AlertTriangle className="w-4 h-4" />
-        <span>{error}</span>
-      </AlertDescription>
-    </Alert>
-    <Alert className="bg-sage/5 border-sage/20 fade-in">
-      <AlertDescription className="text-earth leading-relaxed">
-        This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
-        Trust your process.
-      </AlertDescription>
-    </Alert>
-  </>
-)}
+        {error && (
+          <>
+            <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
+              <AlertDescription className="flex items-center space-x-2 text-burgundy">
+                <AlertTriangle className="w-4 h-4" />
+                <span>{error}</span>
+              </AlertDescription>
+            </Alert>
+            <Alert className="bg-sage/5 border-sage/20 fade-in">
+              <AlertDescription className="text-earth leading-relaxed">
+                This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
+                Trust your process.
+              </AlertDescription>
+            </Alert>
+          </>
+        )}
 
         <div className="flex justify-between pt-6 border-t border-stone/10">
-  <Button 
-    variant="ghost" 
-    className="text-earth hover:text-cosmic transition-colors"
-    onClick={onBack}
-  >
-    <ArrowLeft className="w-4 h-4 mr-2" />
-    Back
-  </Button>
-  <Button
-    variant="primary"
-    onClick={() => {
-      setJourneyData((prev) => ({
-        ...prev,
-        likertScores: sliderValues,
-        adjustedGoal,
-      }));
-      onComplete();
-    }}
-  >
-   It looks like there's a syntax error in AlignmentAdjustment.js. Let me help you fix that. The error suggests we didn't properly close all of our tags. Let me show you the complete section that needs to be fixed.
+          <Button 
+            variant="ghost"
+            onClick={onBack}
+            className="text-earth/90 hover:text-cosmic transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            <span className="text-xs md:text-sm">Back</span>
+          </Button>
 
-In src/components/AlignmentAdjustment.js, find the navigation section (near the bottom) and replace it with this complete code:
-
-```javascript
-<div className="flex justify-between pt-6 border-t border-stone/10">
-  <Button 
-    variant="ghost"
-    onClick={onBack}
-    className="text-earth/90 hover:text-cosmic transition-colors"
-  >
-    <ArrowLeft className="w-4 h-4 mr-2" />
-    <span className="text-xs md:text-sm">Back</span>
-  </Button>
-
-  <div className="flex gap-4">
-    <PDFDownloadLink
-      document={<JourneyPDF journeyData={journeyData} />}
-      fileName={`${journeyData.goal.slice(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase()}-journey.pdf`}
-    >
-      {({ blob, url, loading, error }) => (
-        <Button
-          variant="primary"
-          disabled={loading}
-        >
-          {loading ? 'Preparing...' : 'Download Journey Summary'} 
-        </Button>
-      )}
-    </PDFDownloadLink>
-    <Button
-      variant="primary"
-      onClick={onComplete}
-    >
-      Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
-    </Button>
-  </div>
-</div>
+          <div className="flex gap-4">
+            <PDFDownloadLink
+              document={<JourneyPDF journeyData={journeyData} />}
+              fileName={`${journeyData.goal.slice(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase()}-journey.pdf`}
+            >
+              {({ loading, error }) => (
+                <Button
+                  variant="primary"
+                  disabled={loading}
+                >
+                  {loading ? 'Preparing...' : 'Download Journey Summary'} 
+                </Button>
+              )}
+            </PDFDownloadLink>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setJourneyData((prev) => ({
+                  ...prev,
+                  likertScores: sliderValues,
+                  adjustedGoal,
+                }));
+                onComplete();
+              }}
+            >
+              Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
