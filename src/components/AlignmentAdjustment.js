@@ -202,40 +202,51 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             Back
           </Button>
           <Button
-            variant="primary"
-            onClick={async () => {
-              setJourneyData((prev) => ({
-                ...prev,
-                likertScores: sliderValues,
-                adjustedGoal,
-              }));
+  variant="primary"
+  onClick={async () => {
+    setJourneyData((prev) => ({
+      ...prev,
+      likertScores: sliderValues,
+      adjustedGoal,
+    }));
 
-              try {
-                const response = await fetch('/api/download', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ journeyData }),
-                });
+    try {
+      console.log("Sending journeyData to /api/download:", journeyData);
+      
+      const response = await fetch('/api/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ journeyData }),
+      });
 
-                if (!response.ok) {
-                  throw new Error('Failed to generate download');
-                }
+      if (!response.ok) {
+        console.error("Response from /api/download not OK:", response);
+        throw new Error('Failed to generate download');
+      }
 
-                const { fileName } = await response.json();
-                const downloadLink = document.createElement('a');
-                downloadLink.href = `/${fileName}`;
-                downloadLink.download = fileName;
-                downloadLink.click();
-              } catch (error) {
-                console.error('Error downloading journey data:', error);
-                alert('Failed to download journey data.');
-              }
+      const { fileName } = await response.json();
 
-              onComplete();
-            }}
-          >
-            Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+      if (!fileName) {
+        console.error("No fileName returned from /api/download:", fileName);
+        throw new Error('Download failed: No fileName provided.');
+      }
+
+      console.log("File generated successfully:", fileName);
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = `/${fileName}`;
+      downloadLink.download = fileName;
+      downloadLink.click();
+    } catch (error) {
+      console.error("Error during download process:", error);
+      alert('Failed to download journey data.'); // Display the error to the user
+    }
+
+    onComplete(); // Proceed with the existing completion logic
+  }}
+>
+  Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
+</Button>
         </div>
       </CardContent>
     </Card>
