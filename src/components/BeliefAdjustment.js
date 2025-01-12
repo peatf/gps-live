@@ -21,9 +21,13 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     }
   }, [journeyData.currentPosition]);
 
-  // Debounced Fetch Proximity Advice
-  const fetchProximityAdvice = useCallback(
-    debounce(async (scale) => {
+
+
+const handleScaleChange = async (value) => {
+    const newScale = value[0];
+    setGoalScale(newScale);
+    
+    if (!celebrationTriggered) {
       setIsLoading(true);
       setError(null);
 
@@ -35,37 +39,20 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             journeyData: {
               ...journeyData,
               type: 'ProximityMapping',
-              scale: scale,
-              message: `Provide advice for a goal scaled to ${scale}% of the original scope.`,
+              scale: newScale,
+              message: `Provide advice for a goal scaled to ${newScale}% of the original scope.`,
             },
           }),
         });
 
-        if (!response.ok) throw new Error('Failed to fetch proximity advice');
-
+        if (!response.ok) throw new Error('AI response error');
         const data = await response.json();
-        setJourneyData((prev) => ({
-          ...prev,
-          latestProximityAdvice: data.message,
-          previousLetterPosition: letterPosition, // Save last fetched position
-        }));
         setAiResponse(data.message || 'Analyzing your journey...');
       } catch (error) {
-        setError('Unable to fetch proximity advice. Please try again.');
+        setError('Unable to get suggestions. Please try again.');
       } finally {
         setIsLoading(false);
       }
-    }, 500),
-    [journeyData, letterPosition, setJourneyData]
-  );
-
-
-  const handleScaleChange = (value) => {
-    const newScale = value[0];
-    setGoalScale(newScale);
-    // Only fetch advice if we're not in celebration mode
-    if (!celebrationTriggered) {
-      fetchProximityAdvice(newScale);
     }
 };
 
