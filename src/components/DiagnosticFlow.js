@@ -155,7 +155,7 @@ const DiagnosticFlow = () => {
       <canvas 
         ref={containerRef}
         width={600}
-        height={400}
+        height={300}
         className="w-full border border-stone rounded-lg"
       />
     </div>
