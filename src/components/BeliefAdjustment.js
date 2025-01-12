@@ -97,7 +97,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
 
         <div className="space-y-4 fade-up">
           <p className="text-sm text-cosmic/80 italic">
-            "Reduce" the scope by {goalScale}% using your imagination to see if that allows the goal to feel more achievable or approachable.
+            "Reduce" the scope by 10% using your imagination to see if that allows the goal to feel more achievable or approachable.
           </p>
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-earth">Adjust Goal Scope</span>
