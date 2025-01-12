@@ -59,19 +59,32 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
       if (!response.ok) throw new Error('Failed to get suggestions');
 
       const data = await response.json();
+      const suggestions = data.message;
+      
+      // Update local state for immediate display
       setAiSuggestions((prev) => ({
         ...prev,
         [category]: {
-          suggestions: data.message,
+          suggestions,
           timestamp: Date.now(),
         },
       }));
+
+      // Update journeyData to store advice for PDF
+      setJourneyData(prev => ({
+        ...prev,
+        latestAiAdvice: {
+          ...prev.latestAiAdvice,
+          [category]: suggestions,
+        },
+      }));
+
     } catch (error) {
       setError(error.message);
     } finally {
       setIsLoading(false);
     }
-  }, [journeyData, sliderValues]);
+  }, [journeyData, sliderValues, setJourneyData]);
 
   const handleSliderChange = useCallback((category, value) => {
     setSliderValues((prev) => ({
@@ -226,7 +239,24 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
           <div className="flex gap-4">
             <PDFDownloadLink
-              document={<JourneyPDF journeyData={journeyData} />}
+              document={
+                <JourneyPDF 
+                  journeyData={{
+                    ...journeyData,
+                    likertScores: sliderValues,
+                    adjustedGoal,
+                    latestAiAdvice: {
+                      ...journeyData.latestAiAdvice,
+                      ...Object.fromEntries(
+                        Object.entries(aiSuggestions).map(([category, { suggestions }]) => [
+                          category,
+                          suggestions
+                        ])
+                      ),
+                    },
+                  }} 
+                />
+              }
               fileName={`${journeyData.goal.slice(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase()}-journey.pdf`}
             >
               {({ loading, error }) => (
