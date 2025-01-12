@@ -1,6 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -15,14 +12,15 @@ export default async function handler(req, res) {
     // Organize data as JSON or any desired format
     const formattedData = JSON.stringify(journeyData, null, 2);
 
-    // Prepare downloadable content
+    // Set headers for file download
     const fileName = `journey-data-${Date.now()}.json`;
-    const filePath = path.join(process.cwd(), 'public', fileName);
-    fs.writeFileSync(filePath, formattedData);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
 
-    return res.status(200).json({ fileName });
+    // Send the file content
+    res.status(200).send(formattedData);
   } catch (error) {
-    console.error('Error generating downloadable data:', error);
+    console.error('Error generating downloadable data:', error.stack);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
