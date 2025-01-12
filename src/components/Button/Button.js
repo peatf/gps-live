@@ -43,7 +43,9 @@ export const Button = ({
       "border border-white/5",
       "text-earth/90",
       "hover:border-white/10",
-      "active:border-white/20"
+      "active:border-white/20",
+      "data-[state=active]:bg-white/[0.04]",
+      "data-[state=active]:border-white/10"
     ),
     
     sensation: cn(
@@ -53,16 +55,18 @@ export const Button = ({
       "hover:border-white/10",
       "active:border-white/20",
       "justify-start gap-2",
-      "group"
+      "group",
+      "data-[state=active]:bg-white/[0.04]",
+      "data-[state=active]:border-white/10"
     ),
     
     toggle: cn(
       glassBase,
       "border border-white/10",
       "text-earth",
-      "data-[state=active]:bg-cosmic",
-      "data-[state=active]:text-white",
-      "data-[state=active]:border-cosmic"
+      "data-[state=active]:bg-white/[0.04]",
+      "data-[state=active]:border-white/10",
+      "data-[state=active]:text-cosmic"
     )
   };
 
@@ -73,17 +77,18 @@ export const Button = ({
     <button
       onClick={onClick}
       disabled={disabled}
+      data-state={isActive ? "active" : undefined}
       className={cn(
         baseStyles,
         sizeStyles[size],
         variantStyles[buttonVariant],
-        isActive && "bg-cosmic text-white border-cosmic",
         disabled && "opacity-50 cursor-not-allowed pointer-events-none",
         className
       )}
       style={{
         backdropFilter: variant === 'primary' ? undefined : 'blur(8px)',
-        WebkitBackdropFilter: variant === 'primary' ? undefined : 'blur(8px)'
+        WebkitBackdropFilter: variant === 'primary' ? undefined : 'blur(8px)',
+        background: variant === 'primary' ? undefined : 'rgba(255, 255, 255, 0.02)'
       }}
       {...props}
     >
