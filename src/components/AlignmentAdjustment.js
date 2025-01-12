@@ -235,10 +235,25 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
       onComplete();
     }}
   >
+    <div className="flex gap-4">
+  <PDFDownloadLink
+    document={<JourneyPDF journeyData={journeyData} />}
+    fileName={`${journeyData.goal.slice(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase()}-journey.pdf`}
+  >
+    {({ blob, url, loading, error }) => (
+      <Button
+        variant="primary"
+        disabled={loading}
+        onClick={onComplete}
+      >
+        {loading ? 'Preparing...' : 'Download Journey Summary'} 
+      </Button>
+    )}
+  </PDFDownloadLink>
+  <Button
+    variant="primary"
+    onClick={onComplete}
+  >
     Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
   </Button>
 </div>
-      </CardContent>
-    </Card>
-  );
-}
