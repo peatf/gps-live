@@ -1,4 +1,7 @@
 // src/components/AlignmentAdjustment.js
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import JourneyPDF from './JourneyPDF';
+import { saveAs } from 'file-saver';
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
