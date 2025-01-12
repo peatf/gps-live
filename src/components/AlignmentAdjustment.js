@@ -235,25 +235,40 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
       onComplete();
     }}
   >
-    <div className="flex gap-4">
-  <PDFDownloadLink
-    document={<JourneyPDF journeyData={journeyData} />}
-    fileName={`${journeyData.goal.slice(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase()}-journey.pdf`}
+   It looks like there's a syntax error in AlignmentAdjustment.js. Let me help you fix that. The error suggests we didn't properly close all of our tags. Let me show you the complete section that needs to be fixed.
+
+In src/components/AlignmentAdjustment.js, find the navigation section (near the bottom) and replace it with this complete code:
+
+```javascript
+<div className="flex justify-between pt-6 border-t border-stone/10">
+  <Button 
+    variant="ghost"
+    onClick={onBack}
+    className="text-earth/90 hover:text-cosmic transition-colors"
   >
-    {({ blob, url, loading, error }) => (
-      <Button
-        variant="primary"
-        disabled={loading}
-        onClick={onComplete}
-      >
-        {loading ? 'Preparing...' : 'Download Journey Summary'} 
-      </Button>
-    )}
-  </PDFDownloadLink>
-  <Button
-    variant="primary"
-    onClick={onComplete}
-  >
-    Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
+    <ArrowLeft className="w-4 h-4 mr-2" />
+    <span className="text-xs md:text-sm">Back</span>
   </Button>
+
+  <div className="flex gap-4">
+    <PDFDownloadLink
+      document={<JourneyPDF journeyData={journeyData} />}
+      fileName={`${journeyData.goal.slice(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase()}-journey.pdf`}
+    >
+      {({ blob, url, loading, error }) => (
+        <Button
+          variant="primary"
+          disabled={loading}
+        >
+          {loading ? 'Preparing...' : 'Download Journey Summary'} 
+        </Button>
+      )}
+    </PDFDownloadLink>
+    <Button
+      variant="primary"
+      onClick={onComplete}
+    >
+      Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
+    </Button>
+  </div>
 </div>
