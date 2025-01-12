@@ -14,7 +14,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [aiSuggestions, setAiSuggestions] = useState({});
+  const [aiSuggestions, setAiSuggestions] = useState(journeyData.latestAiAdvice || {});
   const [sliderValues, setSliderValues] = useState(journeyData.likertScores || {});
 
   const generateCategoryContext = (category, goal) => {
@@ -59,11 +59,18 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
       if (!response.ok) throw new Error('Failed to get suggestions');
 
       const data = await response.json();
+      const newAdvice = data.message;
+
       setAiSuggestions((prev) => ({
         ...prev,
-        [category]: {
-          suggestions: data.message,
-          timestamp: Date.now(),
+        [category]: newAdvice,
+      }));
+
+      setJourneyData((prev) => ({
+        ...prev,
+        latestAiAdvice: {
+          ...prev.latestAiAdvice,
+          [category]: newAdvice,
         },
       }));
     } catch (error) {
@@ -71,13 +78,23 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     } finally {
       setIsLoading(false);
     }
-  }, [journeyData, sliderValues]);
+  }, [journeyData, sliderValues, setJourneyData]);
 
   const handleSliderChange = useCallback((category, value) => {
     setSliderValues((prev) => ({
       ...prev,
       [category]: value[0],
     }));
+
+    // Capture initial scores if not already set
+    if (!journeyData.initialLikertScores) {
+      setJourneyData((prev) => ({
+        ...prev,
+        initialLikertScores: {
+          ...prev.likertScores,
+        },
+      }));
+    }
 
     setJourneyData((prev) => ({
       ...prev,
@@ -86,7 +103,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         [category]: value[0],
       },
     }));
-  }, [setJourneyData]);
+  }, [journeyData, setJourneyData]);
 
   useEffect(() => {
     const score = sliderValues[activeCategory];
@@ -117,7 +134,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           agreement that allows your desire to materialize.
         </AlertDescription>
       </CardHeader>
-      
+
       <CardContent className="space-y-6 p-6">
         <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
           <AlertDescription className="space-y-2">
@@ -169,14 +186,14 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
               </span>
             </AlertDescription>
           </Alert>
-        ) : aiSuggestions[activeCategory]?.suggestions && (
+        ) : aiSuggestions[activeCategory] && (
           <Alert className="bg-cosmic/5 border-cosmic/20 scale-in">
             <AlertDescription className="space-y-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-cosmic" />
                 <p className="font-medium text-cosmic">Alignment Insight:</p>
               </div>
-              <p className="text-earth leading-relaxed">{aiSuggestions[activeCategory].suggestions}</p>
+              <p className="text-earth leading-relaxed">{aiSuggestions[activeCategory]}</p>
               <Button
                 variant="ghost"
                 onClick={() => fetchAISuggestions(activeCategory)}
@@ -198,20 +215,12 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         )}
 
         {error && (
-          <>
-            <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
-              <AlertDescription className="flex items-center space-x-2 text-burgundy">
-                <AlertTriangle className="w-4 h-4" />
-                <span>{error}</span>
-              </AlertDescription>
-            </Alert>
-            <Alert className="bg-sage/5 border-sage/20 fade-in">
-              <AlertDescription className="text-earth leading-relaxed">
-                This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
-                Trust your process.
-              </AlertDescription>
-            </Alert>
-          </>
+          <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
+            <AlertDescription className="flex items-center space-x-2 text-burgundy">
+              <AlertTriangle className="w-4 h-4" />
+              <span>{error}</span>
+            </AlertDescription>
+          </Alert>
         )}
 
         <div className="flex justify-between pt-6 border-t border-stone/10">
