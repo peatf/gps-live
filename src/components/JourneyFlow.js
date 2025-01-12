@@ -32,18 +32,26 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
 
   const [step, setStep] = useState(0);
 
+  // Ensure selectedSensations is always initialized to an empty array if undefined
+  useEffect(() => {
+    setJourneyData((prev) => ({
+      ...prev,
+      selectedSensations: prev.selectedSensations || [],
+    }));
+  }, [setJourneyData]);
+
   const sensationCategories = {
     physical: ['Tension', 'Relaxation', 'Warmth', 'Coolness', 'Tingling', 'Pressure'],
     emotional: ['Lightness', 'Heaviness', 'Expansion', 'Contraction', 'Flow', 'Stillness'],
-    energetic: ['Vibration', 'Pulsing', 'Radiating', 'Centering', 'Opening', 'Grounding']
+    energetic: ['Vibration', 'Pulsing', 'Radiating', 'Centering', 'Opening', 'Grounding'],
   };
 
   const toggleSensation = (sensation) => {
-    setJourneyData(prev => ({
+    setJourneyData((prev) => ({
       ...prev,
-      selectedSensations: prev.selectedSensations?.includes(sensation)
-        ? prev.selectedSensations.filter(s => s !== sensation)
-        : [...(prev.selectedSensations || []), sensation]
+      selectedSensations: prev.selectedSensations.includes(sensation)
+        ? prev.selectedSensations.filter((s) => s !== sensation)
+        : [...prev.selectedSensations, sensation],
     }));
   };
 
@@ -53,26 +61,24 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       setJourneyData((prev) => ({ ...prev, daysUntilTarget: days }));
     }
   }, [targetDate, setJourneyData]);
- 
-  // Track initial alignment scores
-useEffect(() => {
-  if (!journeyData.initialScores) {
-    setJourneyData((prev) => ({
-      ...prev,
-      initialScores: { ...journeyData.likertScores },
-    }));
-  }
-}, [journeyData.likertScores, setJourneyData]);
 
-// Track initial letter position
-useEffect(() => {
-  if (journeyData.initialLetterPosition === null) {
-    setJourneyData((prev) => ({
-      ...prev,
-      initialLetterPosition: journeyData.currentPosition,
-    }));
-  }
-}, [journeyData.currentPosition, setJourneyData]);
+  useEffect(() => {
+    if (!journeyData.initialScores) {
+      setJourneyData((prev) => ({
+        ...prev,
+        initialScores: { ...journeyData.likertScores },
+      }));
+    }
+  }, [journeyData.likertScores, setJourneyData]);
+
+  useEffect(() => {
+    if (journeyData.initialLetterPosition === null) {
+      setJourneyData((prev) => ({
+        ...prev,
+        initialLetterPosition: journeyData.currentPosition,
+      }));
+    }
+  }, [journeyData.currentPosition, setJourneyData]);
 
 
 
