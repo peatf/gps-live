@@ -11,7 +11,7 @@ export const Button = ({
   ...props
 }) => {
   // Core styles that all buttons share
-  const baseStyles = "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300 before:absolute before:inset-0 before:rounded-full before:z-0";
+  const baseStyles = "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300";
 
   const sizeStyles = {
     default: "px-6 py-3",
@@ -20,16 +20,12 @@ export const Button = ({
   };
 
   // Glass effect base - used by ghost and sensation buttons
-const glassBase = `
+  const glassBase = `
     relative
     bg-white/[0.03]
     backdrop-filter backdrop-blur-[2px]
-    -webkit-backdrop-filter: blur(2px)
     shadow-[0_2px_5px_rgba(255,255,255,0.05)]
-    transition-all duration-500
-    before:absolute before:inset-0 before:backdrop-blur-[2px]
-    before:-webkit-backdrop-filter: blur(2px)
-    before:rounded-full before:z-0
+    transition-all duration-300
     hover:bg-white/[0.06]
     active:bg-white/[0.08]
   `;
@@ -37,11 +33,15 @@ const glassBase = `
   // Refined variant styles
   const variantStyles = {
     // Primary stays solid for CTAs
-    primary:
-      "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-[1.02] active:scale-[0.98]",
+    primary: cn(
+      "bg-cosmic text-white",
+      "hover:bg-cosmic-light transform hover:scale-[1.02]",
+      "active:scale-[0.98]",
+      "border border-cosmic"
+    ),
     
     // Ghost for navigation (like Back button)
-   ghost: cn(
+    ghost: cn(
       glassBase,
       "border border-white/5",
       "hover:border-white/10",
@@ -49,7 +49,8 @@ const glassBase = `
       "text-earth/90"
     ),
     
-sensation: cn(
+    // Special style for sensation buttons
+    sensation: cn(
       glassBase,
       "border border-white/5",
       "hover:border-white/10",
@@ -57,28 +58,6 @@ sensation: cn(
       "text-earth/90",
       "justify-start gap-2",
       "group"
-    ),
-    
-    // Special style for sensation buttons
-    sensation: cn(
-      glassBase,
-      "border border-white/10",
-      "hover:bg-white/5",
-      "hover:border-white/20",
-      "active:bg-white/10",
-      "text-earth",
-      "justify-start gap-2",
-      "group"
-    ),
-
-    // Transparent button with soft glass effect
-    glass: cn(
-      glassBase,
-      "border border-white/20",
-      "hover:bg-white/5",
-      "hover:border-white/30",
-      "active:bg-white/10",
-      "text-white"
     ),
     
     // Toggle buttons (like alignment section)
@@ -90,7 +69,7 @@ sensation: cn(
       "data-[state=active]:text-white",
       "data-[state=active]:border-cosmic",
       "text-earth"
-    ),
+    )
   };
 
   // Detect button type from props and className
@@ -115,14 +94,14 @@ sensation: cn(
       style={{
         backdropFilter: 'blur(2px)',
         WebkitBackdropFilter: 'blur(2px)',
-        backgroundColor: 'rgba(255, 255, 255, 0.03)'
+        backgroundColor: variant === 'primary' ? undefined : 'rgba(255, 255, 255, 0.03)'
       }}
       {...props}
     >
       <span className="relative z-10 flex items-center justify-center gap-2">
         {children}
       </span>
-
+      
       {/* Subtle gradient overlay for depth */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
     </button>
