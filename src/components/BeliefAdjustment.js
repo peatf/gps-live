@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
 import { ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { Slider } from './Slider/Slider';
+import debounce from 'lodash/debounce';
 
 export default function ProximityMapping({ journeyData, setJourneyData, onContinue, onBack }) {
   const [goalScale, setGoalScale] = useState(100);
@@ -14,17 +15,9 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
   const [error, setError] = useState(null);
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-  useEffect(() => {
-    if (journeyData.currentPosition !== undefined) {
-      setLetterPosition(journeyData.currentPosition);
-    }
-  }, [journeyData.currentPosition]);
-
-  const handleScaleChange = async (value) => {
-    const newScale = value[0];
-    setGoalScale(newScale);
-    
-    if (!celebrationTriggered) {
+  // Debounced fetch for goal scale changes only
+  const fetchProximityAdvice = useCallback(
+    debounce(async (scale) => {
       setIsLoading(true);
       setError(null);
 
@@ -36,36 +29,48 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             journeyData: {
               ...journeyData,
               type: 'ProximityMapping',
-              scale: newScale,
-              message: `Provide advice for a goal scaled to ${newScale}% of the original scope.`,
+              scale: scale,
+              message: `Provide advice for a goal scaled to ${scale}% of the original scope.`,
             },
           }),
         });
 
-        if (!response.ok) throw new Error('AI response error');
+        if (!response.ok) throw new Error('Failed to fetch proximity advice');
+
         const data = await response.json();
-        setAiResponse(data.message || 'Analyzing your journey...');
+        setJourneyData(prev => ({
+          ...prev,
+          latestProximityAdvice: data.message,
+        }));
+        setAiResponse(data.message);
       } catch (error) {
-        setError('Unable to get suggestions. Please try again.');
+        setError('Unable to fetch proximity advice. Please try again.');
       } finally {
         setIsLoading(false);
       }
+    }, 500),
+    [journeyData, setJourneyData]
+  );
+
+  const handleScaleChange = (value) => {
+    const newScale = value[0];
+    setGoalScale(newScale);
+    // Only fetch advice if we're not in celebration mode
+    if (!celebrationTriggered) {
+      fetchProximityAdvice(newScale);
     }
   };
 
   const handleLetterChange = (value) => {
     const newPosition = value[0];
     setLetterPosition(newPosition);
-
-    if (journeyData.initialPosition === undefined) {
-      setJourneyData((prev) => ({ ...prev, initialPosition: newPosition }));
-    }
-
-    setJourneyData((prev) => ({ ...prev, currentPosition: newPosition }));
-
+    setJourneyData(prev => ({ ...prev, currentPosition: newPosition }));
+    
+    // Check if we've reached or passed 'W' (position 22)
     const hasReachedW = newPosition >= 22;
     setCelebrationTriggered(hasReachedW);
     
+    // Clear AI response if we're in celebration mode
     if (hasReachedW) {
       setAiResponse('');
     }
@@ -76,7 +81,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="text-sage">Proximity Mapping</CardTitle>
         <div className="text-earth leading-relaxed mt-2">
-          This tool helps you explore where you are in your journey and what steps feel aligned. Earlier you chose a place that represents where you are on your journey to your desire; first check and see if you feel able to "stretch" where you see yourself if you're not yet at Z.
+          This tool helps you explore where you are in your journey and what steps feel aligned.
         </div>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
@@ -149,6 +154,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
             </AlertDescription>
           </Alert>
         )}
+        
         {error && (
           <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
             <AlertDescription className="text-burgundy">{error}</AlertDescription>
