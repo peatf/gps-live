@@ -6,16 +6,18 @@ export const Card = ({ children, className }) => (
   <div
     className={cn(
       "relative rounded-3xl transition-all duration-300",
-      "min-h-[90vh] w-[98vw] md:w-[95vw]", // Increased width to fill more space
+      "min-h-[90vh] w-[98vw] md:w-[95vw]",
       "hover:shadow-xl",
       "border border-cosmic/5",
       "bg-transparent backdrop-blur-xl",
+      "overflow-y-auto",  // Added this
       className
     )}
     style={{
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
-      backgroundColor: 'rgba(255, 255, 255, 0.02)', // Much more transparent
+      backgroundColor: 'rgba(255, 255, 255, 0.02)',
+      maxHeight: '90vh'   // Added this
     }}
   >
     {children}
@@ -51,7 +53,6 @@ export const CardContent = ({ children, className }) => (
     className={cn(
       "p-8 space-y-6",
       "bg-transparent",
-      "h-auto",
       className
     )}
   >
