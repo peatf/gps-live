@@ -53,7 +53,16 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
   const handleLetterChange = (value) => {
     const newPosition = value[0];
     setLetterPosition(newPosition);
-    setCelebrationTriggered(newPosition === 22); // Trigger celebration when reaching "W"
+
+    // Store initial position if not already set
+    if (journeyData.initialPosition === undefined) {
+      setJourneyData((prev) => ({ ...prev, initialPosition: newPosition }));
+    }
+
+    setJourneyData((prev) => ({ ...prev, currentPosition: newPosition }));
+
+    // Trigger celebration if reaching or exceeding "W"
+    setCelebrationTriggered(newPosition >= 22); // "W" is position 22
   };
 
   useEffect(() => {
@@ -68,9 +77,9 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     <Card
       className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
       style={{
-        backgroundColor: "rgba(255, 255, 255, 0.01)", // Translucent background
-        backdropFilter: "blur(8px)", // Blur effect
-        WebkitBackdropFilter: "blur(8px)", // Safari-specific
+        backgroundColor: "rgba(255, 255, 255, 0.01)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
       }}
     >
       <CardHeader className="border-b border-stone/10">
@@ -120,7 +129,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
           <Slider
             value={[letterPosition]}
             min={0}
-            max={25}
+            max={25} // "Z" is position 25
             step={1}
             onValueChange={handleLetterChange}
             className="w-full"
