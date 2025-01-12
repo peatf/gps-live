@@ -34,10 +34,23 @@ const styles = StyleSheet.create({
   },
 });
 
-export const JourneyPDF = ({ journeyData, initialScores, firstPosition, finalAdvice }) => {
-  const initialLikertScores = initialScores || {}; // Pass or compute initial scores here
-  const startPosition = firstPosition || 0; // Pass or infer the starting position
-  const lastGeneratedAdvice = finalAdvice || "No advice was generated.";
+export const JourneyPDF = ({ journeyData }) => {
+  // Calculate initial and final scores
+  const initialLikertScores = journeyData.initialLikertScores || {
+    safety: 3,
+    confidence: 3,
+    openness: 3,
+    deserving: 3,
+    belief: 3,
+    anticipation: 3,
+    appreciation: 3,
+  };
+
+  // Default starting position if not available
+  const startPosition = journeyData.startPosition || 0;
+
+  // Get the last generated advice
+  const lastGeneratedAdvice = journeyData.lastGeneratedAdvice || "No advice was generated.";
 
   return (
     <Document>
