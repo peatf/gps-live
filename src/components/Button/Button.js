@@ -10,7 +10,6 @@ export const Button = ({
   className,
   ...props
 }) => {
-  // Core styles that all buttons share
   const baseStyles = "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300";
 
   const sizeStyles = {
@@ -19,20 +18,19 @@ export const Button = ({
     lg: "px-8 py-4 text-lg",
   };
 
-  // Glass effect base - used by ghost and sensation buttons
   const glassBase = `
     relative
-    bg-white/[0.03]
-    backdrop-filter backdrop-blur-[2px]
-    shadow-[0_2px_5px_rgba(255,255,255,0.05)]
+    bg-white/[0.02]
+    before:absolute before:inset-0 before:rounded-full before:-z-10
+    before:bg-white/[0.02]
+    before:backdrop-blur-[8px]
+    before:backdrop-filter
+    hover:bg-white/[0.04]
+    active:bg-white/[0.06]
     transition-all duration-300
-    hover:bg-white/[0.06]
-    active:bg-white/[0.08]
   `;
 
-  // Refined variant styles
   const variantStyles = {
-    // Primary stays solid for CTAs
     primary: cn(
       "bg-cosmic text-white",
       "hover:bg-cosmic-light transform hover:scale-[1.02]",
@@ -40,43 +38,35 @@ export const Button = ({
       "border border-cosmic"
     ),
     
-    // Ghost for navigation (like Back button)
     ghost: cn(
       glassBase,
       "border border-white/5",
+      "text-earth/90",
       "hover:border-white/10",
-      "active:border-white/20",
-      "text-earth/90"
+      "active:border-white/20"
     ),
     
-    // Special style for sensation buttons
     sensation: cn(
       glassBase,
       "border border-white/5",
+      "text-earth/90",
       "hover:border-white/10",
       "active:border-white/20",
-      "text-earth/90",
       "justify-start gap-2",
       "group"
     ),
     
-    // Toggle buttons (like alignment section)
     toggle: cn(
       glassBase,
       "border border-white/10",
-      "hover:bg-white/5",
+      "text-earth",
       "data-[state=active]:bg-cosmic",
       "data-[state=active]:text-white",
-      "data-[state=active]:border-cosmic",
-      "text-earth"
+      "data-[state=active]:border-cosmic"
     )
   };
 
-  // Detect button type from props and className
-  const isSensationButton = className?.includes("sensation-button");
-  const buttonVariant = isSensationButton ? "sensation" : variant;
-
-  // Handle active/selected states
+  const buttonVariant = className?.includes("sensation-button") ? "sensation" : variant;
   const isActive = props["data-state"] === "active" || props.selected;
 
   return (
@@ -92,9 +82,8 @@ export const Button = ({
         className
       )}
       style={{
-        backdropFilter: 'blur(2px)',
-        WebkitBackdropFilter: 'blur(2px)',
-        backgroundColor: variant === 'primary' ? undefined : 'rgba(255, 255, 255, 0.03)'
+        backdropFilter: variant === 'primary' ? undefined : 'blur(8px)',
+        WebkitBackdropFilter: variant === 'primary' ? undefined : 'blur(8px)'
       }}
       {...props}
     >
@@ -102,7 +91,6 @@ export const Button = ({
         {children}
       </span>
       
-      {/* Subtle gradient overlay for depth */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
     </button>
   );
