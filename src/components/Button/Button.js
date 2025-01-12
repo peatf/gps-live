@@ -11,7 +11,8 @@ export const Button = ({
   ...props
 }) => {
   // Core styles that all buttons share
-  const baseStyles = "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300";
+  const baseStyles =
+    "relative inline-flex items-center justify-center rounded-full text-sm font-medium transition-all duration-300";
 
   const sizeStyles = {
     default: "px-6 py-3",
@@ -30,7 +31,8 @@ export const Button = ({
   // Refined variant styles
   const variantStyles = {
     // Primary stays solid for CTAs
-    primary: "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-[1.02] active:scale-[0.98]",
+    primary:
+      "bg-cosmic text-white hover:bg-cosmic-light transform hover:scale-[1.02] active:scale-[0.98]",
     
     // Ghost for navigation (like Back button)
     ghost: cn(
@@ -53,6 +55,16 @@ export const Button = ({
       "justify-start gap-2",
       "group"
     ),
+
+    // Transparent button with soft glass effect
+    glass: cn(
+      glassBase,
+      "border border-white/20",
+      "hover:bg-white/5",
+      "hover:border-white/30",
+      "active:bg-white/10",
+      "text-white"
+    ),
     
     // Toggle buttons (like alignment section)
     toggle: cn(
@@ -63,15 +75,15 @@ export const Button = ({
       "data-[state=active]:text-white",
       "data-[state=active]:border-cosmic",
       "text-earth"
-    )
+    ),
   };
 
   // Detect button type from props and className
-  const isSensationButton = className?.includes('sensation-button');
-  const buttonVariant = isSensationButton ? 'sensation' : variant;
+  const isSensationButton = className?.includes("sensation-button");
+  const buttonVariant = isSensationButton ? "sensation" : variant;
 
   // Handle active/selected states
-  const isActive = props['data-state'] === 'active' || props.selected;
+  const isActive = props["data-state"] === "active" || props.selected;
 
   return (
     <button
@@ -90,7 +102,7 @@ export const Button = ({
       <span className="relative z-10 flex items-center justify-center gap-2">
         {children}
       </span>
-      
+
       {/* Subtle gradient overlay for depth */}
       <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
     </button>
