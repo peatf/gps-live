@@ -15,8 +15,12 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [aiSuggestions, setAiSuggestions] = useState(journeyData.latestAiAdvice || {});
+  const [aiSuggestions, setAiSuggestions] = useState({});
   const [sliderValues, setSliderValues] = useState(journeyData.likertScores || {});
+
+  const generateCategoryContext = (category, goal) => {
+    return `A focus around this goal that connects you with ${category} could be something like, "I am glad I have the ability and resources to work on: ${goal}."`;
+  };
 
   const alignmentAreas = {
     safety: "I feel safe and open to receiving this opportunity or experience",
@@ -28,7 +32,6 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly"
   };
 
-  // Fetch AI suggestions
   const fetchAISuggestions = useCallback(async (category) => {
     const score = sliderValues[category];
     if (score > 3) return;
@@ -38,7 +41,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
     try {
       const basePrompt = getCategoryPrompt(category, score, journeyData.goal);
-      const contextualText = `A focus around this goal that connects you with ${category} could be: "I am glad I have the ability and resources to work on: ${journeyData.goal}."`;
+      const contextualText = generateCategoryContext(category, journeyData.goal);
       const finalPrompt = `${basePrompt}\n\n${contextualText}\n\nDoes this help you move this slider up?`;
 
       const response = await fetch('/api/ai', {
@@ -58,132 +61,241 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
       const data = await response.json();
       const suggestions = data.message;
-
-      // Update local state and journeyData
+      
+      // Update local state for immediate display
       setAiSuggestions((prev) => ({
         ...prev,
-        [category]: suggestions,
+        [category]: {
+          suggestions,
+          timestamp: Date.now(),
+        },
       }));
 
-      setJourneyData((prev) => ({
+      // Update journeyData to store advice for PDF
+      setJourneyData(prev => ({
         ...prev,
         latestAiAdvice: {
           ...prev.latestAiAdvice,
           [category]: suggestions,
         },
       }));
-    } catch (err) {
-      setError('Unable to fetch advice. Please try again.');
+
+    } catch (error) {
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
   }, [journeyData, sliderValues, setJourneyData]);
 
-  // Handle category changes
-  const handleCategoryChange = (category) => {
-    setActiveCategory(category);
-
-    if (sliderValues[category] <= 3) {
-      setShouldFetchAdvice(true);
-    }
-  };
-
-  // Handle slider value changes
   const handleSliderChange = useCallback((category, value) => {
-    const newValue = value[0];
-    setSliderValues((prev) => ({
-      ...prev,
+  const newValue = value[0];
+  setSliderValues((prev) => ({
+    ...prev,
+    [category]: newValue,
+  }));
+
+  setJourneyData((prev) => ({
+    ...prev,
+    likertScores: {
+      ...prev.likertScores,
       [category]: newValue,
-    }));
+    },
+  }));
 
-    setJourneyData((prev) => ({
-      ...prev,
-      likertScores: {
-        ...prev.likertScores,
-        [category]: newValue,
-      },
-    }));
+    const handleCategoryChange = (category) => {
+  setActiveCategory(category);
+  if (sliderValues[category] <= 3) {
+    setShouldFetchAdvice(true);
+  }
+};
 
-    if (newValue <= 3) {
-      fetchAISuggestions(category);
-    }
-  }, [fetchAISuggestions, setJourneyData]);
+  if (newValue <= 3) {
+    setShouldFetchAdvice(true);
+  }
+}, [setJourneyData]);
 
   useEffect(() => {
-    console.log('Active Category:', activeCategory);
-    console.log('Slider Values:', sliderValues);
-    console.log('AI Suggestions:', aiSuggestions);
-  }, [activeCategory, sliderValues, aiSuggestions]);
+  if (shouldFetchAdvice && activeCategory !== 'null') {
+    fetchAISuggestions(activeCategory);
+  }
+}, [activeCategory, shouldFetchAdvice, fetchAISuggestions]);
+  
 
   return (
-    <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in">
+    <Card
+      className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
+      style={{
+        backgroundColor: "rgba(255, 255, 255, 0.01)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+      }}
+    >
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="flex items-center gap-2 text-sage">
           <Heart className="w-5 h-5 text-cosmic" />
           <span>Aligning Your Goal</span>
         </CardTitle>
+        <AlertDescription className="text-earth leading-relaxed">
+          Earlier you shared your internal agreement with receiving your desired goal or experience 
+          in the following areas. Aligning your goal is about creating a sense of harmony between 
+          what you desire and where you are. This step invites you to check in with how your goal 
+          feels in your body, mind, and emotions, and to explore what might support the internal 
+          agreement that allows your desire to materialize.
+        </AlertDescription>
       </CardHeader>
+      
       <CardContent className="space-y-6 p-6">
-        {Object.keys(alignmentAreas).map((cat) => (
-          <Button
-            key={cat}
-            variant={cat === activeCategory ? 'primary' : 'ghost'}
-            onClick={() => handleCategoryChange(cat)}
-          >
-            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-          </Button>
-        ))}
-        {activeCategory !== 'null' && (
+        <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
+          <AlertDescription className="space-y-2">
+            <p className="font-medium text-cosmic">Your Current Goal:</p>
+            <p className="text-earth">{journeyData.goal}</p>
+          </AlertDescription>
+        </Alert>
+
+        <div className="space-y-4 fade-in">
+          <div className="flex justify-between">
+            <span className="text-sm font-medium text-earth">{alignmentAreas[activeCategory]}</span>
+            <span className="text-sm text-cosmic">
+              {sliderValues[activeCategory]}/5
+            </span>
+          </div>
+          <Slider
+            value={[sliderValues[activeCategory] || 1]}
+            min={1}
+            max={5}
+            step={1}
+            onValueChange={(value) => handleSliderChange(activeCategory, value)}
+            className="w-full"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-2 fade-in">
+          {Object.keys(alignmentAreas).map((cat) => (
+            <Button
+              key={cat}
+              variant={cat === activeCategory ? 'primary' : 'ghost'}
+              onClick={() => handleCategoryChange(cat)}
+              className="flex items-center gap-2 transition-all duration-200"
+            >
+              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              {sliderValues[cat] >= 4 && (
+                <CheckCircle2 className="w-4 h-4 text-sage" />
+              )}
+            </Button>
+          ))}
+        </div>
+
+        {sliderValues[activeCategory] >= 4 ? (
+          <Alert className="bg-sage/5 border-sage/20 scale-in">
+            <AlertDescription className="flex items-center space-x-2 text-earth">
+              <CheckCircle2 className="w-4 h-4 text-sage" />
+              <span>
+                Beautiful! Your {activeCategory} alignment is strong at {sliderValues[activeCategory]}/5. 
+                You can explore other areas or continue if you're ready.
+              </span>
+            </AlertDescription>
+          </Alert>
+        ) : aiSuggestions[activeCategory]?.suggestions && (
+          <Alert className="bg-cosmic/5 border-cosmic/20 scale-in">
+            <AlertDescription className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-cosmic" />
+                <p className="font-medium text-cosmic">Alignment Insight:</p>
+              </div>
+              <p className="text-earth leading-relaxed">{aiSuggestions[activeCategory].suggestions}</p>
+              <Button
+                variant="ghost"
+                onClick={() => fetchAISuggestions(activeCategory)}
+                className="mt-2"
+              >
+                Refresh Insight
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {isLoading && (
+          <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
+            <AlertDescription className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-cosmic border-t-transparent" />
+              <span className="text-cosmic">Gathering alignment suggestions...</span>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {error && (
           <>
-            <div className="space-y-4">
-              <Slider
-                value={[sliderValues[activeCategory] || 1]}
-                min={1}
-                max={5}
-                step={1}
-                onValueChange={(value) => handleSliderChange(activeCategory, value)}
-              />
-              {sliderValues[activeCategory] <= 3 && aiSuggestions[activeCategory] && (
-                <Alert>
-                  <AlertDescription>
-                    <Sparkles />
-                    {aiSuggestions[activeCategory]}
-                  </AlertDescription>
-                </Alert>
-              )}
-              {error && (
-                <Alert variant="error">
-                  <AlertDescription>
-                    <AlertTriangle />
-                    {error}
-                  </AlertDescription>
-                </Alert>
-              )}
-            </div>
+            <Alert className="bg-burgundy/5 border-burgundy/20 scale-in">
+              <AlertDescription className="flex items-center space-x-2 text-burgundy">
+                <AlertTriangle className="w-4 h-4" />
+                <span>{error}</span>
+              </AlertDescription>
+            </Alert>
+            <Alert className="bg-sage/5 border-sage/20 fade-in">
+              <AlertDescription className="text-earth leading-relaxed">
+                This tool is here to support you, but the insights and guidance you uncover are uniquely yours. 
+                Trust your process.
+              </AlertDescription>
+            </Alert>
           </>
         )}
-        <PDFDownloadLink
-          document={
-            <JourneyPDF
-              journeyData={{
-                ...journeyData,
-                likertScores: sliderValues,
-                adjustedGoal,
-                latestAiAdvice: aiSuggestions,
+
+        <div className="flex justify-between pt-6 border-t border-stone/10">
+          <Button 
+            variant="ghost"
+            onClick={onBack}
+            className="text-earth/90 hover:text-cosmic transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            <span className="text-xs md:text-sm">Back</span>
+          </Button>
+
+          <div className="flex gap-4">
+            <PDFDownloadLink
+              document={
+                <JourneyPDF 
+                  journeyData={{
+                    ...journeyData,
+                    likertScores: sliderValues,
+                    adjustedGoal,
+                    latestAiAdvice: {
+                      ...journeyData.latestAiAdvice,
+                      ...Object.fromEntries(
+                        Object.entries(aiSuggestions).map(([category, { suggestions }]) => [
+                          category,
+                          suggestions
+                        ])
+                      ),
+                    },
+                  }} 
+                />
+              }
+              fileName={`${journeyData.goal.slice(0, 30).replace(/[^a-z0-9]/gi, '_').toLowerCase()}-journey.pdf`}
+            >
+              {({ loading, error }) => (
+                <Button
+                  variant="primary"
+                  disabled={loading}
+                >
+                  {loading ? 'Preparing...' : 'Download Journey Summary'} 
+                </Button>
+              )}
+            </PDFDownloadLink>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setJourneyData((prev) => ({
+                  ...prev,
+                  likertScores: sliderValues,
+                  adjustedGoal,
+                }));
+                onComplete();
               }}
-            />
-          }
-          fileName="alignment-journey.pdf"
-        >
-          {({ loading }) => (
-            <Button variant="primary" disabled={loading}>
-              {loading ? 'Preparing...' : 'Download Journey Summary'}
+            >
+              Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
-          )}
-        </PDFDownloadLink>
-        <Button variant="primary" onClick={onComplete}>
-          Complete Journey
-        </Button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
