@@ -17,6 +17,19 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   const [aiSuggestions, setAiSuggestions] = useState({});
   const [sliderValues, setSliderValues] = useState(journeyData.likertScores || {});
 
+  // Track final scores and latest AI advice for alignment areas
+useEffect(() => {
+  setJourneyData((prev) => ({
+    ...prev,
+    finalScores: { ...sliderValues },
+    aiAdvice: {
+      ...prev.aiAdvice,
+      [activeCategory]: aiSuggestions[activeCategory]?.suggestions || '',
+    },
+  }));
+}, [sliderValues, aiSuggestions, activeCategory, setJourneyData]);
+
+
   const generateCategoryContext = (category, goal) => {
     return `A focus around this goal that connects you with ${category} could be something like, "I am glad I have the ability and resources to work on: ${goal}."`;
   };
