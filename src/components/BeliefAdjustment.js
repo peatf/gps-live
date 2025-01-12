@@ -1,4 +1,3 @@
-// src/components/BeliefAdjustment.js
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
@@ -21,6 +20,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     }
   }, [journeyData.currentPosition]);
 
+  // Handle Scope Slider Changes
   const handleScaleChange = async (value) => {
     setGoalScale(value[0]);
     setIsLoading(true);
@@ -34,7 +34,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
           journeyData: {
             ...journeyData,
             scale: value[0],
-            message: `The user's goal "${journeyData.goal}" involves achieving ${value[0]}% scope. Provide specific feedback on refining the goal's complexity and size.`,
+            type: 'ProximityMapping', // Indicate this is for Proximity Mapping
           },
         }),
       });
@@ -80,7 +80,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
       <CardHeader className="border-b border-stone/10">
         <CardTitle className="text-sage">Proximity Mapping</CardTitle>
         <div className="text-earth leading-relaxed mt-2">
-          This tool helps you explore where you are in your journey and what steps feel aligned. This is about noticing what feels true and actionable for you. Earlier chose a place that represents where you are on your journey to your desire, first check and see if you feel able to "stretch" where you see yourself if you’re not yet at Z.
+          This tool helps you explore where you are in your journey and what steps feel aligned. Earlier you chose a place that represents where you are on your journey to your desire; first check and see if you feel able to "stretch" where you see yourself if you’re not yet at Z.
         </div>
       </CardHeader>
       <CardContent className="space-y-6 p-6">
@@ -99,7 +99,7 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
         {/* Scope Slider */}
         <div className="space-y-4 fade-up">
           <p className="text-sm text-cosmic/80 italic">
-            “Reduce” the scope by 10% using your imagination to see if that allows the goal to feel more achievable or approachable. If needed, get some suggestions for scope reduction by sliding this slider.
+            “Reduce” the scope by {goalScale}% using your imagination to see if that allows the goal to feel more achievable or approachable.
           </p>
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-earth">Adjust Goal Scope</span>
