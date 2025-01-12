@@ -221,21 +221,41 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     <ArrowLeft className="w-4 h-4 mr-2" />
     Back
   </Button>
-  <Button
-    variant="primary"
-    onClick={() => {
-      setJourneyData((prev) => ({
-        ...prev,
-        likertScores: sliderValues,
-        adjustedGoal,
-      }));
-      onComplete();
-    }}
-  >
-    Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
-  </Button>
-</div>
-      </CardContent>
-    </Card>
-  );
-}
+  <<Button
+  variant="primary"
+  onClick={async () => {
+    // Save the current journey data state
+    setJourneyData((prev) => ({
+      ...prev,
+      likertScores: sliderValues,
+      adjustedGoal,
+    }));
+
+    // Handle downloading the journey data
+    try {
+      const response = await fetch('/api/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ journeyData }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate download');
+      }
+
+      const { fileName } = await response.json();
+      const downloadLink = document.createElement('a');
+      downloadLink.href = `/${fileName}`;
+      downloadLink.download = fileName;
+      downloadLink.click();
+    } catch (error) {
+      console.error('Error downloading journey data:', error);
+      alert('Failed to download journey data.');
+    }
+
+    // Proceed with the existing completion logic
+    onComplete();
+  }}
+>
+  Complete Journey <ArrowRight className="w-4 h-4 ml-2" />
+</Button>
