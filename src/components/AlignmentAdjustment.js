@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from './Card/Card';
 import { Button } from './Button/Button';
 import { Alert, AlertDescription } from './Alert/Alert';
+import { Heart, Sparkles, ArrowRight, ArrowLeft, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { Slider } from './Slider/Slider';
-import { Sparkles, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import debounce from 'lodash/debounce';
 import { getCategoryPrompt } from '../utils/alignmentPrompts';
 import { PDFDownloadLink } from '@react-pdf/renderer';
@@ -11,6 +11,8 @@ import JourneyPDF from './JourneyPDF';
 
 export default function AlignmentAdjustment({ journeyData, setJourneyData, onComplete, onBack }) {
   const [activeCategory, setActiveCategory] = useState('null');
+  const [shouldFetchAdvice, setShouldFetchAdvice] = useState(false);
+  const [adjustedGoal, setAdjustedGoal] = useState(journeyData?.goal || '');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [aiSuggestions, setAiSuggestions] = useState(journeyData.latestAiAdvice || {});
@@ -36,6 +38,9 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
 
     try {
       const basePrompt = getCategoryPrompt(category, score, journeyData.goal);
+      const contextualText = `A focus around this goal that connects you with ${category} could be: "I am glad I have the ability and resources to work on: ${journeyData.goal}."`;
+      const finalPrompt = `${basePrompt}\n\n${contextualText}\n\nDoes this help you move this slider up?`;
+
       const response = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -44,16 +49,17 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
             ...journeyData,
             category,
             score,
-            message: basePrompt,
+            message: finalPrompt
           },
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to fetch suggestions');
+      if (!response.ok) throw new Error('Failed to get suggestions');
+
       const data = await response.json();
       const suggestions = data.message;
 
-      // Update local and global states
+      // Update local state and journeyData
       setAiSuggestions((prev) => ({
         ...prev,
         [category]: suggestions,
@@ -73,12 +79,16 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     }
   }, [journeyData, sliderValues, setJourneyData]);
 
-  // Handle category change
+  // Handle category changes
   const handleCategoryChange = (category) => {
     setActiveCategory(category);
+
+    if (sliderValues[category] <= 3) {
+      setShouldFetchAdvice(true);
+    }
   };
 
-  // Handle slider change
+  // Handle slider value changes
   const handleSliderChange = useCallback((category, value) => {
     const newValue = value[0];
     setSliderValues((prev) => ({
@@ -99,7 +109,6 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     }
   }, [fetchAISuggestions, setJourneyData]);
 
-  // Debugging Logs
   useEffect(() => {
     console.log('Active Category:', activeCategory);
     console.log('Slider Values:', sliderValues);
@@ -107,11 +116,14 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
   }, [activeCategory, sliderValues, aiSuggestions]);
 
   return (
-    <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm">
+    <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in">
       <CardHeader className="border-b border-stone/10">
-        <CardTitle>Aligning Your Goal</CardTitle>
+        <CardTitle className="flex items-center gap-2 text-sage">
+          <Heart className="w-5 h-5 text-cosmic" />
+          <span>Aligning Your Goal</span>
+        </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 p-6">
         {Object.keys(alignmentAreas).map((cat) => (
           <Button
             key={cat}
@@ -123,31 +135,55 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
         ))}
         {activeCategory !== 'null' && (
           <>
-            <Slider
-              value={[sliderValues[activeCategory] || 1]}
-              min={1}
-              max={5}
-              step={1}
-              onValueChange={(value) => handleSliderChange(activeCategory, value)}
-            />
-            {sliderValues[activeCategory] <= 3 && aiSuggestions[activeCategory] && (
-              <Alert>
-                <AlertDescription>
-                  <Sparkles />
-                  {aiSuggestions[activeCategory]}
-                </AlertDescription>
-              </Alert>
-            )}
-            {error && (
-              <Alert variant="error">
-                <AlertDescription>
-                  <AlertTriangle />
-                  {error}
-                </AlertDescription>
-              </Alert>
-            )}
+            <div className="space-y-4">
+              <Slider
+                value={[sliderValues[activeCategory] || 1]}
+                min={1}
+                max={5}
+                step={1}
+                onValueChange={(value) => handleSliderChange(activeCategory, value)}
+              />
+              {sliderValues[activeCategory] <= 3 && aiSuggestions[activeCategory] && (
+                <Alert>
+                  <AlertDescription>
+                    <Sparkles />
+                    {aiSuggestions[activeCategory]}
+                  </AlertDescription>
+                </Alert>
+              )}
+              {error && (
+                <Alert variant="error">
+                  <AlertDescription>
+                    <AlertTriangle />
+                    {error}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </div>
           </>
         )}
+        <PDFDownloadLink
+          document={
+            <JourneyPDF
+              journeyData={{
+                ...journeyData,
+                likertScores: sliderValues,
+                adjustedGoal,
+                latestAiAdvice: aiSuggestions,
+              }}
+            />
+          }
+          fileName="alignment-journey.pdf"
+        >
+          {({ loading }) => (
+            <Button variant="primary" disabled={loading}>
+              {loading ? 'Preparing...' : 'Download Journey Summary'}
+            </Button>
+          )}
+        </PDFDownloadLink>
+        <Button variant="primary" onClick={onComplete}>
+          Complete Journey
+        </Button>
       </CardContent>
     </Card>
   );
