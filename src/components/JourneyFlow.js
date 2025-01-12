@@ -179,7 +179,7 @@ export default function JourneyFlow({ journeyData, setJourneyData, onComplete, o
       {sensations.map((sensation) => (
         <Button
           key={sensation}
-          variant={selectedSensations?.includes(sensation) ? 'primary' : 'ghost'}
+          variant={selectedSensations?.includes(sensation) ? 'primary' : 'glass'}
           className="sensation-button"
           onClick={() => toggleSensation(sensation)}
         >
