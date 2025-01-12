@@ -80,6 +80,39 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     }
   }, [journeyData, sliderValues, setJourneyData]);
 
+  const fetchGoalScopingAdvice = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          journeyData: {
+            ...journeyData,
+            type: 'GoalScoping',
+            message: `Provide advice for refining the goal: "${journeyData.goal}".`
+          },
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch goal scoping advice');
+
+      const data = await response.json();
+      const goalAdvice = data.message;
+
+      setJourneyData((prev) => ({
+        ...prev,
+        latestGoalAdvice: goalAdvice,
+      }));
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [journeyData, setJourneyData]);
+
   const handleSliderChange = useCallback((category, value) => {
     setSliderValues((prev) => ({
       ...prev,
@@ -112,6 +145,12 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     }
   }, [activeCategory, sliderValues, fetchAISuggestions]);
 
+  useEffect(() => {
+    if (!journeyData.latestGoalAdvice) {
+      fetchGoalScopingAdvice();
+    }
+  }, [fetchGoalScopingAdvice, journeyData.latestGoalAdvice]);
+
   return (
     <Card
       className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
@@ -140,6 +179,7 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
           <AlertDescription className="space-y-2">
             <p className="font-medium text-cosmic">Your Current Goal:</p>
             <p className="text-earth">{journeyData.goal}</p>
+            <p className="text-earth">{journeyData.latestGoalAdvice || 'Fetching advice...'}</p>
           </AlertDescription>
         </Alert>
 
