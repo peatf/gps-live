@@ -28,61 +28,63 @@ export default function AlignmentAdjustment({ journeyData, setJourneyData, onCom
     appreciation: "I feel a sense of appreciation for this area in my business as it is now. I celebrate my business regularly"
   };
 
+  const generateCategoryContext = (category, goal) => {
+    return `A focus around this goal that connects you with ${category} could be something like, "I am glad I have the ability and resources to work on: ${goal}."`;
+  };
+
   const fetchAISuggestions = useCallback(async (category) => {
-  const score = sliderValues[category];
-  if (score > 3) return;
+    const score = sliderValues[category];
+    if (score > 3) return;
 
-  setIsLoading(true);
-  setError(null);
+    setIsLoading(true);
+    setError(null);
 
-  try {
-    // Generate the base and contextual prompts
-    const basePrompt = getCategoryPrompt(category, score, journeyData.goal);
-    const contextualText = generateCategoryContext(category, journeyData.goal);
-    const finalPrompt = `${basePrompt}\n\n${contextualText}\n\nDoes this help you move this slider up?`;
+    try {
+      const basePrompt = getCategoryPrompt(category, score, journeyData.goal);
+      const contextualText = generateCategoryContext(category, journeyData.goal);
+      const finalPrompt = `${basePrompt}\n\n${contextualText}\n\nDoes this help you move this slider up?`;
 
-    const response = await fetch('/api/ai', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        journeyData: {
-          ...journeyData,
-          category,
-          score,
-          message: finalPrompt,
+      const response = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          journeyData: {
+            ...journeyData,
+            category,
+            score,
+            message: finalPrompt,
+          },
+        }),
+      });
+
+      if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+      const data = await response.json();
+      setAiSuggestions((prev) => ({
+        ...prev,
+        [category]: data.message,
+      }));
+
+      setJourneyData((prev) => ({
+        ...prev,
+        latestAiAdvice: {
+          ...prev.latestAiAdvice,
+          [category]: data.message,
         },
-      }),
-    });
+      }));
+    } catch (err) {
+      setError('Unable to fetch advice. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [journeyData, sliderValues, setJourneyData]);
 
-    if (!response.ok) throw new Error('Failed to get suggestions');
-
-    const data = await response.json();
-    const suggestions = data.message;
-
-    // Update local state and journeyData
-    setAiSuggestions((prev) => ({
-      ...prev,
-      [category]: suggestions,
-    }));
-
-    setJourneyData((prev) => ({
-      ...prev,
-      latestAiAdvice: {
-        ...prev.latestAiAdvice,
-        [category]: suggestions,
-      },
-    }));
-  } catch (err) {
-    setError('Unable to fetch advice. Please try again.');
-  } finally {
-    setIsLoading(false);
-  }
-}, [journeyData, sliderValues, setJourneyData]);
-
-const generateCategoryContext = (category, goal) => {
-  return `A focus around this goal that connects you with ${category} could be something like, "I am glad I have the ability and resources to work on: ${goal}."`;
-};
-
+  useEffect(() => {
+    if (shouldFetchAdvice && activeCategory !== 'null') {
+      fetchAISuggestions(activeCategory);
+      setShouldFetchAdvice(false); // Reset to prevent duplicate calls
+    }
+  }, [activeCategory, shouldFetchAdvice, fetchAISuggestions]);
 
   const handleCategoryChange = (category) => {
     setActiveCategory(category);
@@ -107,15 +109,9 @@ const generateCategoryContext = (category, goal) => {
     }));
 
     if (newValue <= 3) {
-      fetchAISuggestions(category);
+      setShouldFetchAdvice(true);
     }
-  }, [fetchAISuggestions, setJourneyData]);
-
-  useEffect(() => {
-    console.log('Active Category:', activeCategory);
-    console.log('Slider Values:', sliderValues);
-    console.log('AI Suggestions:', aiSuggestions);
-  }, [activeCategory, sliderValues, aiSuggestions]);
+  }, [setJourneyData]);
 
   return (
     <Card className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in">
@@ -144,7 +140,7 @@ const generateCategoryContext = (category, goal) => {
         <div className="space-y-4 fade-in">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium text-earth">{alignmentAreas[activeCategory]}</span>
-            <span className="text-sm text-cosmic">{sliderValues[activeCategory]}/5</span>
+            <span className="text-sm text-cosmic">{sliderValues[activeCategory] || 1}/5</span>
           </div>
           <Slider
             value={[sliderValues[activeCategory] || 1]}
@@ -171,6 +167,24 @@ const generateCategoryContext = (category, goal) => {
             </Button>
           ))}
         </div>
+
+        {isLoading && (
+          <Alert className="bg-cosmic/5 border-cosmic/20 fade-in">
+            <AlertDescription className="flex items-center space-x-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-cosmic border-t-transparent" />
+              <span className="text-cosmic">Gathering alignment suggestions...</span>
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {error && (
+          <Alert className="bg-burgundy/5 border-burgundy/20 fade-in">
+            <AlertDescription className="flex items-center space-x-2 text-burgundy">
+              <AlertTriangle className="w-4 h-4" />
+              <span>{error}</span>
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="flex justify-between pt-6 border-t border-stone/10">
           <Button 
