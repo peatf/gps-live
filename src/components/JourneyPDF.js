@@ -53,23 +53,28 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   proximityMap: {
-    height: 60,
+    height: 80,
     marginVertical: 10,
     position: 'relative',
   },
   letterGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 5,
+    marginBottom: 15,
   },
   letter: {
     fontSize: 10,
     color: '#666',
   },
   highlightedLetter: {
-    fontSize: 10,
+    fontSize: 12,
     color: '#3E54B8',
     fontWeight: 'bold',
+  },
+  positionLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
   },
   line: {
     height: 2,
@@ -119,10 +124,10 @@ const ProximitySlider = ({ initial, current }) => (
         </Text>
       ))}
     </View>
-    <View style={[styles.line, { marginVertical: 10 }]} />
-    <View style={styles.row}>
-      <Text style={[styles.scoreLabel, { flex: 1 }]}>Initial Position: {String.fromCharCode(65 + initial)}</Text>
-      <Text style={[styles.scoreLabel, { flex: 1, textAlign: 'right' }]}>Final Position: {String.fromCharCode(65 + current)}</Text>
+    <View style={[styles.line]} />
+    <View style={styles.positionLabels}>
+      <Text style={styles.scoreLabel}>Initial Position: {initial !== undefined ? String.fromCharCode(65 + initial) : 'Not set'}</Text>
+      <Text style={styles.scoreLabel}>Final Position: {current !== undefined ? String.fromCharCode(65 + current) : 'Not set'}</Text>
     </View>
   </View>
 );
@@ -203,20 +208,26 @@ export const JourneyPDF = ({ journeyData }) => (
         <Text style={styles.sectionTitle}>Supportive Suggestions</Text>
         
         {/* Proximity Slider Advice */}
-        <View style={styles.adviceSection}>
-          <Text style={[styles.scoreLabel, { marginBottom: 5 }]}>From Proximity Mapping:</Text>
-          <Text style={styles.adviceText}>{journeyData.latestProximityAdvice || 'No advice generated'}</Text>
-        </View>
+        {journeyData.latestProximityAdvice && (
+          <View style={styles.adviceSection}>
+            <Text style={[styles.scoreLabel, { marginBottom: 5 }]}>From Proximity Mapping:</Text>
+            <Text style={styles.adviceText}>{journeyData.latestProximityAdvice}</Text>
+          </View>
+        )}
         
         {/* Alignment Advice */}
-        {Object.entries(journeyData.latestAiAdvice || {}).map(([area, advice]) => (
+        {journeyData.latestAiAdvice && Object.entries(journeyData.latestAiAdvice).map(([area, advice]) => (
           <View key={area} style={[styles.adviceSection, { marginTop: 10 }]}>
             <Text style={[styles.scoreLabel, { marginBottom: 5 }]}>
-              {area.charAt(0).toUpperCase() + area.slice(1)}:
+              From {area.charAt(0).toUpperCase() + area.slice(1)} Alignment:
             </Text>
             <Text style={styles.adviceText}>{advice}</Text>
           </View>
         ))}
+        
+        {!journeyData.latestProximityAdvice && (!journeyData.latestAiAdvice || Object.keys(journeyData.latestAiAdvice).length === 0) && (
+          <Text style={styles.adviceText}>Generate advice by adjusting the sliders in Proximity Mapping and Alignment sections.</Text>
+        )}
       </View>
     </Page>
   </Document>
