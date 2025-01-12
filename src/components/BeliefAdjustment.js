@@ -73,6 +73,46 @@ export default function ProximityMapping({ journeyData, setJourneyData, onContin
     }));
   }, [goalScale, letterPosition, setJourneyData]);
 
+  // Function to fetch proximity advice
+const fetchProximityAdvice = useCallback(async () => {
+  setIsLoading(true); // Set loading state
+  setError(null); // Clear any previous errors
+
+  try {
+    const response = await fetch('/api/ai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        journeyData: {
+          ...journeyData,
+          type: 'ProximityMapping', // Specify this is for proximity mapping
+          message: `Provide advice for moving from position "${String.fromCharCode(65 + letterPosition)}" towards Z.`,
+        },
+      }),
+    });
+
+    if (!response.ok) throw new Error('Failed to fetch proximity advice'); // Handle errors
+
+    const data = await response.json(); // Parse response
+    const proximityAdvice = data.message;
+
+    // Save the advice in journeyData
+    setJourneyData((prev) => ({
+      ...prev,
+      latestProximityAdvice: proximityAdvice,
+    }));
+  } catch (error) {
+    setError(error.message); // Display any error that occurred
+  } finally {
+    setIsLoading(false); // End loading state
+  }
+}, [journeyData, letterPosition, setJourneyData]);
+
+// Trigger advice fetch when letter position changes
+useEffect(() => {
+  fetchProximityAdvice();
+}, [letterPosition, fetchProximityAdvice]);
+
   return (
     <Card
       className="w-full max-w-4xl mx-auto backdrop-blur-sm animate-fade-in"
