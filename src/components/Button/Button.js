@@ -84,8 +84,6 @@ export const Button = ({
         className
       )}
       style={{
-        backdropFilter: variant === 'primary' ? undefined : 'blur(8px)',
-        WebkitBackdropFilter: variant === 'primary' ? undefined : 'blur(8px)',
         background: variant === 'primary' ? undefined : 'rgba(255, 255, 255, 0.02)'
       }}
       {...props}
