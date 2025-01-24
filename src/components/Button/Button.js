@@ -23,8 +23,6 @@ export const Button = ({
     bg-white/[0.02]
     before:absolute before:inset-0 before:rounded-full before:-z-10
     before:bg-white/[0.02]
-    before:backdrop-blur-[8px]
-    before:backdrop-filter
     hover:bg-white/[0.04]
     active:bg-white/[0.06]
     transition-all duration-300
@@ -86,6 +84,8 @@ export const Button = ({
         className
       )}
       style={{
+        backdropFilter: variant === 'primary' ? undefined : 'blur(8px)',
+        WebkitBackdropFilter: variant === 'primary' ? undefined : 'blur(8px)',
         background: variant === 'primary' ? undefined : 'rgba(255, 255, 255, 0.02)'
       }}
       {...props}
